@@ -1,0 +1,352 @@
+﻿@page "/Landing"
+@using NFTLock.Data
+ 
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<style>
+
+    .page {
+        height: 100vh;
+        display: block;
+        flex-direction: column;
+        justify-content: center;
+ 
+    }
+ 
+  
+
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 60%;
+        padding: 45px;
+    }
+.LogoMainBackground {
+    position: absolute;
+    top: 47%;
+    left: 77%;
+    height: 31vw;
+    width: 31vw;
+    z-index: 0.;
+    opacity: 1;
+}
+
+
+    .dropdown-menu.show {
+        display: block;
+        position: relative !important;
+    }
+
+    body {
+        background: #1e1f26 !important;
+    }
+
+    .card {
+        overflow: hidden;
+        background: #282931 !important;
+    }
+
+    .bg-light {
+        color: #689aa4 !important;
+        background-color: #2f3544 !important;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #455058;
+        vertical-align: top;
+        border-color: #455058;
+    }
+
+    .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: .5rem;
+        font-weight: 400;
+        line-height: 1.2;
+        color: #689aa4;
+    }
+
+    .text-info {
+        color: #689aa4 !important;
+    }
+
+    .fw-normal {
+        font-weight: 400 !important;
+        color: #689aa4;
+    }
+
+    a {
+        color: #689aa4 !important;
+    }
+
+    .btn-info {
+        color: white;
+        background-color: #54667a;
+        border-color: #54667a;
+        box-shadow: 0 1px 0rgba(255,255,255,.15);
+    }
+
+        .btn-info:hover {
+            color: white;
+            background-color: #689aa4;
+            border-color: #689aa4;
+            box-shadow: 0 1px 0rgba(255,255,255,.15);
+        }
+
+    .jp-card .jp-card-front, .jp-card .jp-card-back {
+        background: #2f3544 !important;
+    }
+
+    .nav-link:focus, .nav-link:hover {
+        color: #455754 !important;
+    }
+
+    .inputStyle {
+        color: #54667a;
+        height: 60px;
+        background: #1E1F26 0% 0% no-repeat padding-box;
+        border-radius: 8px;
+        border: none;
+    }
+
+    .form-control:focus {
+        color: #54667a;
+        background-color: #1e1f26;
+        border-color: rgba(0,0,0,.25);
+        outline: 0;
+        box-shadow: unset,transparent;
+    }
+
+    .border-danger {
+        border-color: #54667a !important;
+    }
+
+    .bg-success {
+        background-color: #706e6e !important;
+    }
+</style>
+
+<img src="/logo.png" class="LogoMainBackground" />
+<p id="submitTrigger" style="display:none" onclick="DataSubmitted">
+
+</p>
+ <NavMenu>
+
+ </NavMenu>
+
+ 
+
+<div class="container">
+    <!-- Row -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-0">Balance History @TokenName</h6>
+                        </div>
+                    </div>
+
+
+                    <div id="android-vs-ios" class=" border-top"> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" >
+
+        <div class="row" style="margin:0;">
+
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div class="row">
+                            <div class="col-8">
+                                <span class="display-6">0.00000458 <i class="ti-angle-down fs-3 text-danger"></i></span>
+                                <h6>Price</h6>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div class="row">
+                            <div class="col-8">
+                                <span class="display-6">500 000 <i class="ti-angle-up fs-3 text-success"></i></span>
+                                <h6>Circulating Supply</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div class="row">
+                            <div class="col-8">
+                                <span class="display-6">$ 6 000 000 <i class="ti-angle-up fs-3 text-success"></i></span>
+                                <h6>Market Cap</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="margin:0;">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: scroll;">
+
+                        <div class="table-responsive">
+                            <table class="table stylish-table v-middle mb-0 no-wrap">
+                                <thead>
+                                    <tr>
+                                        <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
+                                        <th class="border-0 text-muted fw-normal">Amount</th>
+                                        <th class="border-0 text-muted fw-normal">Price USDT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">Link SYNC</h6>
+                                            <small class="text-muted">
+                                                SYNC
+                                            </small>
+                                        </td>
+                                        <td>2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">Dog Coin</h6>
+                                            <small class="text-muted">
+                                                Dog
+                                            </small>
+                                        </td>
+                                        <td class="text-muted">2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">Shiba Inu</h6>
+                                            <small class="text-muted">
+                                                SHIB
+                                            </small>
+                                        </td>
+                                        <td class="text-muted">2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">Emersive Coin</h6>
+                                            <small class="text-muted">
+                                                EMER
+                                            </small>
+                                        </td>
+                                        <td class="text-muted">2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">Monch Coin</h6>
+                                            <small class="text-muted">
+                                                MONCH
+                                            </small>
+                                        </td>
+                                        <td class="text-muted">2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="font-weight-medium mb-0">East Central Coin</h6>
+                                            <small class="text-muted">
+                                                EC
+                                            </small>
+                                        </td>
+                                        <td class="text-muted">2,500,500</td>
+                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+@code {
+
+    public string TokenName { get; set; }
+    private bool IsChartRendered { get; set; }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!IsChartRendered)
+        {
+            Task.Run(() => JS.InvokeAsync<string>("RenderChart"));
+
+            Task.Run(() => JS.InvokeAsync<string>("requestMedia"));
+            IsChartRendered = !IsChartRendered;
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        TokenName = "SYNC";
+        var hardwareService = new HardwareService();
+        var port = hardwareService.DeviceConnected();
+        var configStatus = MauiProgram.CheckConfigured();
+
+        if(configStatus)
+        {
+
+            var walletData = hardwareService.CreateAccount();
+            MauiProgram.WriteState("#CI");
+            MauiProgram.WriteState("ThisIsAtestPassword#");
+            MauiProgram.WriteState("#WI");
+            MauiProgram.WriteState($"{walletData.PrivateKey}!");
+
+
+        }
+    }
+ 
+
+}  

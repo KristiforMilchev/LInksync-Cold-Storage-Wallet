@@ -1,0 +1,186 @@
+/*******************/
+/*Chat widget*/
+/*******************/
+.chat-box{
+    overflow: auto;
+}
+/*******************/
+/*Chat widget*/
+/*******************/
+
+.chat-list {
+    li {
+        list-style: none;
+        .chat-img {
+            width: 45px;
+            img {
+                width: 45px;
+            }
+        }
+        .chat-content {
+            width: calc(100% - 140px);
+            .message {
+                border-top-right-radius: 25px;
+                border-bottom-left-radius: 25px;
+                padding: 15px 20px;
+                border-top-left-radius: 5px;
+                border-bottom-right-radius: 25px;
+            }
+        }
+        .chat-time {
+            width: 80px;
+            font-size: 13px;
+        }
+        &.odd {
+            .chat-content {
+                width: calc(100% - 90px);
+                .message {
+                    border-top-right-radius: 5px;
+                    border-bottom-left-radius: 25px;
+                    padding: 15px 20px;
+                    border-top-left-radius: 25px;
+                    border-bottom-right-radius: 25px;
+                }
+            }
+            .box {
+                clear: both;
+            }
+        }
+        &.odd + .odd {
+            margin-top: 0px;
+        }
+        &.reverse {
+            text-align: right;
+            .chat-time {
+                text-align: left;
+            }
+            .chat-content {
+                padding-left: 0px;
+                padding-right: 15px;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .chat-list {
+        li {
+            .chat-content {
+                width: calc(100% - 80px);
+            }
+        }
+    }
+}
+
+
+
+/*******************/
+/*Chat widget*/
+/*******************/
+
+.message-box {
+    .message-widget {
+        a {
+            &:hover {
+                background: rgba(0,0,0,0.025);
+            }
+            .user-img {
+                width: 45px;
+                .profile-status {
+                    border: 2px solid $white;
+                    height: 10px;
+                    left: 33px;
+                    position: absolute;
+                    top: -1px;
+                    width: 10px;
+                }
+                .online {
+                    background: $success;
+                }
+                .busy {
+                    background: $danger;
+                }
+                .away {
+                    background: $warning;
+                }
+                .offline {
+                    background: $warning;
+                }
+            }
+            .mail-desc,
+            .time {
+                color: $body-color;
+            }
+        }
+    }
+}
+
+.right-part.chat-container,
+.right-part.invoice-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .chat-box-inner-part {
+        width: 100%;
+    }
+}
+
+.left-part.user-chat-box,
+.left-part.list-of-user {
+    height: 100vh;
+}
+
+.chatting-box,
+.invoiceing-box {
+    display: none;
+}
+
+/*******************/
+/*Chat widget*/
+/*******************/
+
+.chat-box {
+    .chat {
+        display: none;
+        &.active-chat {
+            display: block;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .right-part.invoice-box {
+        display: block;
+        .chat-box-inner-part {
+            width: 100%;
+        }
+    }
+}
+
+@include media-breakpoint-only(md) {
+    .left-part.list-of-user {
+        position: fixed;
+        left: -$left-part-width;
+        background: $body-bg;
+        z-index: 1;
+        transition: 0.1s ease-in;
+        .show-left-part {
+            right: -107px;
+        }
+        // On visible state
+        // 
+        &.show-panel {
+            left: 65px;
+            .show-left-part {
+                right: -42px;
+            }
+        }
+    }
+    .right-part.invoice-box {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+
+

@@ -1,0 +1,156 @@
+﻿@page "/"
+@using System.Net
+@using System.Timers
+@using System.Numerics
+@using NFTLock.Data
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+
+<div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true"></li>
+        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="1" class=""></li>
+        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="2" class=""></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="row">
+                <img src="/payphone.svg" width="222.24pt" height="224.48pt">
+            </div>
+            <div class="row">
+                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
+                    DISCOVER
+                </h2>
+            </div>
+            <div class="row">
+                <p style="font-size:18pt; text-align:center;padding:50px;">
+                    Creating your default account on Binance Smart Chain
+                </p>
+                <p style="text-align:center">
+                    @Address
+                </p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="row">
+                <img src="/card.svg" width="222.24pt" height="224.48pt">
+
+            </div>
+            <div class="row">
+                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
+                    New Lock Discovered
+                </h2>
+            </div>
+            <div class="row">
+                <p style="font-size:18pt; text-align:center;padding:50px">
+                    We are setting the lock up, please mint a key for the lock on the next page.
+                </p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="row">
+                <img src="/box.svg" width="222.24pt" height="224.48pt">
+
+            </div>
+            <div class="row">
+                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
+                    ENJOY
+                </h2>
+            </div>
+            <div class="row">
+                <p style="font-size:18pt; text-align:center;padding:50px;">
+                    Please mint a key and wait for the confirmation.
+                </p>
+            </div>
+            <div class="row" style="margin:50px;">
+                <button @onclick="CreateContract" type="button" class="justify-content-center w-100 btn btn-rounded btn-info d-flex align-items-center">
+                    <span style="width:100%;">Get started </span>
+                    <i class="fas fa-arrow-alt-circle-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleDark" role="button" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleDark" role="button" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </a>
+</div>
+
+@code {
+    private AuthenicationHandler AuthenicationHandler { get; set; }
+    private string Address { get; set; }
+    private string ActiveTransaction{ get; set; }
+    System.Timers.Timer Timer { get; set; }
+    private int NFTKeyCreated { get; set; }
+    private void OpenTrading()
+    {
+        NavigationManager.NavigateTo("Landing");
+    }
+
+    private void CreateContract()
+    {
+        InvokeAsync(async () => 
+       {
+           ActiveTransaction = await AuthenicationHandler.DeployContract();
+
+           Timer = new System.Timers.Timer();
+           Timer.AutoReset = true;
+           Timer.Elapsed += (sender, e) => RepeatTransaction(sender, e);
+           Timer.Interval = GetInterval();
+           Timer.Start();
+           StateHasChanged();
+       });
+    }
+
+
+
+    static double GetInterval()
+    {
+        DateTime now = DateTime.Now;
+        return ((60 - now.Second) * 1000 - now.Millisecond);
+    }
+
+
+    private async void RepeatTransaction(object sender, ElapsedEventArgs e)
+    {
+
+        if (NFTKeyCreated != 0)
+        {
+            Timer.Stop();
+            NavigationManager.NavigateTo("Landing");
+        }
+        else
+        {
+            NFTKeyCreated = await AuthenicationHandler.CheckUserBalanceForContract(ActiveTransaction);
+
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenicationHandler = new AuthenicationHandler();
+        await InvokeAsync(async () =>
+        {
+            var accountExists = AuthenicationHandler.GetDefault();
+            var checkMintedKey = await AuthenicationHandler.CheckUserBalanceForContract(accountExists);
+            if (checkMintedKey != 0)
+            {
+                NavigationManager.NavigateTo("Landing");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("Landing");
+
+                Address = AuthenicationHandler.CreateAccountInitial();
+                StateHasChanged();
+            }
+        });
+    }
+}

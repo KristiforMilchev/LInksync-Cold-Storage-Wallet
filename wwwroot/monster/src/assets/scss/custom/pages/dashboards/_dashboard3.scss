@@ -1,0 +1,50 @@
+// 
+// common
+// 
+.social-profile {
+    background: rgba(7, 10, 43, 0.8);
+}
+
+.profile-card .profile-img {
+    max-height: 380px;
+}
+
+.profile-tab, .customtab {
+    li {
+        a.nav-link {
+            border: 0;
+            padding: 15px 20px;
+            color: $body-color;
+            &.active {
+                border-bottom: 2px solid $info;
+                color: $info;
+            }
+            &:hover {
+                color: $info;
+            }
+        }
+    }
+}
+
+// 
+// Vector Map
+// 
+#visitfromworld {
+    path.jvectormap-region.jvectormap-element {
+        stroke-width: 1px;
+        // stroke: $text-muted;
+    }
+}
+.jvectormap-zoomin,
+.jvectormap-zoomout,
+.jvectormap-goback {
+    background: $text-muted;
+}
+
+.jvectormap-zoomin {
+    top: 10px;
+}
+
+.jvectormap-zoomout {
+    top: 40px;
+}

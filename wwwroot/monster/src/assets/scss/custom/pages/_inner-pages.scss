@@ -1,0 +1,58 @@
+//
+// title padding
+//
+.title-part-padding {
+    padding: 15px 20px;
+}
+
+// ----------------------------------------------
+// Feather Custom style (Common)
+// ----------------------------------------------
+.fill-white {
+  fill: rgba(255,255,255,.1);
+}
+
+.feather-sm {
+  width: 18px;
+  height: 18px;
+}
+
+.feather-lg {
+  width: 28px;
+  height: 28px;
+}
+
+.feather-xl {
+  width: 35px;
+  height: 35px;
+}
+
+// 
+// Pricing Page
+// 
+.price-label {
+	position: absolute;
+	top: -10px;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+	width: 100px;
+	padding: 5px 10px;
+}
+
+.price-sign {
+	font-size: 15px;
+	position: absolute;
+	top: 5px;
+	margin-left: -10px;
+}
+
+// bootstrap table
+.bootstrap-table {
+	.pull-right {
+		float: right
+	}
+	.pull-left {
+		float: left
+	}
+}

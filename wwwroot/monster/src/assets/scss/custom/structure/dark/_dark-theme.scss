@@ -1,0 +1,670 @@
+// Theme Color Dark
+
+body[data-theme="dark"] {
+	@import "dark-colors";
+	@import "dark-component";
+
+	// common body settings
+	color: $theme-dark-text-color;
+	background: $theme-dark-bg-layout !important;
+
+
+	// -----------------------------------------
+	// basic setting of font colors
+	// -----------------------------------------
+	.fill-white {
+		fill: rgba(0,0,0,.1);
+	}
+
+	.btn-close,.accordion-button::after {
+				filter: contrast(0.1);
+				opacity: 1;
+	}
+
+	.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6,
+	.page-wrapper,
+	.form-control,
+	.form-select,
+	.accordion-button,
+	.chat-list .chat-item .chat-content .box.bg-light,
+	.nav-tabs .nav-link.active,
+	.nav-tabs .nav-item.show .nav-link,
+	.nav-tabs .nav-link:hover,
+	.nav-tabs .nav-link:focus,
+	.breadcrumb-item.active,
+	.input-group-text,
+	.custom-file-label::after,
+	.table .thead-light th,
+	.note-editor.note-frame .note-editing-area .note-editable,
+	.lobilists .btn-link,
+	.dropdown-menu,
+	ul.list-style-none li a,
+	.dropdown-item,
+	.mce-menubar .mce-menubtn button span,
+	.mce-ico,
+	.noUi-tooltip,
+	.picker,
+	.select2-container--classic .select2-selection--single,
+	.select2-container--default .select2-selection--multiple,
+	.select2-container--default .select2-selection--single,
+	.select2-container--default .select2-selection--single .select2-selection__arrow,
+	.select2-container--default .select2-selection--single .select2-selection__rendered,
+	.dtp table.dtp-picker-days tr > td > a,
+	.dtp .dtp-picker-time > a,
+	.cke_reset_all,
+	.cke_reset_all *,
+	.cke_reset_all a,
+	.cke_reset_all textarea,
+	.table,
+	.popover-body,
+	button.list-group-item,
+	.toast-header,
+	.swal2-popup .swal2-content,
+	.swal2-popup .swal2-title,
+	.swal2-input,
+	.ql-snow .ql-picker.ql-header .ql-picker-label::before,
+	.ql-snow .ql-picker.ql-header .ql-picker-item::before,
+	.table-hover tbody tr:hover,
+	.email-app .list-group .list-group-item .list-group-item-action,
+	.lobilists .lobilist-item-title,
+	.daterangepicker select.hourselect,
+	.daterangepicker select.minuteselect,
+	.daterangepicker select.secondselect,
+	.daterangepicker select.ampmselect,
+	.daterangepicker select.monthselect,
+	.daterangepicker select.yearselect,
+	.mailbox .message-center .message-item .message-title,
+	.select2-container--default .select2-search--dropdown .select2-search__field,
+	a.link,
+	.chat-list .chat-item .chat-content .box,
+	.table-striped>tbody>tr:nth-of-type(odd),
+	.table-light,
+	.list-group-item-action,
+	.mce-container, .mce-container *, .mce-widget, .mce-widget *, .mce-reset,
+	.text-bodycolor,
+	.page-titles .breadcrumb .breadcrumb-item+.breadcrumb-item::before,
+	.note-btn, 
+    .ql-formats button {
+		color: $theme-dark-text-color;
+	}
+
+	.cke_button_icon {
+		filter: brightness(0) invert(1);
+	}
+
+	// -----------------------------------------
+	// basic settings of background colors
+	// -----------------------------------------
+	.customizer,
+	.chat-list .chat-item .chat-content .box.bg-light-info,
+	pre[class*="language-"],
+	.bg-light,
+	.bg-white,
+	.input-group-text,
+	.custom-file-label::after,
+	.table .thead-light th,
+	.table-hover tbody tr:hover,
+	.icon-hover:hover,
+	.myadmin-dd .dd-list .dd-item .dd-handle,
+	.myadmin-dd-empty .dd-list .dd3-content,
+	.myadmin-dd-empty .dd-list .dd3-handle,
+	.mce-panel,
+	.select2-container--default .select2-selection--single,
+	.select2-container--default .select2-selection--multiple,
+	.select2-container--classic .select2-selection--single,
+	.select2-dropdown,
+	.select2-container--default .select2-results__option[aria-selected="true"],
+	.select2-container--classic .select2-search--dropdown .select2-search__field,
+	.daterangepicker td.available:hover,
+	.daterangepicker th.available:hover,
+	.ql-snow .ql-picker-options,
+	.form-select,
+	.jumbotron,
+	.page-wrapper,
+	.progress,
+	.list-group-item.active,
+	.dropdown-menu,
+	#main-wrapper,
+	.wizard:not(.wizard-circle) > .steps .disabled a,
+	.wizard:not(.wizard-circle) > .steps .disabled a:hover,
+	.wizard:not(.wizard-circle) > .steps .disabled a:active,
+	.wizard:not(.wizard-circle) > .content,
+	.wizard:not(.wizard-circle) > .actions .disabled a,
+	.wizard:not(.wizard-circle) > .actions .disabled a:hover,
+	.wizard:not(.wizard-circle) > .actions .disabled a:active,
+	.wizard-content .wizard > .steps .step,
+	.cke_toolbar_separator,
+	.wizard-content .wizard>.actions>ul>li>a[href="#previous"],
+	.toast-header,
+	.daterangepicker .ranges li:hover,
+	.select2-container--default .select2-search--dropdown .select2-search__field,
+	.offcanvas,
+	.note-toolbar,
+  	.note-modal-content {
+		background-color: $theme-dark-bg-layout !important;
+	}
+
+	.note-btn {
+      background-color: $theme-dark-card-bg;
+    }
+
+	.table-hover>tbody>tr:hover {
+		--bs-table-accent-bg: $theme-dark-bg-layout !important;
+	}
+
+	.table-light {
+		--bs-table-bg:$theme-dark-bg-layout;
+	}
+
+	.bg-extra-light {
+		background-color: $theme-dark-bg-light !important;
+	}
+
+	.daterangepicker td.off,
+	.daterangepicker td.off.in-range,
+	.daterangepicker td.off.start-date,
+	.daterangepicker td.off.end-date,
+	.datepicker table tr td.day.focused,
+	.datepicker table tr td.day:hover,
+	.datepicker .datepicker-switch:hover,
+	.datepicker .next:hover,
+	.datepicker .prev:hover,
+	.datepicker tfoot tr th:hover,
+	.noUi-target,
+	.noUi-tooltip,
+	.bootstrap-switch .bootstrap-switch-label,
+	.striped-rows .row:nth-child(odd),
+	.dp-off,
+	.footable-odd,
+	.jsgrid-alt-row > .jsgrid-cell,
+	.jsgrid-filter-row > .jsgrid-cell,
+	.cd-horizontal-timeline .events a::after,
+	.css-bar > i,
+	div.mce-edit-area,
+	.mce-menu-item.mce-disabled,
+	.mce-menu-item.mce-disabled:hover,
+	.cke_top,
+	.swal2-popup,
+	.fc-unthemed td.fc-today,
+	.fc-toolbar .fc-button.fc-state-active,
+	.picker__list-item,
+	.picker__box,
+	.picker--time .picker__box,
+	.daterangepicker,
+	.daterangepicker .calendar-table,
+	.feed-widget .feed-body .feed-item:hover,
+	.table-hover>tbody>tr:hover,
+	.email-app .list-group .list-group-item .list-group-item-action.active, .email-app .list-group .list-group-item .list-group-item-action:hover  {
+		background: $theme-dark-bg-layout !important;
+	}
+
+	.card-header {
+		background: $theme-dark-bg-light;
+	}
+	
+	.toast,
+	.twitter-typeahead .tt-menu,
+	.footable .pagination li.disabled a,
+	.footable .pagination li a {
+	 background-color: $theme-dark-bg-layout; 
+	}
+
+	.breadcrumb {
+		background-color: transparent;
+	}
+
+	.daterangepicker select.hourselect,
+	.daterangepicker select.minuteselect,
+	.daterangepicker select.secondselect,
+	.daterangepicker select.ampmselect,
+	.daterangepicker select.monthselect,
+	.daterangepicker select.yearselect {
+		background: $theme-dark-bg-layout;
+		border: 1px solid $theme-dark-bg-layout;
+	}
+
+	.select2-container--classic.select2-container--open.select2-container--below .select2-selection--single {
+		background-image: -webkit-linear-gradient(top, $theme-dark-card-bg 50%, $theme-dark-card-bg 100%);
+	}
+
+	.card,
+	.form-select,
+	.form-control,
+	.nav-tabs .nav-link.active,
+	.nav-tabs .nav-item.show .nav-link,
+	.list-group-item,
+	.modal-content,
+	.page-link,
+	.page-item.disabled .page-link,
+	.note-editor.note-frame .note-editing-area .note-editable,
+	.note-editor.note-frame .note-statusbar,
+	.lobilists .lobilist,
+	.jsgrid-header-row > .jsgrid-header-cell,
+	.jsgrid-row > .jsgrid-cell,
+	.css-bar:after,
+	.select2-container--default .select2-selection--single,
+	.select2-container--default .select2-selection--multiple,
+	.select2-container--classic .select2-selection--single,
+	.dtp > .dtp-content,
+	.popover,
+	.popover-header,
+	.right-part.mail-list,
+	.right-part.mail-details,
+	.right-part.mail-compose,
+	.left-part,
+	.card-footer,
+	.typeahead.form-control,
+	.select2-dropdown,
+	.accordion-button:not(.collapsed),
+	.jvectormap-container,
+	.list-group-item-action:active  {
+		background-color: $theme-dark-card-bg !important;
+	}
+
+	.footer,
+	.dropzone,
+	.dropdown-item:hover,
+	.dropdown-item:focus,
+	.picker__button--today,
+	.picker__button--clear,
+	.picker__button--close,
+	.jsgrid-grid-header,
+	.page-titles,
+	.mailbox .message-center .message-item.active, .mailbox .message-center .message-item:hover {
+		background: $theme-dark-card-bg;
+	}
+
+
+	.fc-unthemed .fc-divider,
+	.fc-unthemed .fc-list-heading td,
+	.fc-unthemed .fc-popover .fc-header {
+		background: $theme-dark-text-color;
+	}
+
+	.form-control.form-input-bg {
+		background-color: rgba(0,0,0,0.05) !important;
+		border: 0;
+		&:focus {
+			background-color: rgba(0,0,0,0.09) !important;
+		}
+	}
+
+	// -----------------------------------------
+	// basic setting of border
+	// -----------------------------------------
+	.note-btn,
+  	.note-toolbar,
+	.form-check-input,
+	.btn-outline-secondary,
+	.border-bottom,
+	.border-top,
+	.border-start,
+	.border-end,
+	.border,
+	.activity-box .date-divider,
+	.dropdown-menu,
+	.form-control,
+	.form-select,
+	.footer,
+	.accordion-button,
+	table.footable, table.footable-details,
+	.table th,
+	.table td,
+	.modal-header,
+	.modal-footer,
+	blockquote,
+	pre[class*="language-"],
+	.card-group .card,
+	.nav-tabs .nav-link.active,
+	.nav-tabs .nav-item.show .nav-link,
+	.nav-tabs,
+	.nav-tabs .nav-link:hover,
+	.nav-tabs .nav-link:focus,
+	.list-group-item,
+	.custom-file-label,
+	.input-group-text,
+	.custom-file-label::after,
+	.left-part,
+	.page-link,
+	.profiletimeline,
+	.note-editor.note-frame,
+	.dropzone,
+	.note-editor.note-frame .note-statusbar,
+	.mailbox .message-center .message-item,
+	.lobilists .lobilist,
+	.lobilists .lobilist-item,
+	.lobilists .lobilist-item .drag-handler,
+	.lobilists .lobilist-footer,
+	.lobilists .lobilist-form-footer,
+	.bootstrap-switch,
+	.r-separator .form-group,
+	.b-form .row,
+	.datepaginator-sm .pagination li a,
+	.datepaginator-lg .pagination li a,
+	.datepaginator .pagination li a,
+	.ql-toolbar.ql-snow,
+	.ql-container.ql-snow,
+	.jsgrid-edit-row > .jsgrid-cell,
+	.jsgrid-filter-row > .jsgrid-cell,
+	.jsgrid-grid-body,
+	.jsgrid-grid-header,
+	.jsgrid-header-row > .jsgrid-header-cell,
+	.jsgrid-insert-row > .jsgrid-cell,
+	.jsgrid-pager-page a,
+	.jsgrid-pager-current-page,
+	.jsgrid-pager-nav-button a,
+	.timeline > .timeline-item > .timeline-panel,
+	.cd-horizontal-timeline .events a::after,
+	.cd-timeline-navigation a,
+	.mailbox .nav-link,
+	.dropdown-divider,
+	.e-campaign .c-cost,
+	.table-bordered,
+	.table-bordered td,
+	.table-bordered th,
+	.mce-panel,
+	.mce-menubar,
+	.mce-btn-group:not(:first-child),
+	.mce-btn:hover,
+	.mce-btn:active,
+	.mce-splitbtn:hover .mce-open,
+	.noUi-tooltip,
+	.picker__list-item,
+	.picker__button--today,
+	.picker__button--clear,
+	.picker__button--close,
+	.daterangepicker,
+	.daterangepicker .calendar-table,
+	.daterangepicker .drp-buttons,
+	.select2-container--default .select2-selection--single,
+	.select2-container--default .select2-selection--multiple,
+	.select2-container--classic .select2-selection--single,
+	.select2-dropdown,
+	.cke_chrome,
+	.cke_toolgroup a.cke_button:last-child:after,
+	.cke_toolgroup a.cke_button.cke_button_disabled:hover:last-child:after,
+	.wizard-content .wizard.wizard-circle > .steps .step,
+	.select2-container--default .select2-selection--single,
+	.select2-container--default .select2-selection--multiple,
+	.select2-container--classic .select2-selection--single,
+	.select2-dropdown,
+	.steamline .sl-item,
+	.steamline,
+	.form-select,
+	.popover-header,
+	.accordion-collapse,
+	.twitter-typeahead .tt-menu,
+	.wizard-content .wizard>.actions>ul>li>a[href="#previous"],
+	.fixed-table-container,
+	.footable .pagination li.disabled a,
+	.footable .pagination li a {
+		border-color: $theme-dark-border-color !important;
+	}
+
+	.select2-container--default .select2-search--dropdown .select2-search__field {
+		border: 1px solid $theme-dark-card-bg;
+	}
+
+	.msg-widget .msg-item .msg-body .down-arrow {
+		border-top: 8px solid $theme-dark-bg-layout;
+	}
+
+	.form-material .form-control, .form-material .form-control.focus, .form-material .form-control:focus {
+		background-image: linear-gradient(#186dde,#186dde),linear-gradient($theme-dark-border-color,$theme-dark-border-color);
+	}
+
+
+	// -----------------------------------------
+	// css chart
+	// -----------------------------------------
+	.css-bar-danger.css-bar-30 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(198deg, #fc4b6c 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-primary.css-bar-20 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(162deg, #2c63ff 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-primary.css-bar-50 {
+		background-image: linear-gradient(
+				270deg,
+				#2c63ff 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(270deg, #2c63ff 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-danger.css-bar-20 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(162deg, #fc4b6c 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-warning.css-bar-40 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(234deg, #ffbc34 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-info.css-bar-60 {
+		background-image: linear-gradient(
+				306deg,
+				#1e88e5 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(270deg, #1e88e5 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-success.css-bar-20 {
+		background-image: linear-gradient(
+			162deg,
+			#26c6da 50%,
+			$theme-dark-bg-layout 50%,
+			$theme-dark-bg-layout
+		);
+	}
+
+	.css-bar-success.css-bar-10 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(126deg, #26c6da 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-purple.css-bar-10 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(126deg, #7266ba 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-primary.css-bar-45 {
+		background-image: linear-gradient(90deg, $theme-dark-bg-layout 50%, transparent 50%, transparent), linear-gradient(252deg, #2c63ff 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-danger.css-bar-25 {
+		background-image: linear-gradient(90deg, $theme-dark-bg-layout 50%, transparent 50%, transparent), linear-gradient(180deg, #fc4b6c 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout)
+	}
+
+	.css-bar-success.css-bar-35 {
+		background-image: linear-gradient(90deg, $theme-dark-bg-layout 50%, transparent 50%, transparent), linear-gradient(216deg, #26c6da 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-primary.css-bar-40 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(234deg, #7460ee 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-info.css-bar-20 {
+		background-image: linear-gradient(
+				90deg,
+				$theme-dark-bg-layout 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(162deg, #1e88e5 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	.css-bar-danger.css-bar-60 {
+		background-image: linear-gradient(
+				306deg,
+				#fc4b6c 50%,
+				transparent 50%,
+				transparent
+			),
+			linear-gradient(270deg, #fc4b6c 50%, $theme-dark-bg-layout 50%, $theme-dark-bg-layout);
+	}
+
+	// -----------------------------------------
+	// Form related styles
+	// -----------------------------------------
+	.ql-snow .ql-stroke {
+		stroke: $theme-dark-text-color;
+	}
+
+	.timeline:before {
+		background-color: $gray-800;
+	}
+
+	.cd-horizontal-timeline .events {
+		background: $gray-800;
+	}
+	
+
+	.timeline > .timeline-item > .timeline-panel:after {
+		border-right: $theme-dark-border-color;
+		border-left: $theme-dark-border-color;
+	}
+
+	.mce-menubar .mce-menubtn:hover,
+	.mce-menubar .mce-menubtn.mce-active,
+	.mce-menubar .mce-menubtn:focus {
+		background: $dark;
+		border-color: $theme-dark-border-color;
+	}
+
+	.mce-btn {
+		background: $theme-dark-bg-light;
+		text-shadow: none;
+		button {
+			color: $theme-dark-text-color;
+		}
+	}
+
+	.wizard-content .wizard > .steps > ul > li.current {
+		.step {
+			border-color: $themecolor !important;
+			background-color: $black;
+		}
+		> a {
+			color: $white;
+		}
+	}
+
+	.wizard-content {
+		.wizard.wizard-circle > .steps > ul > li.current:after,
+		.wizard.wizard-circle > .steps > ul > li.current ~ li:after,
+		.wizard.wizard-circle > .steps > ul > li.current ~ li:before {
+			background-color: $theme-dark-border-color;
+		}
+		.wizard.vertical > .steps > ul > li.current:after,
+		.wizard.vertical > .steps > ul > li.current:before,
+		.wizard.vertical > .steps > ul > li.current ~ li:after,
+		.wizard.vertical > .steps > ul > li.current ~ li:before,
+		.wizard.vertical > .steps > ul > li:after,
+		.wizard.vertical > .steps > ul > li:before {
+			background-color: transparent;
+		}
+	}
+
+	.was-validated .form-control:valid,
+	.form-control.is-valid,
+	.was-validated .custom-select:valid,
+	.custom-select.is-valid {
+		border-color: $success !important;
+	}
+	.was-validated .form-control:invalid,
+	.form-control.is-invalid,
+	.was-validated .custom-select:invalid,
+	.custom-select.is-invalid {
+		border-color: $danger !important;
+	}
+
+	// Calendar
+	.fc td,
+	.fc th {
+		background: $theme-dark-bg-layout !important;
+		border-color: $theme-dark-card-bg !important;
+	}
+
+	.fc-state-default {
+		text-shadow: none;
+	}
+
+	.fc-unthemed td.fc-today,
+	.fc-toolbar .fc-button.fc-state-active {
+		background: $theme-dark-bg-light;
+	}
+
+	.fc-unthemed .fc-divider,
+	.fc-unthemed .fc-list-heading td,
+	.fc-unthemed .fc-popover .fc-header {
+		background: $theme-dark-bg-light;
+	}
+
+	// -----------------------------------------
+	// Chart related styles
+	// -----------------------------------------
+
+	.ct-label {
+		fill: $theme-dark-text-color;
+		color: $theme-dark-text-color;
+	}
+	.ct-grid {
+		stroke: $background-alt;
+	}
+	.c3 text {
+		stroke: $theme-dark-text-color;
+	}
+	#morris-donut-chart path {
+		stroke: $theme-dark-card-bg;
+	}
+	#morris-donut-chart text tspan {
+		fill: $theme-dark-text-color;
+	}
+
+	// 
+}

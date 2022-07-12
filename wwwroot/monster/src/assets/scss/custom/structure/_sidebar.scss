@@ -1,0 +1,293 @@
+//
+//  Sidebar
+//
+.left-sidebar {
+  position: absolute;
+  width: $sidebar-width-full;
+  height: 100%;
+  top: 0;
+  padding-top: $topbar-height;
+  z-index: 10;
+  background: $sidebar;
+  box-shadow: $shadow;
+  transition: 0.2s ease-in;
+
+  // Sidebar Footer
+  // ###########################################
+
+  .sidebar-footer {
+    position: fixed;
+    bottom: 0;
+    width: $sidebar-width-full;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba($border-color, 0.1);
+    z-index: 99;
+    transition: 0.2s ease-in;
+    a {
+      padding: $sidebar-footer-inner-padding;
+      width: 33.333337%;
+      color: $white;
+      text-align: center;
+      font-size: $sidebar-footer-text-size;
+    }
+  }
+}
+
+//
+// Scroll Sidebar
+//
+.scroll-sidebar {
+  position: relative;
+  height: calc(100% - 50px);
+}
+
+.ps-scrollbar-y-rail {
+    z-index: 1;
+}
+
+.sidebar-nav {
+  ul {
+    .sidebar-item {
+      width: $sidebar-width-full;
+      .sidebar-link {
+        padding: $sidebar-link-padding;
+        display: flex;
+        white-space: nowrap;
+        align-items: center;
+        position: relative;
+        line-height: $sidebar-link-line-height;
+        font-size: $sidebar-link-font-size;
+        opacity: 0.6;
+        color: $sidebar-text;
+        border-left: 3px solid transparent;
+        .hide-menu {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .feather {
+          height: 18px;
+          width: 18px;
+          margin: 0 8px 0 5px;
+          fill: rgba(255, 255, 255, 0.2);
+          color: $sidebar-icons;
+        }
+        i {
+          color: $sidebar-icons;
+          font-style: normal;
+          line-height: $sidebar-icon-line-height;
+          font-size: $sidebar-icon-size;
+          color: $sidebar-icons;
+          text-align: center;
+          width: $sidebar-icon-width;
+          display: inline-block;
+        }
+        .badge {
+          position: absolute;
+          right: 34px;
+          top: 19px;
+          padding-left: $sidebar-notibadge-inner-padding-x;
+          padding-right: $sidebar-notibadge-inner-padding-x;
+          line-height: 14px;
+        }
+
+        // Active and Hover State
+        // ################################################
+        &.active,
+        &:hover {
+          opacity: 1;
+          .feather {
+            color: $white;
+          }
+        }
+        &.active {
+          font-weight: 400;
+        }
+      }
+
+      // Selected nav link style here
+      // ################################################
+      &.selected > .sidebar-link {
+        border-left: 3px solid $white;
+        opacity: 1;
+        /*background: rgba(0, 0, 0, 0.04);*/ //For set the background of the links
+      }
+
+      // First Level link here
+      // ################################################
+      .first-level {
+        padding: $sidebar-first-level-padding;
+        .sidebar-item.active .sidebar-link {
+          opacity: 1;
+        }
+        .sidebar-item .sidebar-link {
+          padding: $sidebar-first-level-link-padding;
+          i {
+            display: none;
+            font-size: $sidebar-first-level-icon-size;
+          }
+        }
+      }
+    }
+
+    // Small Cap
+    // ################################################
+    .nav-small-cap {
+      font-size: $nav-small-cap-font-size;
+      line-height: 30px;
+      color: $sidebar-text;
+      opacity: 1;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 14px 14px 14px 15px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      i {
+        line-height: 30px;
+        margin: 0 5px;
+        display: none;
+      }
+    }
+    .nav-devider {
+      background: rgba(255, 255, 255, 0.1);
+      height: 1px;
+      margin: 14px 0;
+      display: block;
+    }
+  }
+
+  // Hover State of links
+  // ################################################
+  > #sidebarnav > .sidebar-item > .sidebar-link:hover {
+    /*background: rgba(0, 0, 0, 0.04);*/
+  }
+}
+
+//
+// Remove unnecessary margin-padding
+//
+.sidebar-nav {
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+    }
+  }
+}
+.collapse.in {
+  display: block;
+}
+
+//
+// Down arrow
+//
+.sidebar-nav .has-arrow {
+  position: relative;
+  &::after {
+    position: absolute;
+    content: "";
+    width: 0.4em;
+    height: 0.4em;
+    margin-left: 10px;
+    top: 26px;
+    right: 15px;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: $sidebar-text;
+    @extend %sidebar_arrow_transform;
+  }
+}
+
+// Active state of sidebar down arrow
+// ################################################
+/*.sidebar-nav .active > .has-arrow::after,*/
+/*.sidebar-nav li.selected > .has-arrow::after,*/
+.sidebar-nav li.active > .has-arrow::after,
+.sidebar-nav li > .has-arrow.active::after,
+.sidebar-nav .has-arrow[aria-expanded="true"]::after {
+  @extend %sidebar_arrow_active_transform;
+}
+
+//
+// User Profile
+//
+
+.user-profile {
+  .profile-img {
+    width: $profile-pic-width-full;
+    &::before {
+      -webkit-animation: 2.5s blow 0s linear infinite;
+      animation: 2.5s blow 0s linear infinite;
+      position: absolute;
+      content: "";
+      width: $profile-pic-width-full;
+      height: $profile-pic-width-full;
+      top: 1.5rem;
+      border-radius: 50%;
+      z-index: 0;
+    }
+    @-webkit-keyframes blow {
+      0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+      100% {
+        box-shadow: 0 0 0 20px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+    }
+    @keyframes blow {
+      0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+      100% {
+        box-shadow: 0 0 0 20px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        -webkit-transform: scale3d(1, 1, 0.5);
+        transform: scale3d(1, 1, 0.5);
+      }
+    }
+  }
+  .profile-text {
+    .dropdown-toggle.link.u-dropdown {
+      color: $white;
+    }
+  }
+  // .profile-text {
+  //   a {
+  //     color: $white;
+  //     &:hover {
+  //       color: $body-color;
+  //     }
+  //   }
+  // }
+  .dropdown-menu {
+    left: 0px;
+    right: 0px;
+    top: unset !important;
+    width: 180px;
+    margin: 0 auto;
+  }
+}

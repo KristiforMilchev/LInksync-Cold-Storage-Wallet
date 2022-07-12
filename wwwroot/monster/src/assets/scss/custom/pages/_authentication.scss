@@ -1,0 +1,98 @@
+// ######################################
+// Error Pages
+// ######################################
+.error-box {
+    @extend %height_width_100;
+    position: fixed;
+    background: url(.../../../../src/assets/images/background/error-bg.jpg) no-repeat bottom center $white;
+    .error-body {
+        padding-top: 5%;
+    }
+    .error-title {
+        @extend %font_210;
+    }
+}
+
+// ######################################
+// Authentication Pages
+// ######################################
+.auth-wrapper{
+    position: relative;
+    min-height: 100vh;
+    .auth-box{
+        box-shadow: $shadow;
+        margin: 10% 0;
+        max-width: 400px;
+        width: 90%;
+
+        // ######################################
+        // with Sidebar
+        // ######################################
+        &.on-sidebar{
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+        }
+    }
+    
+    .auth-box-2{
+        padding: 40px;
+        .logo{
+            text-align: center;
+        }
+    }
+    
+    .logbox-content {
+        width: 100%;
+        margin-left: 400px;
+    }
+    
+    #recoverform {
+        display: none;
+    }
+
+    #registerform {
+        display: none;
+    }
+
+    .auth-sidebar{
+        position: fixed;
+        height: 100%;
+        right: 0px;
+        overflow: auto;
+        margin: 0px;
+        top: 0px;
+    }
+}
+
+@media(max-width:767px) {
+    .auth-wrapper{
+        .auth-sidebar{
+            position: relative;
+            max-width: 100%;
+            width: 100%;
+            margin: 40px 0 60px;
+        }
+        .demo-text{
+            margin-top: 30px;
+        }
+    }
+    .auth-wrapper .logbox-content {
+        margin-left: 0;
+    }
+    .auth-wrapper .auth-box-2.on-sidebar {
+        position: relative;
+        width: 100%;
+    }
+
+    .auth-wrapper .auth-box-2 {
+        padding: 40px 25px;
+    }
+}
+
+@media (min-width: 1500px) {
+    .inner-width-card {
+        width: 450px;
+    }
+}

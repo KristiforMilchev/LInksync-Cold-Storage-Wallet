@@ -1,0 +1,60 @@
+// 
+// Common
+// 
+.total-revenue,
+.income-year,
+.total-revenue2 {
+    position: relative;
+    .chartist-tooltip {
+        border-radius: 60px;
+    }
+    .ct-series-a .ct-line {
+        stroke: $info;
+        stroke-width: 2px;
+    }
+    .ct-series-a .ct-point {
+        stroke: $info;
+        stroke-width: 7px;
+    }
+    .ct-series-b .ct-line {
+        stroke: $success;
+        stroke-width: 2px;
+    }
+    .ct-series-b .ct-point {
+        stroke: $success;
+        stroke-width: 7px;
+    }
+    .ct-series-a .ct-area,
+    .ct-series-b .ct-area {
+        fill: transparent;
+    }
+}
+
+// 
+// Income of the year
+// 
+.income-year {
+    .ct-series-a .ct-bar {
+        stroke: $info;
+    }
+    .ct-series-b .ct-bar {
+        stroke: $success;
+    }
+}
+
+.round-overlap.sales {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 67px;
+    border: 2px solid $border-color;
+    border-radius: 100%;
+    font-size: 35px;
+    text-align: center;
+    i {
+        line-height: 150px;
+    }
+}

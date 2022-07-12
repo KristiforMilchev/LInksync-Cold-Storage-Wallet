@@ -1,0 +1,880 @@
+ 
+
+
+.AgentResponse {
+    background: #6F55FF;
+    color: white;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid white;
+    border-radius: 12px;
+}
+
+
+.AgentResponse  {
+    color: white !important;
+}
+
+.respText > p{
+    color:white
+}
+.respText > h1{
+    color:white;
+}
+
+.respText > h2 {
+    color: white;
+}
+
+
+.respText > h3 {
+    color: white;
+}
+
+.respText > h4 {
+    color: white;
+}
+
+.respText > h5 {
+    color: white;
+}
+
+.respText > h6 {
+    color: white;
+}
+
+
+.respText > li {
+    color: white;
+}
+
+
+.respText > span{
+    color: white;
+}
+
+
+.btnNav {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.btnBl {
+    background: #0180c0;
+}
+.card {
+    border-radius: 7px !important;
+    border: 0.00002px solid #80808033 !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    -webkit-box-shadow: 0px 10px 13px -7px #000000, 2px 2px 21px 4px rgb(0 0 0 / 0%);
+    box-shadow: 0px 10px 13px -7px #000000, 2px 2px 21px 4px rgb(0 0 0 / 0%);
+}
+
+.bgWrap {
+    /*            background: url(https://tt20220512121602.azurewebsites.net//images/assets/dot-bg-01.svg);
+		*/ object-fit: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dot-shape {
+    z-index: 0;
+    top: 32%;
+    right: 37%;
+    width: 60%;
+}
+
+[class*="bubble"] {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+}
+
+    [class*="bubble"]:before {
+        content: '';
+        border-radius: 50%;
+        position: absolute;
+    }
+
+.bubble-one {
+    width: 120px;
+    height: 120px;
+    left: 23%;
+    top: 12%;
+    animation: rotated 14s infinite linear;
+}
+
+
+    .bubble-one:before {
+        width: 30px;
+        height: 30px;
+        background: #AE78FF;
+        top: 0;
+        left: 50%;
+    }
+
+.bubble-two {
+    width: 160px;
+    height: 160px;
+    top: 28%;
+    left: 14%;
+    animation: rotatedTwo 25s infinite linear;
+}
+
+    .bubble-two:before {
+        width: 17px;
+        height: 17px;
+        background: #FFB15F;
+        top: 50%;
+        right: 100%;
+    }
+
+.bubble-three {
+    width: 120px;
+    height: 120px;
+    bottom: 19%;
+    left: 11%;
+    animation: rotated 15s infinite linear;
+}
+
+    .bubble-three:before {
+        width: 7px;
+        height: 7px;
+        background: #FF53B3;
+        bottom: 0;
+        left: 50%;
+    }
+
+.bubble-four {
+    width: 120px;
+    height: 120px;
+    right: 75%;
+    bottom: 22%;
+    animation: rotatedTwo 17s infinite linear;
+}
+
+    .bubble-four:before {
+        width: 12px;
+        height: 12px;
+        background: #2EEAED;
+        bottom: 0;
+        left: 50%;
+    }
+
+
+.bubble-one-right {
+    width: 120px;
+    height: 120px;
+    right: 23%;
+    top: 12%;
+    animation: rotated 14s infinite linear;
+}
+
+
+    .bubble-one-right:before {
+        width: 30px;
+        height: 30px;
+        background: #AE78FF;
+        top: 0;
+        left: 50%;
+    }
+
+.bubble-two-right {
+    width: 160px;
+    height: 160px;
+    top: 28%;
+    right: 14%;
+    animation: rotatedTwo 25s infinite linear;
+}
+
+    .bubble-two-right:before {
+        width: 17px;
+        height: 17px;
+        background: #FFB15F;
+        top: 50%;
+        right: 100%;
+    }
+
+.bubble-three-right {
+    width: 120px;
+    height: 120px;
+    bottom: 19%;
+    right: 11%;
+    animation: rotated 15s infinite linear;
+}
+
+    .bubble-three-right:before {
+        width: 7px;
+        height: 7px;
+        background: #FF53B3;
+        bottom: 0;
+        left: 50%;
+    }
+
+.bubble-four-right {
+    width: 120px;
+    height: 120px;
+    right: 27%;
+    bottom: 22%;
+    animation: rotatedTwo 17s infinite linear;
+}
+
+    .bubble-four-right:before {
+        width: 12px;
+        height: 12px;
+        background: #2EEAED;
+        bottom: 0;
+        left: 50%;
+    }
+
+.signUp-action {
+    width: 155px;
+    color: #fff;
+    background: #6F55FF;
+    box-shadow: 0px 15px 40px rgb(161 146 250 / 35%);
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 45px;
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+    .signUp-action:hover {
+        background: #FFBA12;
+        box-shadow: 0px 15px 40px rgb(255 186 18 / 30%);
+        cursor:pointer;
+    }
+
+.scrollBox {
+    overflow-x: auto;
+    max-width: 511px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-y: hidden;
+}
+
+.navOverload {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+.nav-link:focus, .nav-link:hover {
+    color: #455754;
+}
+
+.nav-link {
+    display: block;
+    padding: .5rem 1rem;
+    color: #455754;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.bg-inactive {
+    color: black;
+}
+
+.fc-event {
+    border-radius: 0;
+    border: none;
+    cursor: move;
+    color: #fff !important;
+    font-size: 13px;
+    margin: 1px -1px 0 -1px;
+    padding: 5px 5px;
+    text-align: center;
+    background: #7460ee;
+    cursor: pointer;
+}
+
+.NetworkDropdown {
+    margin-right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-content: space-around;
+    align-items: center;
+}
+
+.smallLabel {
+    font-size: 16px;
+    font-weight: 100;
+}
+
+@media (min-width: 1800px) {
+    .dashboard-calendar .fc-view {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 761px;
+    }
+}
+
+.center {
+    text-align: center;
+}
+
+.emptyDispute {
+    text-align: center;
+    padding: 70px;
+    font-size: 20px;
+}
+
+.fc-toolbar .fc-button {
+    background: #6f55ff;
+}
+
+    .fc-toolbar .fc-button.fc-state-active {
+        background: #fff;
+        color: #6f55ff;
+    }
+
+    .fc-toolbar .fc-button:hover {
+        background: #6f55ff;
+        opacity: 1;
+    }
+
+
+.bg-light-inactive {
+    background-color: gray !important;
+}
+
+.text-inactive {
+    color: white !important;
+}
+
+.fw-normal {
+    font-weight: 400 !important;
+}
+
+
+
+.flexColJustified {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.gridSize {
+    font-size: 27px;
+}
+
+.PosBtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.spaceEvenCenter {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: center;
+}
+
+.timeline {
+    position: relative;
+    padding: 20px 0 20px;
+    list-style: none;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+    .timeline::-webkit-scrollbar-thumb {
+        background: #009efb;
+        border-radius: 0;
+    }
+
+.timeline::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+::-webkit-scrollbar-track {
+    background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #009efb;
+    border-radius: 0;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+.note-editor.note-frame {
+    border: none;
+}
+
+.dropdown-menu-start[data-bs-popper] {
+    right: auto;
+    left: -253px;
+}
+
+.right-part {
+    /* width: calc(100% - 260px); */
+    /* height: calc(100vh - 125px); */
+    margin-left: 260px;
+}
+
+    .right-part.chat-container {
+        display: flex;
+        /* align-items: center; */
+        /* justify-content: center; */
+    }
+
+
+.usersBox {
+    height: 628px !important;
+    overflow: hidden !important;
+    overflow-y: scroll !important;
+}
+
+
+.AssertedList {
+    height: 389px;
+    overflow: hidden;
+    overflow-y: scroll;
+    padding: 10%;
+}
+
+.feedHeight {
+    height: 300px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.FeedRow{
+
+}
+
+    .FeedRow:hover {
+        background: #e4e4e4;
+        cursor:pointer;
+    }
+
+
+.note-frame{
+    border:none !important;
+}
+
+
+.cardCustom {
+    background: #6f55ff;
+    color: white;
+    padding: 50px;
+}
+
+.flexCenter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 7px;
+    width: 100%;
+    border-radius: 15px;
+}
+.CoinSize
+{
+    width: 85px;
+    height: 85px;
+    padding: 15px;
+}
+
+.padBtn {
+    font-size: 4rem;
+ }
+
+.addDistance {
+    margin: 7px;
+}
+
+.flexRow {
+    display: flex;
+    width: 100%;
+    color:white;
+}
+
+.verticalRow {
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin-top: 5px;
+    border-radius: 12px;
+    color:white;
+}
+
+.activeBtn {
+    background: white !important;
+    color: #f62d51 !important;
+    border: 1px solid red;
+}
+
+
+.page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.signBox {
+    margin: 50px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+@media (min-width:320px) { /* smartphones, iPhone, portrait 480x320 phones */
+    .padBtn {
+        font-size: 18px;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 9px;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 9px;
+    }
+    .CoinSize {
+        width: 55px;
+        height: 55px;
+        padding: 15px;
+    }
+    .flexCenter {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 7px;
+        width: 100%;
+        border-radius: 7px;
+    }
+    .Keyboard {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+
+    .Keyboardbtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    html body .display-7 {
+        font-size: 1rem;
+    }
+    .signBox {
+        margin: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-width:481px) { /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
+    .padBtn {
+        font-size: 18px;
+    }
+    .CoinSize {
+        width: 55px;
+        height: 55px;
+        padding: 15px;
+    }
+    .flexCenter {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 7px;
+        width: 100%;
+        border-radius: 7px;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 9px;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 9px;
+    }
+    board {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+
+    .Keyboardbtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    html body .display-7 {
+        font-size: 1rem;
+    }
+    .signBox {
+        margin: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-width:641px) { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+    .padBtn {
+        font-size: 18px;
+    }
+    .CoinSize {
+        width: 55px;
+        height: 55px;
+        padding: 15px;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 9px;
+    }
+    .flexCenter {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 7px;
+        width: 100%;
+        border-radius: 7px;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 9px;
+    }
+    .Keyboard {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+
+    .Keyboardbtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    html body .display-7 {
+        font-size: 1rem;
+    }
+    .signBox {
+        margin: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-width:961px) { /* tablet, landscape iPad, lo-res laptops ands desktops */
+    .Keyboard {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 13px;
+    }
+    .padBtn {
+        font-size: 4rem;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 14px;
+    }
+    .Keyboardbtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .signBox {
+        margin: 50px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */
+    .Keyboard {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 13px;
+    }
+    .padBtn {
+        font-size: 2rem;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 14px;
+    }
+    .Keyboardbtn {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .signBox {
+        margin: 50px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+    .Keyboard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: 2s ease-in;
+    }
+    .table > tbody {
+        vertical-align: inherit;
+        font-size: 14px;
+    }
+    .table > thead {
+        vertical-align: bottom;
+        font-size: 14px;
+    }
+    .padBtn {
+        font-size: 2rem;
+    }
+    .Keyboardbtn {
+        display: none !important;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .signBox {
+        margin: 50px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+} 
+
+.flexRow{
+    display:flex;
+    width:100%;
+    text-align:center;
+}
+
+.fullWidth{
+    display:grid;
+    width:100%;
+}
+
+.MenuIconSize {
+    font-size: 16px;
+}
+
+.visibleMenu {
+    display: flex;
+    width: 100%;
+    z-index: 99;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    left: 0;
+    right: 0;
+    background: #028ee1;
+    max-height: 382px;
+    bottom: 0;
+}
+
+.bg-danger {
+    background-color: #009efb !important;
+}
+
+.fixWdith {
+    margin: 20px;
+}
+
+.strecht {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.flexRowCenter {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.bubble-two {
+    width: 171%;
+    height: 87%;
+    top: 0;
+    left: -9%;
+    position: absolute;
+    z-index: 0;
+    background: #009efb;
+    top: -51%;
+}
+
+.virtualCardBtn {
+    background: white;
+    color: black;
+    border-color: white;
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 100px;
+}
+
+
+
+.bg-info {
+    background-color: #028ee1 !important;
+}
+
+.form-control:disabled, .form-control:read-only {
+    background-color: #028ee1;
+    color: white;
+    opacity: 1;
+}
+
+.selectOption:hover{
+    background:red !important;
+    color:green;
+}
+
+.form-control:focus {
+    color: #54667a;
+    background-color: #fff;
+    /* border-color: rgba(0,0,0,.25); */
+    outline: 0;
+    box-shadow: unset,transparent;
+}

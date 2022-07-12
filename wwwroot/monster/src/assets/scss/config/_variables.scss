@@ -1,0 +1,390 @@
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Theme Fonts
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Google Fonts For the Theme
+@import 'https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900';
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// All Colors of Bootstrap Overrides
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$white: #fff !default;
+$gray-100: #ebf3f5 !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #90a4ae !default;
+$gray-600: #868e96 !default;
+$gray-700: #4F5467 !default;
+$gray-800: #263238 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+$blue: #009efb !default;
+$indigo: #6610f2 !default;
+$purple: #7460ee !default;
+$pink: #e83e8c !default;
+$red: #f62d51 !default;
+$orange: #fb8c00 !default;
+$yellow: #ffbc34 !default;
+$green: #39c449 !default;
+$teal: #20c997 !default;
+$cyan: #4fc3f7 !default;
+$primary: #7460ee !default;
+$text-muted: $gray-500 !default;
+$inverse: #2f3d4a !default;
+
+$dark-transparent: rgba(0, 0, 0, 0.05);
+
+$colors: ( blue: $blue,
+indigo: $indigo,
+purple: $purple,
+pink: $pink,
+red: $red,
+orange: $orange,
+yellow: $yellow,
+green: $green,
+teal: $teal,
+cyan: $cyan,
+white: $white,
+gray: $gray-600,
+gray-dark: $gray-800);
+
+$primary: $blue !default;
+$secondary: $gray-600 !default;
+$success: $green !default;
+$info: $blue !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+$cyan: $cyan !default;
+$orange: $orange !default;
+$megna: #01c0c8 !default;
+
+$light-danger: #f9e7eb;
+$light-success: #c5f7cb;
+$light-warning: #ffedc9;
+$light-primary: #ddd8fd;
+$light-info: #aedcf7;
+$light-inverse: #f6f6f6;
+$light-megna: #e0f2f4; 
+$light-secondary: #dde1e4;
+
+$dark-danger: #e6294b;
+$dark-success: #4ab657;
+$dark-warning: #e9ab2e;
+$dark-primary: #6352ce;
+$dark-info: #028ee1;
+$dark-red: #d61f1f;
+$dark-inverse: #232a37;
+
+$theme-colors: () !default;
+$theme-colors: map-merge(( 
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark,
+    "cyan": $cyan,
+    "orange": $orange,
+    "purple": $purple,
+    "inverse": $inverse,
+    "megna": $megna,
+    "light-danger": $light-danger,
+    "light-success":  $light-success,
+    "light-warning": $light-warning,
+    "light-primary": $light-primary,
+    "light-info": $light-info,
+    "light-inverse": $light-inverse,
+    "light-secondary": $light-secondary,
+    "light-megna": $light-megna,
+    "dark-danger": $dark-danger,
+    "dark-success": $dark-success,
+    "dark-warning": $dark-warning,
+    "dark-primary": $dark-primary,
+    "dark-info": $dark-info
+),
+$theme-colors);
+
+// 
+// Button Shadow & Hover
+// 
+$btn-box-shadow:  0 1px 0 rgba($white, .15) !default;
+
+// @each $color, $value in $theme-colors {
+//   .btn-#{$color},
+//   .btn-outline-#{$color} {
+//    box-shadow: 0 2px 2px rgba($value, 0.05);
+//    &:hover {
+//        box-shadow: 0 8px 15px rgba($value, 0.3);
+//    }
+//   }
+// }
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Typography
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$font-size-base: 1rem;
+$font-family-sans-serif: 'Rubik',
+sans-serif !default;
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 400 !default; 
+$font-weight-bold: 500 !default;
+$font-weight-base:  300 !default;
+
+$h1-font-size: 36px !default;
+$h2-font-size: 24px !default;
+$h3-font-size: 21px !default;
+$h4-font-size: 18px !default;
+$h5-font-size: 16px !default;
+$h6-font-size: 14px !default;
+
+// Font size
+$font-sizes: (
+  1: 10px,
+  2: 12px,
+  3: 14px,
+  4: 16px,
+  5: 18px,
+  6: 20px,
+  7: 24px,
+);
+
+// display
+$display-font-sizes: (
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem,
+  7: 2rem,
+  8: 1.75rem
+) !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Typography Settings of Fonts
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$headings-margin-bottom: (1rem / 2) !default;
+$headings-font-weight: 400 !default;
+$headings-color: #2c2b2e !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Quickly modify global styling by enabling or disabling optional features.
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$enable-caret: true !default;
+$enable-rounded: true !default;
+$enable-shadows: true !default;
+$enable-gradients: false !default;
+$enable-transitions: true !default;
+$enable-hover-media-query: false !default;
+$enable-grid-classes: true !default;
+$enable-print-styles: true !default;
+$enable-negative-margins: true;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Body Color & bgColor Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$body-bg: #f2f7f8;
+$body-color: #54667a !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Grid Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$grid-gutter-width: 30px !default;
+$grid-breakpoints: (xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1600px) !default;
+
+$sizes: () !default;
+$sizes: map-merge((25: 25%,
+        30: 30%,
+        35: 35%,
+        40: 40%,
+        50: 50%,
+        75: 75%,
+        100: 100%,
+        auto: auto),
+    $sizes);
+
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Breadcrumbs Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$breadcrumb-bg: $body-bg;
+$breadcrumb-margin-bottom: 1.5rem;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Dropdowns Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$dropdown-item-padding-x: 1rem !default;
+$dropdown-item-padding-y: .65rem !default;
+$dropdown-border-color: $gray-200;
+$dropdown-divider-bg: $gray-100;
+$dropdown-link-color: $gray-600 !default;
+$dropdown-box-shadow: 1px 1px 15px rgba(0, 0, 0, .1) !default;
+$dropdown-border-width: 0 !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Modal Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$modal-content-border-width: 0 !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Buttons Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$btn-secondary-border: $gray-300;
+
+// 
+// Button Shadow & Hover
+// 
+$btn-box-shadow:  0 1px 0 rgba($white, .15) !default;
+$input-btn-focus-width:         0 !default;
+$input-btn-focus-color-opacity: 0 !default;
+$input-btn-focus-color:         rgba(transparent, $input-btn-focus-color-opacity) !default;
+$btn-border-radius: 4px !default;
+$btn-border-radius-sm: 4px !default;
+$btn-border-radius-lg: 6px !default;
+$input-box-shadow: unset !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// toast
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$toast-border-width: 0 !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// alert
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$alert-bg-scale:                    0% !default;
+$alert-border-scale:                0% !default;
+$alert-color-scale:                 1% !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Checkbox
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$form-check-input-bg:  #eaedf5 !default;
+$form-check-input-border: 0 !default;
+$form-check-input-border-radius: 4px !default;
+$form-check-input-width: 1.375em !default;
+$form-check-input-height: 1.375em !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Tables
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$table-color: $gray-900;
+$table-bg-accent: $gray-100;
+$table-bg-hover: $gray-100;
+$table-hover-bg: $gray-100 !default;
+$table-cell-padding-y : .75rem !default;
+$table-cell-padding-x : .75rem !default;
+$table-bg-level: -10 !default;
+$table-border-color: #e8eef3 !default;
+$table-accent-bg: rgba(0,0,0,.02) !default;
+$table-group-separator-color: transparent;
+$table-striped-bg:            $light !default;
+$table-cell-padding-y-sm: 10px !default;
+$table-cell-padding-x-sm: 15px !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Components active Colors Settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$component-active-color: $white !default;
+$component-active-bg: $blue !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Forms
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$input-group-addon-bg: $gray-100;
+$input-border-color: $gray-200;
+$input-color: #54667a;
+$input-font-weight: 400;
+$input-group-addon-border-color: $gray-200;
+$input-btn-focus-color: rgba(0, 0, 0, .25) !default;
+$input-focus-border-color: rgba(0, 0, 0, 0.25) !default;
+$custom-control-indicator-active-bg: rgba(0, 0, 0, 35%) !default;
+$custom-select-indicator: url(../../src/assets/images/custom-select.png) !default;
+$input-btn-focus-box-shadow: transparent !default;
+$custom-select-focus-box-shadow: transparent !default;
+$custom-select-indicator: str-replace(url(""), "%23") !default;
+$form-select-box-shadow: unset !default;
+$form-select-focus-box-shadow: unset !default;
+$input-border-radius-sm: 4px !default;
+$input-border-radius-lg: 4px !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Border settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$border-width: 1px !default;
+$border-color: $gray-200 !default;
+$border-radius: 4px !default;
+$border-radius-lg: 5px !default;
+$border-radius-sm: 1px !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Progress bars settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$progress-height: 5px !default;
+$progress-box-shadow: none !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Tabs active bg settings
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$nav-tabs-link-active-bg: $white !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Navbar dark & light font colors
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$navbar-dark-color: rgba($white, .8) !default;
+$navbar-dark-hover-color: rgba($white, 1) !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Card Related Settings Here
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$card-spacer-y : 1.25rem !default;
+$card-spacer-x : 1.25rem !default;
+$card-border-width: 0px !default;
+$card-border-radius: .25rem !default;
+$card-border-color: transparent !default;
+$card-columns-margin: 20px !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Badge
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+
+$badge-font-weight: 400 !default;
+$badge-pill-padding-x: 0.5rem !default;
+$badge-font-size: 0.75rem !default;
+$badge-padding-y : 3px !default;
+$badge-padding-x : 10px !default;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+// Shadow
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+$box-shadow-sm: 0px 2px 9px 0px rgba(169, 184, 200, 0.2) !default;
+
+$text-muted: #8392a5 !default;
+
+
+// 
+// Dropdown
+// 
+$dropdown-color: $gray-900;
+$dropdown-font-size: 0.875rem !default;
+$dropdown-divider-bg: $border-color;
