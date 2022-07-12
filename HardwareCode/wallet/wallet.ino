@@ -16,12 +16,22 @@
 #include "EEPROM.h"
 #include "AESLib.h"
 
+char confirmationPwd[10]= "iV1z@$H88"; //Parity check used to check decryption was successfull 
+
+//EPPROM ebcryption storage structure 
+struct EncryptedData{
+ char strA1;
+ char strA2;
+ char strA3;
+ char strA4;
+ String Password;
+};
+
 void setup() {
   Serial.begin(9600);
  
  
 }
-
 
 
 
@@ -122,7 +132,7 @@ void EncryptInitial(String password , String privateKey)
   // data
   int str_len = privateKey.length() + 1; 
   char char_array[str_len];
-  privateKey.toCharArray(char_array, str_len); 
+  password.toCharArray(char_array, str_len); 
   Serial.println("Initial Key: " + privateKey);
 
   int z = 0;
@@ -151,14 +161,16 @@ void EncryptInitial(String password , String privateKey)
  char char_array_pwd[str_len_pwd];
  password.toCharArray(char_array_pwd, str_len_pwd);
  uint8_t keys[4*sizeof(str_len_pwd)];
+ 
  for(byte i = 0; i < sizeof(char_array_pwd) - 1; i++){
     if((int) char_array_pwd[i] != '\0')
     {
          keys[i] = (int) char_array_pwd[i];  
     }
  }
- char msg[44] = "Some test dawdawdwadwadwadawdwadawdawddawdw";
-  aes256_enc_single(keys,msg);
+ 
+ 
+ aes256_enc_single(keys,confirmationPwd);
  // Serial.println("encrypted:");
  // Serial.println(msg);
   aes256_enc_single(keys, strA1);
@@ -180,7 +192,14 @@ void EncryptInitial(String password , String privateKey)
   Serial.println(strA4);
  // Serial.println("decrypted:");
 
- 
+ EncryptedData encrypted = {
+  strA1,
+  strA2,
+  strA3,
+  strA4,
+  confirmationPwd
+ };
+ writeStringToEEPROM(0,encrypted); //This will fail current function only accepts string
  // String retrievedString = readStringFromEEPROM(0);
   //Serial.print("The String we read from EEPROM: ");
   //Serial.println(retrievedString);
