@@ -15,107 +15,139 @@
 #include "Arduino.h"
 #include "EEPROM.h"
 #include "AESLib.h"
+#include "ArduinoJson.h"
 
-char confirmationPwd[10]= "iV1z@$H88"; //Parity check used to check decryption was successfull 
+
+ 
 
 //EPPROM ebcryption storage structure 
-struct EncryptedData{
- char strA1;
- char strA2;
- char strA3;
- char strA4;
- String Password;
-};
-
+ 
 void setup() {
   Serial.begin(9600);
  
- 
-}
+ }
 
 
 
 String cmd = "";
 String readConcurrent = "";
-bool ShouldRead = false;
+bool ShouldReadPassword = false;
+bool ShouldReadPK = false;
+
 uint8_t signPassword;
 String Pass = "";
- 
+ bool tpm = false;
 // the loop function runs over and over again forever
 void loop() {
 
-   char receiveVal;     
+   String receiveVal;     
 
     if(Serial.available() > 0)  
     {          
-        receiveVal = Serial.read();  
-    //    Serial.println(receiveVal);
-        cmd = cmd + receiveVal;
-      //  Serial.println(cmd);
+        receiveVal = Serial.readString();
+        int str_len = receiveVal.length() + 1; 
+        char char_array[str_len];
+        receiveVal.toCharArray(char_array, str_len); 
+        StaticJsonDocument<512> doc;
+                  Serial.println(receiveVal);
 
-        if(cmd == "#CF")
+        DeserializationError error = deserializeJson(doc, char_array);
+        
+        if (error) {
+          Serial.print(F("deserializeJson() failed: "));
+          Serial.println(error.f_str());
+          return;
+        }
+        
+        const char* Cmd = doc["Cmd"]; // "CF"
+        const char* PrivateKey = doc["PrivateKey"]; // nullptr
+        const char* Password = doc["Password"]; // nullptr
+        String currentCMD = Cmd;
+        String PK = PrivateKey;
+        String Pass = Password;
+        
+          Serial.println(Cmd);
+          Serial.println(PrivateKey);
+          Serial.println(Password);
+
+
+        
+        // Test if parsing succeeds.
+        if (error) {
+          Serial.print(F("deserializeJson() failed: "));
+          Serial.println(error.f_str());
+          return;
+        }
+
+        if(currentCMD.equals("CF"))
         {
            cmd = "";
-           EncryptedData res = readStringFromEEPROM(0);
-       //    Serial.println(res);
-           if(res.Password != "")
+           receiveVal= "";
+           Serial.flush();
+
+          Serial.println("Parity Hash: ");
+          //  Serial.println(encrypted.Password);
+
+           String decryptParity = readStringFromEEPROM(0);
+           if(decryptParity != "")
            {
-         //     Serial.println("Device Configured");
+              Serial.println("Device Configured");
               Serial.write("#CFS1"); 
            }
            else
            {
-       //       Serial.println("Configuration is missing!");
+              Serial.println("Configuration is missing!");
               Serial.write("#CFS2"); 
            }
            
         }
-     
- 
-        if(ShouldRead && receiveVal == '#')
+      
+
+        if(currentCMD.equals("NEW"))
         {
-         //  Serial.println("Stopping to read password");
-           ShouldRead = false;
-           Pass = readConcurrent;
-           readConcurrent = "";
-           cmd = "";
-           //Serial.println(converted);
-           //Serial.println(ascii);
-        }
-
-
-        if(ShouldRead && receiveVal == '!')
-        {
-        //   Serial.println("Stopping to read private key");
+          Serial.println("Stopping to read private key");
           // Serial.println(readConcurrent);
+           ShouldReadPK = false;
 
-           ShouldRead = false;
-          // Serial.println(Pass);
-          // Serial.println(readConcurrent);
-           EncryptInitial(Pass,readConcurrent);
+           Serial.flush();
+           Serial.println(Pass);
+           Serial.println(PK);
+           EncryptInitial(Pass,PK);
            readConcurrent = "";
            cmd = "";
       
         }
-        if(ShouldRead == true)
+       
+        if(currentCMD.equals("Login"))
         {
-          
-           readConcurrent = readConcurrent + receiveVal;
-           
-        }
-             if(cmd == "#CI")
-        {
-           cmd = "";
-       //    Serial.println("Starting to read password");
-           ShouldRead = true;
-        }
+            String attemts = readStringFromEEPROM(0);
+            String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
+            String readPK = readStringFromEEPROM(40); //Get PK from EEPROM 
 
-        if(cmd == "#WI")
-        {
-           cmd = "";
-         //  Serial.println("Starting to read private key");
-           ShouldRead = true;
+            if(Pass.equals(readPw))
+            {
+                char Buf[readPK.length()+ 1];
+                readPK.toCharArray(Buf, readPK.length()+ 1);
+                String test =  String(Buf);
+                Serial.write("#SD:" ); 
+                Serial.write(Buf); 
+
+            }
+            else
+            {
+               int at = attemts.toInt();
+               at = at - 1;
+               writeStringToEEPROM(0, String(at)); //PK Part 1 
+
+               if(at == 0)
+               {
+                  ClearMemmory();
+               }
+               Serial.write("#ERL"); 
+            }
         }
+       
+  
         
         
        delay(10);
@@ -126,100 +158,47 @@ void loop() {
 
 void EncryptInitial(String password , String privateKey)
 {
-  delay(100);
+    delay(100);
  
-
-  // data
-  int str_len = privateKey.length() + 1; 
-  char char_array[str_len];
-  password.toCharArray(char_array, str_len); 
-  Serial.println("Initial Key: " + privateKey);
-
-  int z = 0;
-  String pk1 = privateKey.substring(0,16);
-  String pk2 = privateKey.substring(16, 32);
-  String pk3 = privateKey.substring(32, 48);
-  String pk4 = privateKey.substring(48, 64);
-
-    //Serial.println(char_array);
-
-  Serial.println(pk1);
-  Serial.println(pk2);
-  Serial.println(pk3);
-  Serial.println(pk4);
- char strA1[17];
- char strA2[17]; 
- char strA3[17];
- char strA4[17];
- pk1.toCharArray(strA1, str_len); 
- pk2.toCharArray(strA2, str_len); 
- pk3.toCharArray(strA3, str_len); 
- pk4.toCharArray(strA4, str_len); 
-
- //Password Encoding
- int str_len_pwd = password.length() + 1; 
- char char_array_pwd[str_len_pwd];
- password.toCharArray(char_array_pwd, str_len_pwd);
- uint8_t keys[4*sizeof(str_len_pwd)];
- 
- for(byte i = 0; i < sizeof(char_array_pwd) - 1; i++){
-    if((int) char_array_pwd[i] != '\0')
-    {
-         keys[i] = (int) char_array_pwd[i];  
-    }
- }
+   //Write values to EEPROM
+   writeStringToEEPROM(0, "3"); //PK Part 1 
+   writeStringToEEPROM(1, password); //PK Part 1 
+   writeStringToEEPROM(41, privateKey); //PK Part 2 
  
  
- aes256_enc_single(keys,confirmationPwd);
- // Serial.println("encrypted:");
- // Serial.println(msg);
-  aes256_enc_single(keys, strA1);
-  aes256_enc_single(keys, strA2);
-  aes256_enc_single(keys, strA3);
-  aes256_enc_single(keys, strA4);
-  Serial.println(strA1);
-  Serial.println(strA2);
-  Serial.println(strA3);
-  Serial.println(strA4);
-  
-  aes256_dec_single(keys, strA1);
-  aes256_dec_single(keys, strA2);
-  aes256_dec_single(keys, strA3);
-  aes256_dec_single(keys, strA4);
-  Serial.println(strA1);
-  Serial.println(strA2);
-  Serial.println(strA3);
-  Serial.println(strA4);
- // Serial.println("decrypted:");
-
- EncryptedData encrypted = {
-  strA1,
-  strA2,
-  strA3,
-  strA4,
-  confirmationPwd
- };
- writeStringToEEPROM(0,encrypted); //This will fail current function only accepts string
- // String retrievedString = readStringFromEEPROM(0);
-  //Serial.print("The String we read from EEPROM: ");
-  //Serial.println(retrievedString);
 }
 
-void writeStringToEEPROM(int addrOffset, EncryptedData strToWrite)
+
+void writeStringToEEPROM(int addrOffset, const String &strToWrite)
 {
-   EEPROM.put(addrOffset, strToWrite);
+  byte len = strToWrite.length();
+  EEPROM.write(addrOffset, len);
+  for (int i = 0; i < len; i++)
+  {
+    EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
+  }
 }
 
-EncryptedData readStringFromEEPROM(int addrOffset)
+String readStringFromEEPROM(int addrOffset)
 {
-  EncryptedData strToWrite;
-  EEPROM.get(0, strToWrite);
-  return strToWrite;
+  int newStrLen = EEPROM.read(addrOffset);
+  char data[newStrLen + 1];
+  for (int i = 0; i < newStrLen; i++)
+  {
+    data[i] = EEPROM.read(addrOffset + 1 + i);
+  }
+  data[newStrLen] = '\0'; // !!! NOTE !!! Remove the space between the slash "/" and "0" (I've added a space because otherwise there is a display bug)
+  return String(data);
 }
 
- 
- 
 
+void ClearMemmory()
+{
+  for (int i = 0; i < 1000; i++)
+  {
+    EEPROM.write(i, "0");
+  }
+}
  
  
 

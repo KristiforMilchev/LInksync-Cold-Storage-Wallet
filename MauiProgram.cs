@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+using Newtonsoft.Json;
 using SYNCWallet.Data;
+using SYNCWallet.Models;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Media;
@@ -55,10 +57,15 @@ public static class MauiProgram
     public static bool CheckConfigured()
     {
         StartSerial();
- 
 
-        _serialPort.Write("#CF");
-        while(!ConfigResponse)
+
+        MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+        {
+            Cmd = "CF",
+            Password = "",
+            PrivateKey = ""
+        }));
+        while (!ConfigResponse)
         {
 
         }
@@ -118,6 +125,8 @@ public static class MauiProgram
 
     public static void WriteState(string value)
     {
-        _serialPort.Write(value);
+        _serialPort.WriteLine(value);
+        _serialPort.DiscardOutBuffer();
+        _serialPort.DiscardInBuffer();
     }
 }
