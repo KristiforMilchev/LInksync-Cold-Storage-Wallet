@@ -1,5 +1,7 @@
 ﻿@page "/Landing"
 @using NFTLock.Data
+@using Newtonsoft.Json
+@using SYNCWallet.Models
  
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -335,21 +337,26 @@
         var port = hardwareService.DeviceConnected();
         var configStatus = MauiProgram.CheckConfigured();
 
-        if(configStatus)
+        if(!configStatus)
         {
 
             var walletData = hardwareService.CreateAccount();
-            MauiProgram.WriteState("#CI");
-            Thread.SpinWait(4);
-            MauiProgram.WriteState("ThisIsAtestPassword#");
-            Thread.SpinWait(4);
 
-            MauiProgram.WriteState("#WI");
-            Thread.SpinWait(4);
-
-            MauiProgram.WriteState($"{walletData.PrivateKey}!");
-
-
+            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            {
+                Cmd = "NEW",
+                Password = "ThisIsAtestPassword",
+                PrivateKey = walletData.PrivateKey
+            }));
+        }
+        else
+        {
+            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            {
+                Cmd = "Login",
+                Password = "ThisIsAtestPassword",
+                PrivateKey = "3"
+            }));
         }
     }
  
