@@ -340,8 +340,13 @@
 
             var walletData = hardwareService.CreateAccount();
             MauiProgram.WriteState("#CI");
+            Thread.SpinWait(4);
             MauiProgram.WriteState("ThisIsAtestPassword#");
+            Thread.SpinWait(4);
+
             MauiProgram.WriteState("#WI");
+            Thread.SpinWait(4);
+
             MauiProgram.WriteState($"{walletData.PrivateKey}!");
 
 
