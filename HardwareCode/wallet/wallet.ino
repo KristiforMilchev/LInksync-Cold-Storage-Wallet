@@ -18,8 +18,7 @@
 #include "ArduinoJson.h"
 
 
-
-char confirmationPwd[10]= "iV1z@$H88"; //Parity check used to check decryption was successfull 
+ 
 
 //EPPROM ebcryption storage structure 
  
@@ -121,67 +120,31 @@ void loop() {
        
         if(currentCMD.equals("Login"))
         {
-          Serial.println("Trying to logjn");
-          String decryptParity = readStringFromEEPROM(0);
-          decryptParity.trim();
-          Serial.println(decryptParity);
-          //Password Encoding
-          int str_len_pwd = Pass.length() + 1; 
-          char char_array_pwd[str_len_pwd];
-          Pass.toCharArray(char_array_pwd, str_len_pwd);
-          uint8_t keys[4*sizeof(str_len_pwd)];
-          
-          //Encoding the original password for ascii
-          for(byte i = 0; i < sizeof(char_array_pwd) - 1; i++){
-            if((int) char_array_pwd[i] != '\0')
+            String attemts = readStringFromEEPROM(0);
+            String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
+            String readPK = readStringFromEEPROM(40); //Get PK from EEPROM 
+
+            if(Pass.equals(readPw))
             {
-                keys[i] = (int) char_array_pwd[i];  
+                char Buf[readPK.length()+ 1];
+                readPK.toCharArray(Buf, readPK.length()+ 1);
+                String test =  String(Buf);
+                Serial.write("#SD:" ); 
+                Serial.write(Buf); 
+
             }
-          }
-          
-         uint8_t key[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+            else
+            {
+               int at = attemts.toInt();
+               at = at - 1;
+               writeStringToEEPROM(0, String(at)); //PK Part 1 
 
-
-          String before = decryptParity;
-           
-          int str_len_before = before.length() + 1; 
-          char char_array_before[str_len_before];
-          before.toCharArray(char_array_before, str_len_before);
- 
- 
-          aes256_dec_single(key, char_array_before);
-          String after = char_array_before;
-          Serial.println("Decrypted Password "+ after);
-
-          String pk1 = readStringFromEEPROM(10); //PK Part 1 
-          String pk2 = readStringFromEEPROM(27); //PK Part 2 
-          String pk3 = readStringFromEEPROM(44); //PK Part 3 
-          String pk4 = readStringFromEEPROM(61); //PK Part 3 
-          Serial.println(pk1);
-          Serial.println(pk2);
-          Serial.println(pk3);
-          Serial.println(pk4);
-          char strA1[17];
-          char strA2[17]; 
-          char strA3[17];
-          char strA4[17];
-          //Converting the splitted pk to char* PKn []
-          pk1.toCharArray(strA1, 17); 
-          pk2.toCharArray(strA2, 17); 
-          pk3.toCharArray(strA3, 17); 
-          pk4.toCharArray(strA4, 17); 
-          
-          aes256_dec_single(key, strA1);
-          aes256_dec_single(key, strA2);
-          aes256_dec_single(key, strA3);
-          aes256_dec_single(key, strA4);
-      
-          //Debug purposes only to delete later
-          Serial.println(strA1);
-          Serial.println(strA2);
-          Serial.println(strA3);
-          Serial.println(strA4);
-    
+               if(at == 0)
+               {
+                  ClearMemmory();
+               }
+               Serial.write("#ERL"); 
+            }
         }
        
   
@@ -197,82 +160,11 @@ void EncryptInitial(String password , String privateKey)
 {
     delay(100);
  
-
-    
-    Serial.println("Initial Key: " + privateKey);
-
-    int z = 0;
-
-    //Splitting PK to 4 eaqual peaces each 16
-    String pk1 = privateKey.substring(0,16);
-    String pk2 = privateKey.substring(16, 32);
-    String pk3 = privateKey.substring(32, 48);
-    String pk4 = privateKey.substring(48, 64);
-    Serial.println(pk1);
-    Serial.println(pk2);
-    Serial.println(pk3);
-    Serial.println(pk4);
-    char strA1[17];
-    char strA2[17]; 
-    char strA3[17];
-    char strA4[17];
-    //Converting the splitted pk to char* PKn []
-    pk1.toCharArray(strA1, 17); 
-    pk2.toCharArray(strA2, 17); 
-    pk3.toCharArray(strA3, 17); 
-    pk4.toCharArray(strA4, 17); 
-
-    //Password Encoding
-    int str_len_pwd = password.length() + 1; 
-    char char_array_pwd[str_len_pwd];
-    password.toCharArray(char_array_pwd, str_len_pwd);
-    uint8_t keys[4*sizeof(str_len_pwd)];
-    
-    //Encoding the original password for ascii
-    for(byte i = 0; i < sizeof(char_array_pwd) - 1; i++){
-      if((int) char_array_pwd[i] != '\0')
-      {
-          keys[i] = (int) char_array_pwd[i];  
-      }
-    }
- 
-    uint8_t key[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-
-    aes256_enc_single(key,confirmationPwd);
-
-    aes256_enc_single(key, strA1);
-    aes256_enc_single(key, strA2);
-    aes256_enc_single(key, strA3);
-    aes256_enc_single(key, strA4);
-    
-    //Debug purposes only to delete later
-    Serial.println(strA1);
-    Serial.println(strA2);
-    Serial.println(strA3);
-    Serial.println(strA4);
-    Serial.println("Enc Password");
-    Serial.println(confirmationPwd);
-
-  
-    //aes256_dec_single(keys, strA1);
-   // aes256_dec_single(keys, strA2);
-    //aes256_dec_single(keys, strA3);
-   // aes256_dec_single(keys, strA4);
-
-    //Debug purposes only to delete later
-   // Serial.println(strA1);
-   // Serial.println(strA2);
-   // Serial.println(strA3);
-   // Serial.println(strA4);
-    
-
-
    //Write values to EEPROM
-   writeStringToEEPROM(0, confirmationPwd);  //Save Password Parity
-   writeStringToEEPROM(10, strA1); //PK Part 1 
-   writeStringToEEPROM(27, strA2); //PK Part 2 
-   writeStringToEEPROM(44, strA3); //PK Part 3 
-   writeStringToEEPROM(61, strA4); //PK Part 3 
+   writeStringToEEPROM(0, "3"); //PK Part 1 
+   writeStringToEEPROM(1, password); //PK Part 1 
+   writeStringToEEPROM(41, privateKey); //PK Part 2 
+ 
  
 }
 
@@ -299,6 +191,14 @@ String readStringFromEEPROM(int addrOffset)
   return String(data);
 }
 
+
+void ClearMemmory()
+{
+  for (int i = 0; i < 1000; i++)
+  {
+    EEPROM.write(i, "0");
+  }
+}
  
  
 
