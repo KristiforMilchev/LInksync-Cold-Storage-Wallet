@@ -34,6 +34,127 @@
 <body>
 
 
+	<style>
+
+		.page {
+			height: 100vh;
+			display: block;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+
+
+		.container, .container-lg, .container-md, .container-sm, .container-xl {
+			max-width: 60%;
+			padding: 45px;
+		}
+
+		.LogoMainBackground {
+			position: absolute;
+			top: 47%;
+			left: 77%;
+			height: 31vw;
+			width: 31vw;
+			z-index: 0.;
+			opacity: 1;
+		}
+
+
+		.dropdown-menu.show {
+			display: block;
+			position: relative !important;
+		}
+
+		body {
+			background: #1e1f26 !important;
+		}
+
+		.card {
+			overflow: hidden;
+			background: #282931 !important;
+		}
+
+		.bg-light {
+			color: #689aa4 !important;
+			background-color: #2f3544 !important;
+		}
+
+		.table {
+			width: 100%;
+			margin-bottom: 1rem;
+			color: #455058;
+			vertical-align: top;
+			border-color: #455058;
+		}
+
+		.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+			margin-top: 0;
+			margin-bottom: .5rem;
+			font-weight: 400;
+			line-height: 1.2;
+			color: #689aa4;
+		}
+
+		.text-info {
+			color: #689aa4 !important;
+		}
+
+		.fw-normal {
+			font-weight: 400 !important;
+			color: #689aa4;
+		}
+
+		a {
+			color: #689aa4 !important;
+		}
+
+		.btn-info {
+			color: white;
+			background-color: #54667a;
+			border-color: #54667a;
+			box-shadow: 0 1px 0rgba(255,255,255,.15);
+		}
+
+			.btn-info:hover {
+				color: white;
+				background-color: #689aa4;
+				border-color: #689aa4;
+				box-shadow: 0 1px 0rgba(255,255,255,.15);
+			}
+
+		.jp-card .jp-card-front, .jp-card .jp-card-back {
+			background: #2f3544 !important;
+		}
+
+		.nav-link:focus, .nav-link:hover {
+			color: #455754 !important;
+		}
+
+		.inputStyle {
+			color: #54667a;
+			height: 60px;
+			background: #1E1F26 0% 0% no-repeat padding-box;
+			border-radius: 8px;
+			border: none;
+		}
+
+		.form-control:focus {
+			color: #54667a;
+			background-color: #1e1f26;
+			border-color: rgba(0,0,0,.25);
+			outline: 0;
+			box-shadow: unset,transparent;
+		}
+
+		.border-danger {
+			border-color: #54667a !important;
+		}
+
+		.bg-success {
+			background-color: #706e6e !important;
+		}
+	</style>
 
 	<!-- ============================================================== -->
 	<!-- All Jquery -->
@@ -224,162 +345,184 @@
 			}
 			return "ok"
 		}
-        var resultContainer = document.getElementById('qr-reader-results');
-        var lastResult, countResults = 0;
+		var resultContainer = document.getElementById('qr-reader-results');
+		var lastResult, countResults = 0;
 
-        function onScanSuccess(decodedText, decodedResult) {
-            if (decodedText !== lastResult) {
-                ++countResults;
-                lastResult = decodedText;
-                // Handle on success condition with the decoded message.
-                console.log(`Scan result ${decodedText}`, decodedResult);
-            }
-        }
+		function onScanSuccess(decodedText, decodedResult) {
+			if (decodedText !== lastResult) {
+				++countResults;
+				lastResult = decodedText;
+				// Handle on success condition with the decoded message.
+				console.log(`Scan result ${decodedText}`, decodedResult);
+			}
+		}
 
 		function StartCam() {
 			//Call the API to retrive the door camera
 
-            var html5QrcodeScanner = new Html5QrcodeScanner(
-                "qr-reader", { fps: 10, qrbox: 450 });
-            html5QrcodeScanner.render(onScanSuccess);
+			var html5QrcodeScanner = new Html5QrcodeScanner(
+				"qr-reader", { fps: 10, qrbox: 450 });
+			html5QrcodeScanner.render(onScanSuccess);
 		}
 
 
-        function requestMedia() {
+		function requestMedia() {
 
-            // Create request options
-            let options = {
-                audio: true,
-                video: true
-            };
+			// Create request options
+			let options = {
+				audio: true,
+				video: true
+			};
 
 
-            // Warning: Below commented code causes "Illegal invocation error"
-            //// Set up proper function
-            //navigator.mediaDevices.getUserMedia =
-            //    navigator.getUserMedia ||
-            //    navigator.webkitGetUserMedia ||
-            //    navigator.mozGetUserMedia ||
-            //    navigator.msGetUserMedia;
+			// Warning: Below commented code causes "Illegal invocation error"
+			//// Set up proper function
+			//navigator.mediaDevices.getUserMedia =
+			//    navigator.getUserMedia ||
+			//    navigator.webkitGetUserMedia ||
+			//    navigator.mozGetUserMedia ||
+			//    navigator.msGetUserMedia;
 
-            try {
-                // Request user media
-                navigator.mediaDevices
-                    .getUserMedia(options)
-                    .then(gotLocalStream)
-                    .catch(logError);
-            }
-            catch (e) {
-                logError(e);
-            }
+			try {
+				// Request user media
+				navigator.mediaDevices
+					.getUserMedia(options)
+					.then(gotLocalStream)
+					.catch(logError);
+			}
+			catch (e) {
+				logError(e);
+			}
 
-        }
+		}
 
-        // Receives local stream data 
-        function gotLocalStream(stream) {
+		// Receives local stream data
+		function gotLocalStream(stream) {
 
-            // Get 'video' html control
-            var videoLocalPanel = document.getElementById("LOCAL_VIDEO_ID");
+			// Get 'video' html control
+			var videoLocalPanel = document.getElementById("LOCAL_VIDEO_ID");
 
-            if ("srcObject" in videoLocalPanel) {
-                videoLocalPanel.srcObject = stream;
-            } else {
-                videoLocalPanel.src = window.URL.createObjectURL(stream);
-            }
+			if ("srcObject" in videoLocalPanel) {
+				videoLocalPanel.srcObject = stream;
+			} else {
+				videoLocalPanel.src = window.URL.createObjectURL(stream);
+			}
 
-        }
+		}
 
-        function logError(e) {
+		function logError(e) {
 
-            // Get 'label' html control
-            var label = document.getElementById("LABEL_ID");
+			// Get 'label' html control
+			var label = document.getElementById("LABEL_ID");
 
-            label.value = e;
+			label.value = e;
 
 		}
 
 
-        function RenderChart() {
+		function RenderChart() {
 
-            // -----------------------------------------------------------------------
-            // Realtime chart
-            // -----------------------------------------------------------------------
+			// -----------------------------------------------------------------------
+			// Realtime chart
+			// -----------------------------------------------------------------------
 
-            var options_Android_Vs_iOS = {
-                series: [{
-                    name: "Growth ",
-                    data: [8, 1, 1, 10, 11, 6, 12, 14, 21, 15, 21, 24, 28, 23, 34, 38, 41, 47]
-                }, {
-                    name: "Loss ",
-                    data: [11, 4, 3, 14, 9, 10, 18, 15, 24, 17, 19, 26, 31, 26, 37, 41, 46, 51]
-                },],
-                chart: {
-                    height: 300,
-                    type: 'area',
-                    stacked: false,
-                    fontFamily: 'Rubik,sans-serif',
-                    zoom: {
-                        enabled: false
-                    },
-                    toolbar: {
-                        show: false
-                    },
-                    sparkline: {
-                        enabled: true
-                    }
-                },
-                colors: ['#706e6e', '#706e6e'],
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    show: false
-                },
-                markers: {
-                    size: 2,
-                    strokeColors: 'transparent',
-                    colors: '#706e6e',
-                },
-                fill: {
-                    type: 'solid',
-                    colors: ['#706e6e', '#706e6e'],
-                    opacity: 1
-                },
-                grid: {
-                    show: true,
-                    strokeDashArray: 3,
-                    borderColor: "rgba(0,0,0,0.1)"
-                },
-                xaxis: {
-                    labels: {
-                        show: false,
-                    },
-                    axisBorder: {
-                        show: false,
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        show: false,
-                    },
-                    axisBorder: {
-                        show: false,
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                tooltip: {
-                    theme: "dark",
-                    marker: {
-                        show: true,
-                    },
-                },
-            };
+			var options_Android_Vs_iOS = {
+				series: [{
+					name: "Growth ",
+					data: [8, 1, 1, 10, 11, 6, 12, 14, 21, 15, 21, 24, 28, 23, 34, 38, 41, 47]
+				}, {
+					name: "Loss ",
+					data: [11, 4, 3, 14, 9, 10, 18, 15, 24, 17, 19, 26, 31, 26, 37, 41, 46, 51]
+				},],
+				chart: {
+					height: 300,
+					type: 'area',
+					stacked: false,
+					fontFamily: 'Rubik,sans-serif',
+					zoom: {
+						enabled: false
+					},
+					toolbar: {
+						show: false
+					},
+					sparkline: {
+						enabled: true
+					}
+				},
+				colors: ['#706e6e', '#706e6e'],
+				dataLabels: {
+					enabled: false
+				},
+				stroke: {
+					show: false
+				},
+				markers: {
+					size: 2,
+					strokeColors: 'transparent',
+					colors: '#706e6e',
+				},
+				fill: {
+					type: 'solid',
+					colors: ['#706e6e', '#706e6e'],
+					opacity: 1
+				},
+				grid: {
+					show: true,
+					strokeDashArray: 3,
+					borderColor: "rgba(0,0,0,0.1)"
+				},
+				xaxis: {
+					labels: {
+						show: false,
+					},
+					axisBorder: {
+						show: false,
+					}
+				},
+				yaxis: {
+					labels: {
+						show: false,
+					},
+					axisBorder: {
+						show: false,
+					}
+				},
+				legend: {
+					show: false
+				},
+				tooltip: {
+					theme: "dark",
+					marker: {
+						show: true,
+					},
+				},
+			};
 
-            var chart_line_overview = new ApexCharts(document.querySelector("#android-vs-ios"), options_Android_Vs_iOS);
-            chart_line_overview.render();
-            return "OK";
+			var chart_line_overview = new ApexCharts(document.querySelector("#android-vs-ios"), options_Android_Vs_iOS);
+			chart_line_overview.render();
+			return "OK";
+		}
+
+		function OpenSeedConfimr() {
+			$("#Options").hide();
+			$("#Preview").show();
+		}
+
+		function ConfirmSeed() {
+            $("#Preview").hide();
+			$("#confirm").show();
+		}
+
+		function ReturnToSeedSave() {
+            $("#Preview").show();
+            $("#confirm").hide();
+		}
+
+		function SetPin() {
+			
+			$("#pincode").show();
+			$("#confirm").hide();
+			$("#Preview").hide();
         }
 	</script>
 

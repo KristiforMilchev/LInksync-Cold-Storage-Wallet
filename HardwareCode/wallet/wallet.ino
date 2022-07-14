@@ -124,7 +124,7 @@ void loop() {
         {
             byte decryptParity = EEPROM.read(0);
             String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
-            String readPK = readStringFromEEPROM(40); //Get PK from EEPROM 
+            String readPK = readStringFromEEPROM(41); //Get PK from EEPROM 
  
             Serial.println("Login Parity attempts:");
 
@@ -135,8 +135,10 @@ void loop() {
                 char Buf[readPK.length()+ 1];
                 readPK.toCharArray(Buf, readPK.length()+ 1);
                 String test =  String(Buf);
-                Serial.write("#SD:" ); 
+                Serial.write("#SR:" ); 
                 Serial.write(Buf); 
+                Serial.write("#SR:"); 
+
                 EEPROM.write(0, 3); //PK Part 1 
 
             }

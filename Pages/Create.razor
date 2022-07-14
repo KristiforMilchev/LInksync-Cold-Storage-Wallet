@@ -1,0 +1,259 @@
+﻿@page "/Create"
+@using System.Net
+@using System.Timers
+@using System.Numerics
+@using NFTLock.Data
+@using NFTLock.Models
+@using Newtonsoft.Json
+@using SYNCWallet.Models
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+
+<div class="container FixCenter"   style="    height: 100vh;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;">
+    <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+        <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
+
+    </div>
+    <div class="row" id="Options" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+        <div class="col-md-5 "  style="margin:10px;">
+            <div class="row" style="margin-top: 50px;">
+                <div class="card" style="padding: 0;overflow: hidden;">
+                    <div class="card-body">
+                        <i class="icon-wallet" style="    font-size: 140px;
+                        display: flex;
+                        justify-content: center;
+                        margin: 10px;"></i>
+                        <button @onclick="CreateNew" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                            Create new
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 " style="margin:10px;">
+            <div class="row" style="margin-top: 50px;">
+                <div class="card" style="padding: 0;overflow: hidden;">
+                    <div class="card-body">
+                        <i class="icon-wallet" style="    font-size: 140px;
+                        display: flex;
+                        justify-content: center;
+                        margin: 10px;"></i>
+                        <button onclick="LoginPublic()" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                            Import Existing
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row"  id="Preview" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
+        <div class="card" style="padding: 0;overflow: hidden;">
+            <div class="card-body">
+                <div class="row" style="    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    align-items: flex-start;
+    justify-content: center;">
+                    @if (Words != null)
+                    {
+                        
+                        @foreach (var item in Words)
+                        {
+
+                            <div class="col-md-2" style="text-align: center;
+    border: 1px solid #999999;
+    border-radius: 7px;
+    padding: 0;
+    margin: 5px;">
+                                <p class="text-muted">
+                                    @item.Name
+                                </p>
+                                <small class="text-muted">
+                                   @item.Index
+                                </small>
+                            </div>
+                          
+                        }
+
+                    }
+                </div>
+          
+
+                <button @onclick="ConfirmWallet" style="width: 100%; margin-bottom:20px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                    Confirm
+                </button>
+    
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row" id="confirm" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
+        <div class="card" style="padding: 0;overflow: hidden;">
+            <div class="card-body">
+                <div>
+                    <button onclick="ReturnToSeedSave()" style="width: 200px; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                        Retrun
+                    </button>
+                </div>
+                <div class="row" style="flex-wrap: wrap;
+                                        flex-direction: row;
+                                        align-content: center;
+                                        align-items: flex-start;
+                                        justify-content: center;">
+                    @if (Words != null)
+                    {
+                        <div class="col-md-3" style="text-align: center;
+                                                        border: 1px solid #999999;
+                                                        border-radius: 7px;
+                                                        padding: 0;
+                                                        margin: 5px;">
+                            <input   type="text" @bind-value="Word"  class="form-control inputStyle" placeholder="Name of seed word at position">
+
+                            <small class="text-muted">
+                                @WordNum
+                            </small>
+                        </div>
+                    }
+                </div>
+
+
+                <button @onclick="ConfirmWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                    Next
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <div class="row" id="pincode" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
+        <div class="card" style="padding: 0;overflow: hidden;">
+            <div class="card-body">
+ 
+                <div class="row" style="flex-wrap: wrap;
+                                        flex-direction: row;
+                                        align-content: center;
+                                        align-items: flex-start;
+                                        justify-content: center;">
+                 
+                        <div class="col-md-3" style="text-align: center;
+                                                        border: 1px solid #999999;
+                                                        border-radius: 7px;
+                                                        padding: 0;
+                                                        margin: 5px;">
+                            <input type="text" @bind-value="PassCode" class="form-control inputStyle" placeholder="Enter PIN">
+                        </div>
+                </div>
+                <button @onclick="CreateWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                    Next
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    private string Password{ get; set; }
+    public List<Word> Words { get; set; }
+    public CryptoWallet Wallet { get; set; }
+    public Word Selected { get; set; }
+    public int Validated { get; set; }
+    public int WordNum { get; set; }
+    public string Word { get; set; }
+    public string PassCode { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var hardwareService = new HardwareService();
+    }
+
+    private void CreateNew()
+    {
+        Validated = 0;
+        var hardwareService = new HardwareService();
+        Wallet = hardwareService.CreateAccount();
+
+        InvokeAsync(() =>
+        {
+            Words = Wallet.Words;
+            StateHasChanged();
+        });
+        JS.InvokeVoidAsync("OpenSeedConfimr");
+    }
+
+    private void ConfirmWallet()
+    {
+        JS.InvokeVoidAsync("ConfirmSeed");
+
+
+        if(Selected == null)
+        {
+            var random = new Random();
+            WordNum = random.Next(5, Words.Count - 5);
+            Selected = Words.ElementAt(WordNum);
+
+        }
+        else
+        {
+            var last = Words.ElementAt(WordNum);
+
+            if (last.Name == Word)
+            {
+
+                Validated++;
+                Word = "";
+            }
+
+            var random = new Random();
+            WordNum = random.Next(5, Words.Count - 5);
+            Selected = Words.ElementAt(WordNum);
+
+
+        }
+
+        if (Validated > 2)
+        {
+            SetPin();
+        }
+    }
+
+    private void SetPin()
+    {
+        JS.InvokeVoidAsync("SetPin");
+    }
+
+    private void CreateWallet()
+    {
+
+        var hardwareService = new HardwareService();
+        try
+        {
+            var passwrod = hardwareService.Encrypt(PassCode, "iV1z@$H8");
+            var PK = hardwareService.Encrypt(Wallet.PrivateKey, PassCode);
+
+            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                {
+                    Cmd = "NEW",
+                    Password = passwrod,
+                    PrivateKey = PK
+                }));
+
+            NavigationManager.NavigateTo("/LoginPanel");
+        }
+        catch (Exception e)
+        {
+            
+            
+        }
+
+    }
+}
