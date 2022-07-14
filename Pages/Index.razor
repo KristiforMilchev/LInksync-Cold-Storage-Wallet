@@ -65,7 +65,7 @@
                 </p>
             </div>
             <div class="row" style="margin:50px;">
-                <button @onclick="CreateContract" type="button" class="justify-content-center w-100 btn btn-rounded btn-info d-flex align-items-center">
+                <button  type="button" class="justify-content-center w-100 btn btn-rounded btn-info d-flex align-items-center">
                     <span style="width:100%;">Get started </span>
                     <i class="fas fa-arrow-alt-circle-right"></i>
                 </button>
@@ -85,72 +85,26 @@
 @code {
     private AuthenicationHandler AuthenicationHandler { get; set; }
     private string Address { get; set; }
-    private string ActiveTransaction{ get; set; }
-    System.Timers.Timer Timer { get; set; }
-    private int NFTKeyCreated { get; set; }
-    private void OpenTrading()
-    {
-        NavigationManager.NavigateTo("Landing");
-    }
 
-    private void CreateContract()
-    {
-        InvokeAsync(async () => 
-       {
-           ActiveTransaction = await AuthenicationHandler.DeployContract();
-
-           Timer = new System.Timers.Timer();
-           Timer.AutoReset = true;
-           Timer.Elapsed += (sender, e) => RepeatTransaction(sender, e);
-           Timer.Interval = GetInterval();
-           Timer.Start();
-           StateHasChanged();
-       });
-    }
-
-
-
-    static double GetInterval()
-    {
-        DateTime now = DateTime.Now;
-        return ((60 - now.Second) * 1000 - now.Millisecond);
-    }
-
-
-    private async void RepeatTransaction(object sender, ElapsedEventArgs e)
-    {
-
-        if (NFTKeyCreated != 0)
-        {
-            Timer.Stop();
-            NavigationManager.NavigateTo("Landing");
-        }
-        else
-        {
-            NFTKeyCreated = await AuthenicationHandler.CheckUserBalanceForContract(ActiveTransaction);
-
-        }
-
-    }
 
     protected override async Task OnInitializedAsync()
     {
         AuthenicationHandler = new AuthenicationHandler();
-        await InvokeAsync(async () =>
-        {
-            var accountExists = AuthenicationHandler.GetDefault();
-            var checkMintedKey = await AuthenicationHandler.CheckUserBalanceForContract(accountExists);
-            if (checkMintedKey != 0)
-            {
-                NavigationManager.NavigateTo("Landing");
-            }
-            else
-            {
-                NavigationManager.NavigateTo("Landing");
 
-                Address = AuthenicationHandler.CreateAccountInitial();
-                StateHasChanged();
-            }
-        });
+        var hardwareService = new HardwareService();
+        var port = hardwareService.DeviceConnected();
+        var configStatus = MauiProgram.CheckConfigured();
+        //var walletData = hardwareService.CreateAccount();
+
+        if (configStatus)
+        {
+            NavigationManager.NavigateTo("LoginPanel");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("Create");
+
+        }
+ 
     }
 }

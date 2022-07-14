@@ -12,6 +12,7 @@ using NFTLock.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using System.Security.Cryptography;
+using SYNCWallet.Models;
 
 namespace NFTLock.Data
 {
@@ -74,7 +75,9 @@ namespace NFTLock.Data
         public CryptoWallet CreateAccount()
         {
             var ecKey = Nethereum.Signer.EthECKey.GenerateKey();
+            var recovered = ecKey.GetPrivateKeyAsBytes();
             var privateKey = ecKey.GetPrivateKeyAsBytes().ToHex();
+            var privateKey2 = recovered.ToHex();
 
             var account = new Account(privateKey, 97);
 
@@ -83,8 +86,29 @@ namespace NFTLock.Data
                 Address = account.Address,
                 Card = "",
                 Name = "Account 1",
-                PrivateKey = privateKey
+                PrivateKey = privateKey,
+                Words = GenerateWords(recovered)
             };
+        }
+
+
+        public List<Word> GenerateWords(byte[] bytes)
+        {
+            var seeePhrase = new SeedPhase();
+            var i = 0;
+            List<Word> words = new List<Word>();
+            bytes.ToList().ForEach(x =>
+            {
+               var word = seeePhrase.Words.FirstOrDefault(y => y.Id == x);
+                if(word != null)
+                {
+                    word.Index = i;
+                    words.Add(word);
+                }
+                i++; 
+               
+            });
+            return words;
         }
 
         public string Encrypt(string data, string password)

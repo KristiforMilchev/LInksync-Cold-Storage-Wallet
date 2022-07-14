@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SYNCWallet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace NFTLock.Models
         public string Name { get; set; }
         public string PrivateKey { get; set; }
         public string Card { get; set; }
+        public List<Word> Words { get; set; }
     }
 }
