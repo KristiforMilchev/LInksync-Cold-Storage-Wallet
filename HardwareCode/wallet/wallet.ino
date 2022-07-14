@@ -24,7 +24,7 @@
  
 void setup() {
   Serial.begin(9600);
- 
+  //ClearMemmory();
  }
 
 
@@ -49,7 +49,7 @@ void loop() {
         char char_array[str_len];
         receiveVal.toCharArray(char_array, str_len); 
         StaticJsonDocument<512> doc;
-                  Serial.println(receiveVal);
+        Serial.println(receiveVal);
 
         DeserializationError error = deserializeJson(doc, char_array);
         
@@ -88,8 +88,10 @@ void loop() {
           Serial.println("Parity Hash: ");
           //  Serial.println(encrypted.Password);
 
-           String decryptParity = readStringFromEEPROM(0);
-           if(decryptParity != "")
+           byte decryptParity = EEPROM.read(0);
+           Serial.println(decryptParity);
+
+           if(decryptParity != 0)
            {
               Serial.println("Device Configured");
               Serial.write("#CFS1"); 
@@ -120,9 +122,13 @@ void loop() {
        
         if(currentCMD.equals("Login"))
         {
-            String attemts = readStringFromEEPROM(0);
+            byte decryptParity = EEPROM.read(0);
             String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
             String readPK = readStringFromEEPROM(40); //Get PK from EEPROM 
+ 
+            Serial.println("Login Parity attempts:");
+
+            Serial.println(decryptParity);
 
             if(Pass.equals(readPw))
             {
@@ -131,19 +137,28 @@ void loop() {
                 String test =  String(Buf);
                 Serial.write("#SD:" ); 
                 Serial.write(Buf); 
+                EEPROM.write(0, 3); //PK Part 1 
 
             }
             else
             {
-               int at = attemts.toInt();
-               at = at - 1;
-               writeStringToEEPROM(0, String(at)); //PK Part 1 
+              if(decryptParity == 3)
+              {
+                  Serial.println("Remove parity"); 
+                  EEPROM.write(0, 2); //PK Part 1 
 
-               if(at == 0)
-               {
-                  ClearMemmory();
-               }
-               Serial.write("#ERL"); 
+              }
+              else if(decryptParity == 2)
+              {
+                  Serial.println("Remove parity"); 
+                  EEPROM.write(0, 1); //PK Part 1 
+              }
+              else
+              {
+                 Serial.println("Cleaning memory");
+                 ClearMemmory();
+              }
+              Serial.write("#ERL"); 
             }
         }
        
@@ -161,7 +176,9 @@ void EncryptInitial(String password , String privateKey)
     delay(100);
  
    //Write values to EEPROM
-   writeStringToEEPROM(0, "3"); //PK Part 1 
+
+
+   EEPROM.write(0, 3); //PK Part 1 
    writeStringToEEPROM(1, password); //PK Part 1 
    writeStringToEEPROM(41, privateKey); //PK Part 2 
  
@@ -196,7 +213,8 @@ void ClearMemmory()
 {
   for (int i = 0; i < 1000; i++)
   {
-    EEPROM.write(i, "0");
+    EEPROM.write(i,0);
+    Serial.println(EEPROM.read(i));
   }
 }
  

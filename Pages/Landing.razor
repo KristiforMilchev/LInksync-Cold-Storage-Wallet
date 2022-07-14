@@ -340,7 +340,7 @@
         var configStatus = MauiProgram.CheckConfigured();
         var walletData = hardwareService.CreateAccount();
 
-        if(configStatus)
+        if(!configStatus)
         {
             var passwrod = hardwareService.Encrypt("345", "iV1z@$H8");
             var PK = hardwareService.Encrypt(walletData.PrivateKey, "12345678");
