@@ -49,8 +49,7 @@ void loop() {
         char char_array[str_len];
         receiveVal.toCharArray(char_array, str_len); 
         StaticJsonDocument<512> doc;
-        Serial.println(receiveVal);
-
+ 
         DeserializationError error = deserializeJson(doc, char_array);
         
         if (error) {
@@ -66,16 +65,12 @@ void loop() {
         String PK = PrivateKey;
         String Pass = Password;
         
-          Serial.println(Cmd);
-          Serial.println(PrivateKey);
-          Serial.println(Password);
-
+ 
 
         
         // Test if parsing succeeds.
         if (error) {
-          Serial.print(F("deserializeJson() failed: "));
-          Serial.println(error.f_str());
+           Serial.println(error.f_str());
           return;
         }
 
@@ -85,21 +80,17 @@ void loop() {
            receiveVal= "";
            Serial.flush();
 
-          Serial.println("Parity Hash: ");
-          //  Serial.println(encrypted.Password);
+           //  Serial.println(encrypted.Password);
 
            byte decryptParity = EEPROM.read(0);
-           Serial.println(decryptParity);
-
+ 
            if(decryptParity != 0)
            {
-              Serial.println("Device Configured");
-              Serial.write("#CFS1"); 
+               Serial.write("#CFS1"); 
            }
            else
            {
-              Serial.println("Configuration is missing!");
-              Serial.write("#CFS2"); 
+               Serial.write("#CFS2"); 
            }
            
         }
@@ -112,8 +103,7 @@ void loop() {
            ShouldReadPK = false;
 
            Serial.flush();
-           Serial.println(Pass);
-           Serial.println(PK);
+ 
            EncryptInitial(Pass,PK);
            readConcurrent = "";
            cmd = "";
@@ -126,18 +116,16 @@ void loop() {
             String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
             String readPK = readStringFromEEPROM(41); //Get PK from EEPROM 
  
-            Serial.println("Login Parity attempts:");
-
-            Serial.println(decryptParity);
+  
 
             if(Pass.equals(readPw))
             {
                 char Buf[readPK.length()+ 1];
                 readPK.toCharArray(Buf, readPK.length()+ 1);
                 String test =  String(Buf);
-                Serial.write("#SR:" ); 
-                Serial.write(Buf); 
-                Serial.write("#SR:"); 
+                Serial.println("#SR:" ); 
+                Serial.println(Buf); 
+                Serial.println("#SR:"); 
 
                 EEPROM.write(0, 3); //PK Part 1 
 
@@ -146,14 +134,12 @@ void loop() {
             {
               if(decryptParity == 3)
               {
-                  Serial.println("Remove parity"); 
-                  EEPROM.write(0, 2); //PK Part 1 
+                   EEPROM.write(0, 2); //PK Part 1 
 
               }
               else if(decryptParity == 2)
               {
-                  Serial.println("Remove parity"); 
-                  EEPROM.write(0, 1); //PK Part 1 
+                 EEPROM.write(0, 1); //PK Part 1 
               }
               else
               {

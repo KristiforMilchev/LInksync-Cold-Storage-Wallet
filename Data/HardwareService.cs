@@ -146,12 +146,12 @@ namespace NFTLock.Data
         }
 
 
-        private string DecryptAesEncoded(string text)
+        public string DecryptAesEncoded(string text, string password)
         {
             string textToDecrypt = text;
             string ToReturn = "";
-            string publickey = "12345678";
-            string secretkey = "87654321";
+            string publickey = password;
+            string secretkey = password;
             byte[] privatekeyByte = { };
             privatekeyByte = System.Text.Encoding.UTF8.GetBytes(secretkey);
             byte[] publickeybyte = { };

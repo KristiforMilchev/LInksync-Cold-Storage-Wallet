@@ -52,7 +52,7 @@
 @code {
 
     private string Password{ get; set; }
-
+    System.Timers.Timer aTimer { get; set; }
     protected override async Task OnInitializedAsync()
     {
         if (MauiProgram.IsLogged)
@@ -61,9 +61,10 @@
 
         }
 
-        System.Timers.Timer aTimer = new System.Timers.Timer();
+        aTimer = new System.Timers.Timer();
         aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         aTimer.Interval = 5000;
+        aTimer.Start();
 
 
     }
@@ -73,6 +74,11 @@
     {
         if (MauiProgram.IsLogged)
         {
+            if(aTimer != null)
+            {
+                aTimer.Stop();
+                aTimer.Dispose();
+            }
             NavigationManager.NavigateTo("/Landing");
 
         }
