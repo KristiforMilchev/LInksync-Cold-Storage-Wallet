@@ -53,7 +53,20 @@ namespace NFTLock.Data
             public BigInteger _mintAmount { get; set; }
         }
 
-        public async Task<int> CheckUserBalanceForContract(string ownerAddress)
+        public async Task<decimal> GetAccountBalance(int network)
+        {
+            var publicKey = MauiProgram.PublicAddress;
+            var web3 = new Nethereum.Web3.Web3("https://ropsten.infura.io/myInfura");
+            var balance = await web3.Eth.GetBalance.SendRequestAsync(publicKey);
+            var etherAmount = Web3.Convert.FromWei(balance.Value);
+
+            Console.WriteLine(web3);
+            Console.WriteLine("Get txCount " + etherAmount);
+            Console.ReadLine();
+            return etherAmount;
+        }
+
+        public async Task<decimal> CheckUserBalanceForContract(string ownerAddress)
         {
  
             var balanceOfFunctionMessage = new BalanceOf()
@@ -172,6 +185,7 @@ namespace NFTLock.Data
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var listedTokenData = JsonConvert.DeserializeObject<Token>(responseBody);
                 tokens.Add(listedTokenData);
+
             });
            
 

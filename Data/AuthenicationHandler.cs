@@ -1,4 +1,4 @@
-using Nethereum.Hex.HexConvertors.Extensions;
+ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using NFTLock.Models;
@@ -30,40 +30,7 @@ public class AuthenicationHandler
     }
 
 
-    public async Task<int> CheckUserBalanceForContract(string address)
-    {
-        var result = 0;
-        var path = AppDomain.CurrentDomain.BaseDirectory;
-
-        if (!File.Exists($"{path}\\Settings.json"))
-            return 0;
-
-
-        var applicationSettings = JsonConvert.DeserializeObject<ApplicationSettings>(File.ReadAllText($"{path}\\Settings.json"));
-        var account = applicationSettings.Wallets.FirstOrDefault(x=>x.Address == address);
-
-        if (account == null)
-            return 0;
-
-        var provider = "https://data-seed-prebsc-1-s1.binance.org:8545/";
-        var contractAddress = "0x92d5E3A2F20C5191E38eC8D950bb9591602753DB";
-        var privateKey = account.PrivateKey;
-        var abi = MauiProgram.ContractABI;
-
-        try
-        {
-            ContractService contractService = new ContractService(provider, contractAddress, abi, privateKey);
-            result = await contractService.CheckUserBalanceForContract(address);
-        }
-        catch (Exception e)
-        {
-
-            Console.WriteLine(e);
-        }
-
-
-        return result;
-    }
+    
 
     internal Account  UnlockWallet(string pass)
     {
@@ -77,6 +44,33 @@ public class AuthenicationHandler
     {
          return await ContractService.GetNetworkTokens(networkId);
         
+    }
+
+    public async Task<TokenContract> GetUserTokenBalance(int network, TokenContract current, bool isCoin)
+    {
+        var provider = "https://data-seed-prebsc-1-s1.binance.org:8545/";
+
+        var abi = MauiProgram.ContractABI;
+
+        try
+        {
+            ContractService contractService = new ContractService(provider, current.ContractAddress, abi, "");
+            var result = default(decimal);
+            if (isCoin)
+                await contractService.GetAccountBalance(network);
+            else
+                await contractService.CheckUserBalanceForContract(MauiProgram.PublicAddress);
+       
+            current.UserBalance = result;
+            return current;
+        }
+        catch (Exception e)
+        {
+
+            Console.WriteLine(e);
+            return null;
+        }
+
     }
 }
 

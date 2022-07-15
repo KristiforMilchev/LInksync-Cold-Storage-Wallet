@@ -101,84 +101,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">Link SYNC</h6>
-                                            <small class="text-muted">
-                                                SYNC
-                                            </small>
-                                        </td>
-                                        <td>2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">Dog Coin</h6>
-                                            <small class="text-muted">
-                                                Dog
-                                            </small>
-                                        </td>
-                                        <td class="text-muted">2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">Shiba Inu</h6>
-                                            <small class="text-muted">
-                                                SHIB
-                                            </small>
-                                        </td>
-                                        <td class="text-muted">2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">Emersive Coin</h6>
-                                            <small class="text-muted">
-                                                EMER
-                                            </small>
-                                        </td>
-                                        <td class="text-muted">2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">Monch Coin</h6>
-                                            <small class="text-muted">
-                                                MONCH
-                                            </small>
-                                        </td>
-                                        <td class="text-muted">2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:50px;">
-                                            <span class="round text-white d-inline-block text-center rounded-circle bg-info">S</span>
-                                        </td>
-                                        <td>
-                                            <h6 class="font-weight-medium mb-0">East Central Coin</h6>
-                                            <small class="text-muted">
-                                                EC
-                                            </small>
-                                        </td>
-                                        <td class="text-muted">2,500,500</td>
-                                        <td><span class="badge bg-success px-2 py-1">$ 86.25</span></td>
-                                    </tr>
+                                    @foreach(var token in Tokens)
+                                    {
+                                        var contract = token.Contracts.FirstOrDefault(x => x.Network == 1);
+                                       
+                                        <tr>
+                                            <td style="width:50px;">
+                                                <img src="@token.Logo"/>   
+                                            </td>
+                                            <td>
+                                                <h6 class="font-weight-medium mb-0">Link SYNC</h6>
+                                                <small class="text-muted">
+                                                    @token.Symbol
+                                                </small>
+                                            </td>
+                                            <td>@contract.UserBalance</td>
+                                            <td><span class="badge bg-success px-2 py-1">@contract.UserBalance / @Tokens.FirstOrDefault(x=>x.IsChainCoin).Contracts.FirstOrDefault().UserBalance</span></td>
+                                        </tr>
+
+
+                                    }
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -199,7 +142,7 @@
     public string TokenName { get; set; }
     private bool IsChartRendered { get; set; }
     AuthenicationHandler Authenication { get; set; }
-
+    List<Token> Tokens { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -218,7 +161,24 @@
         TokenName = "SYNC";
 
         Authenication = new AuthenicationHandler();
-        Authenication.GetSupportedTokens(1);
+        var tokens = await Authenication.GetSupportedTokens(1);
+        Tokens = new List<Token>();
+
+        //Load Tokens and user balance.
+        tokens.ForEach(x =>
+        {
+
+            var current = x.Contracts;
+            var newToken = x;
+            newToken.Contracts = new List<TokenContract>();
+            var newList = new TokenContract();
+            current.ForEach(async y =>
+            {
+                var getUserDetails = await Authenication.GetUserTokenBalance(1, y, x.IsChainCoin);
+                newToken.Contracts.Add(getUserDetails);
+            });
+            Tokens.Add(newToken);
+        });
     }
 
 }  
