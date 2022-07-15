@@ -4,6 +4,7 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
@@ -14,7 +15,8 @@ using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
- 
+using static SYNCWallet.Models.GithubTokensModel;
+
 namespace NFTLock.Data
 {
     internal class ContractService
@@ -106,11 +108,74 @@ namespace NFTLock.Data
 
         public static async Task<List<Token>> GetNetworkTokens(int networkId)
         {
+
+
             HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://www.contoso.com/");
-            response.EnsureSuccessStatusCode();
+            client.DefaultRequestHeaders.Add("User-Agent", "request");
+            HttpResponseMessage response = await client.GetAsync($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+ 
+
+            // response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
-            return new List<Token>();
+            var listedTokenData = JsonConvert.DeserializeObject<List<ListedToken>>(responseBody);
+
+            var tokens = new List<Token>();
+
+
+
+            switch (networkId)
+            {
+                case 97:
+                    tokens.Add(new Token
+                    {
+                        Symbol = "BNB",
+                        Name = "BNB",
+                        Logo = "/images/tokenLogos/bsc.png",
+                        IsChainCoin = true
+                    });
+                    break;
+                case 56:
+                    tokens.Add(new Token
+                    {
+                        Symbol = "BNB",
+                        Name = "BNB",
+                        Logo = "/images/tokenLogos/bsc.png",
+                        IsChainCoin = true
+                    });
+                    break;
+                case 1:
+                    tokens.Add(new Token
+                    {
+                        Symbol = "ETH",
+                        Name = "ETH",
+                        Logo = "/images/tokenLogos/eth.png",
+                        IsChainCoin = true
+                    });
+                    break;
+                case 4:
+                    tokens.Add(new Token
+                    {
+                        Symbol = "ETH",
+                        Name = "ETH",
+                        Logo = "/images/tokenLogos/eth.png",
+                        IsChainCoin = true
+                    });
+                    break;
+                default:
+                    break;
+            }
+
+            listedTokenData.ForEach(async x =>
+            {
+                HttpResponseMessage response = await client.GetAsync($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{x.name}/token.json");
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var listedTokenData = JsonConvert.DeserializeObject<Token>(responseBody);
+                tokens.Add(listedTokenData);
+            });
+           
+
+            return tokens;
         }
     }
 }
