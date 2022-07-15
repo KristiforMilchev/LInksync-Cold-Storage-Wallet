@@ -3,11 +3,14 @@ using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet;
+using SYNCWallet.Models;
 
 namespace NFTLock.Data;
 
 public class AuthenicationHandler
 {
+    ContractService _contractService { get; set; }
+  
     public string CreateAccountInitial()
 	{
         //WIP
@@ -62,9 +65,19 @@ public class AuthenicationHandler
         return result;
     }
 
-     
+    internal Account  UnlockWallet(string pass)
+    {
+        var hs = new HardwareService();
+        var privateKey = hs.DecryptAesEncoded(MauiProgram.PK, pass);
+        var wallet = new Account(privateKey, 97);
+        return wallet;
+    }
 
-
+    public async Task<List<Token>> GetSupportedTokens(int networkId)
+    {
+         return await ContractService.GetNetworkTokens(networkId);
+        
+    }
 }
 
 

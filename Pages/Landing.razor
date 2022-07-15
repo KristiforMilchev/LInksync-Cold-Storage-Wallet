@@ -198,6 +198,8 @@
 
     public string TokenName { get; set; }
     private bool IsChartRendered { get; set; }
+    AuthenicationHandler Authenication { get; set; }
+
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -214,34 +216,9 @@
     protected override async Task OnInitializedAsync()
     {
         TokenName = "SYNC";
-        var hardwareService = new HardwareService();
-        var port = hardwareService.DeviceConnected();
-        var configStatus = MauiProgram.CheckConfigured();
-        var walletData = hardwareService.CreateAccount();
 
-        if(!configStatus)
-        {
-            var passwrod = hardwareService.Encrypt("345", "iV1z@$H8");
-            var PK = hardwareService.Encrypt(walletData.PrivateKey, "12345678");
-
-            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
-            {
-                Cmd = "NEW",
-                Password = passwrod,
-                PrivateKey = PK
-            }));
-        }
-        else
-        {
-            var passwrod = hardwareService.Encrypt("345", "iV1z@$H8");
-
-            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
-            {
-                Cmd = "Login",
-                Password = passwrod,
-                PrivateKey = "3"
-            }));
-        }
+        Authenication = new AuthenicationHandler();
+        Authenication.GetSupportedTokens(1);
     }
 
 }  

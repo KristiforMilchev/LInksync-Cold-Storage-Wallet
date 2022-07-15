@@ -5,10 +5,13 @@ using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using NFTLock.Models;
+using SYNCWallet;
+using SYNCWallet.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
  
@@ -100,6 +103,14 @@ namespace NFTLock.Data
 
             return transactionReceipt;
         }
- 
+
+        public static async Task<List<Token>> GetNetworkTokens(int networkId)
+        {
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync("http://www.contoso.com/");
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return new List<Token>();
+        }
     }
 }

@@ -85,7 +85,17 @@
 @code {
     private AuthenicationHandler AuthenicationHandler { get; set; }
     private string Address { get; set; }
+    private DateTime CheckConnection { get; set; }
 
+    System.Timers.Timer aTimer { get; set; }
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(DateTime.UtcNow > CheckConnection)
+        {
+
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,18 +103,48 @@
 
         var hardwareService = new HardwareService();
         var port = hardwareService.DeviceConnected();
-        var configStatus = MauiProgram.CheckConfigured();
-        //var walletData = hardwareService.CreateAccount();
+        aTimer = new System.Timers.Timer();
+        aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+        aTimer.Interval = 5000;
+        aTimer.Start();
+        CheckDeviceConnected(port);
 
-        if (configStatus)
+    }
+
+    // Specify what you want to happen when the Elapsed event is raised.
+    private void OnTimedEvent(object source, ElapsedEventArgs e)
+    {
+        var hardwareService = new HardwareService();
+        var port = hardwareService.DeviceConnected();
+        CheckDeviceConnected(port);
+    }
+
+    private void CheckDeviceConnected(string port)
+    {
+        if (!string.IsNullOrEmpty(port))
         {
-            NavigationManager.NavigateTo("LoginPanel");
+            if(aTimer != null)
+            {
+                aTimer.Stop();
+                aTimer.Dispose();
+            }
+
+            var configStatus = MauiProgram.CheckConfigured();
+            //var walletData = hardwareService.CreateAccount();
+
+            if (configStatus)
+            {
+                NavigationManager.NavigateTo("LoginPanel");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("Create");
+
+            }
         }
         else
         {
-            NavigationManager.NavigateTo("Create");
-
+            CheckConnection = CheckConnection.AddMinutes(1);
         }
- 
     }
 }
