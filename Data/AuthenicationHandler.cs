@@ -26,7 +26,7 @@ public class AuthenicationHandler
     public string GetDefault()
     {
         //WIP
-        return string.Empty;
+        return MauiProgram.PublicAddress;
     }
 
 
@@ -54,12 +54,12 @@ public class AuthenicationHandler
 
         try
         {
-            ContractService contractService = new ContractService(provider, current.ContractAddress, abi, "");
+            ContractService contractService = new ContractService(provider, current.ContractAddress, abi, MauiProgram.PublicAddress);
             var result = default(decimal);
             if (isCoin)
-                await contractService.GetAccountBalance(network);
+                result = await contractService.GetAccountBalance(network);
             else
-                await contractService.CheckUserBalanceForContract(MauiProgram.PublicAddress);
+                result = await contractService.CheckUserBalanceForContract(MauiProgram.PublicAddress);
        
             current.UserBalance = result;
             return current;

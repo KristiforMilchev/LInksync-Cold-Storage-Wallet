@@ -129,6 +129,17 @@ public static class MauiProgram
             AuthenicationHandler handler = new AuthenicationHandler();
             var wallet = handler.UnlockWallet(Pass);
             PublicAddress = wallet.Address;
+            if(PublicAddress == null)
+            {
+
+                MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                {
+                    Cmd = "Login",
+                    Password = Pass,
+                    PrivateKey = "3"
+                }));
+                IsLogged = false;
+            }
             Debug.WriteLine(PublicAddress);
             PK = string.Empty;
         }

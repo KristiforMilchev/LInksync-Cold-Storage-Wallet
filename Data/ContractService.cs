@@ -10,6 +10,7 @@ using SYNCWallet;
 using SYNCWallet.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -55,15 +56,23 @@ namespace NFTLock.Data
 
         public async Task<decimal> GetAccountBalance(int network)
         {
-            var publicKey = MauiProgram.PublicAddress;
-            var web3 = new Nethereum.Web3.Web3("https://ropsten.infura.io/myInfura");
-            var balance = await web3.Eth.GetBalance.SendRequestAsync(publicKey);
-            var etherAmount = Web3.Convert.FromWei(balance.Value);
+            try
+            {
+                var publicKey = MauiProgram.PublicAddress;
+                var web3 = new Nethereum.Web3.Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+                var balance = await web3.Eth.GetBalance.SendRequestAsync(publicKey);
+                var etherAmount = Web3.Convert.FromWei(balance.Value);
 
-            Console.WriteLine(web3);
-            Console.WriteLine("Get txCount " + etherAmount);
-            Console.ReadLine();
-            return etherAmount;
+                Console.WriteLine(web3);
+                Console.WriteLine("Get txCount " + etherAmount);
+                Console.ReadLine();
+                return etherAmount;
+            }
+            catch (Exception e )
+            {
+                Debug.WriteLine(e);
+                return 0;
+            }
         }
 
         public async Task<decimal> CheckUserBalanceForContract(string ownerAddress)
@@ -123,14 +132,8 @@ namespace NFTLock.Data
         {
 
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "request");
-            HttpResponseMessage response = await client.GetAsync($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
- 
 
-            // response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            var listedTokenData = JsonConvert.DeserializeObject<List<ListedToken>>(responseBody);
+            var listedTokenData = await GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
 
@@ -178,18 +181,34 @@ namespace NFTLock.Data
                     break;
             }
 
-            listedTokenData.ForEach(async x =>
-            {
-                HttpResponseMessage response = await client.GetAsync($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{x.name}/token.json");
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var listedTokenData = JsonConvert.DeserializeObject<Token>(responseBody);
-                tokens.Add(listedTokenData);
-
-            });
-           
+            tokens = await GetListedTokens(listedTokenData, tokens);
 
             return tokens;
+        }
+
+        private static async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens)
+        {
+            foreach(var token in listedTokenData)
+            {
+                var currentToken = await GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                tokens.Add(currentToken);
+            }
+
+            return tokens;
+        }
+
+        private static async Task<T> GetRequest<T>(string url)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "request");
+            HttpResponseMessage response = await client.GetAsync(url);
+
+
+            // response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
+
+            return listedTokenData;
         }
     }
 }
