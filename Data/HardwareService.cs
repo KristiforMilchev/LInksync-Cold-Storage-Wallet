@@ -13,12 +13,13 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using System.Security.Cryptography;
 using SYNCWallet.Models;
-
+ 
 namespace NFTLock.Data
 {
     internal class HardwareService
     {
 
+        
         public void Lock()
         {
             MauiProgram.WriteState("1");
@@ -99,16 +100,35 @@ namespace NFTLock.Data
             List<Word> words = new List<Word>();
             bytes.ToList().ForEach(x =>
             {
-               var word = seeePhrase.Words.FirstOrDefault(y => y.Id == x);
-                if(word != null)
+                string yourByteString = Convert.ToString(x, 2).PadLeft(8, '0');
+                var cByte = Convert.ToByte(yourByteString, 2);
+
+
+ 
+                words.Add(new Word
                 {
-                    word.Index = i;
-                    words.Add(word);
-                }
+                    Name = yourByteString,
+                    Index = i,
+                });
                 i++; 
                
             });
             return words;
+        }
+
+        public string GeneratePrivateKey(List<string> data)
+        {
+            byte[] bytes = new byte[data.Count+1];
+            var i = 0;
+            data.ForEach(x =>
+            {
+                var cByte = Convert.ToByte(x, 2);
+                bytes[i] = cByte;
+                i++;
+            });
+
+            var pk = bytes.ToHex();
+            return pk;
         }
 
         public string Encrypt(string data, string password)
