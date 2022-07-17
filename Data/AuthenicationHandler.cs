@@ -45,33 +45,7 @@ public class AuthenicationHandler
          return await ContractService.GetNetworkTokens(networkId);
         
     }
-
-    public async Task<TokenContract> GetUserTokenBalance(int network, TokenContract current, bool isCoin)
-    {
-        var provider = "https://data-seed-prebsc-1-s1.binance.org:8545/";
-
-        var abi = MauiProgram.ContractABI;
-
-        try
-        {
-            ContractService contractService = new ContractService(provider, current.ContractAddress, abi, MauiProgram.PublicAddress);
-            var result = default(decimal);
-            if (isCoin)
-                result = await contractService.GetAccountBalance(network);
-            else
-                result = await contractService.CheckUserBalanceForContract(MauiProgram.PublicAddress);
-       
-            current.UserBalance = result;
-            return current;
-        }
-        catch (Exception e)
-        {
-
-            Console.WriteLine(e);
-            return null;
-        }
-
-    }
+ 
 }
 
 

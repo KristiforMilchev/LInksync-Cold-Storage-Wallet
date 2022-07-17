@@ -13,5 +13,6 @@ namespace SYNCWallet.Models
         public decimal Decimals { get; set; }
         public string ContractAddress { get; set; }
         public decimal UserBalance { get; set; }
+        public decimal Price { get; set; }
     }
 }
