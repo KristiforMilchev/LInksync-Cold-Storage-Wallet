@@ -113,12 +113,11 @@
                                             var contract = default(TokenContract);
                                             if (token.Contracts != null && token.Contracts.Count > 0)
                                             {
-                                                contract = token.Contracts.FirstOrDefault(x => 
-                                                x.Network == 1);
+                                                contract = token.Contracts.FirstOrDefault();
                                             }
                                             <tr>
                                                 <td style="width:50px;">
-                                                    <img src="@token.Logo" />
+                                                    <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
                                                 </td>
                                                 <td>
                                                     <h6 class="font-weight-medium mb-0">@token.Name</h6>
@@ -133,14 +132,25 @@
                                                         @contract.UserBalance
 
                                                     </td>
-                                                    <td><span class="badge bg-success px-2 py-1">@contract.UserBalance / @Tokens.FirstOrDefault(x=>x.IsChainCoin).Contracts.FirstOrDefault().UserBalance</span></td>
+                                                    <td>
+                                                        <span class="badge bg-success px-2 py-1">    
+                                                            @if (contract.Price == null)
+                                                            {
+                                                                @: "--"
+                                                            }
+                                                            else
+                                                            {
+                                                                @contract.Price
+                                                            }
+                                                        </span>
+                                                    </td>
                                                 }
                                                 else
                                                 {
                                                     <td>
-                                                        0
+                                                       --
                                                     </td>
-                                                    <td><span class="badge bg-success px-2 py-1">$ 0</span></td>
+                                                    <td><span class="badge bg-success px-2 py-1">$ --</span></td>
                                                 }
 
                                             </tr>
@@ -188,37 +198,12 @@
     protected override async Task OnInitializedAsync()
     {
         TokenName = "SYNC";
-
         Authenication = new AuthenicationHandler();
-        var tokens = await Authenication.GetSupportedTokens(1);
-        Tokens = new List<Token>();
         WalletAddress = Authenication.GetDefault();
-        //Load Tokens and user balance.
-        foreach(var x in tokens)
-        {
-            var current = x.Contracts;
-            var newToken = x;
-            newToken.Contracts = new List<TokenContract>();
-            var newList = new TokenContract();
-            if(current != null)
-            {
-                foreach(var y in current)
-                {
-                    var getUserDetails = await Authenication.GetUserTokenBalance(1, y, x.IsChainCoin);
-                    newToken.Contracts.Add(getUserDetails);
-                }
-            }
-            else
-            {
-                var getUserDetails = await Authenication.GetUserTokenBalance(1, new TokenContract
-                {
-                    ContractAddress = "dawd"
-                }, x.IsChainCoin);
-                newToken.Contracts.Add(getUserDetails);
-            }
-         
-            Tokens.Add(newToken);
-        }
+
+        Tokens = await Authenication.GetSupportedTokens(1); //Get All tokens and their balance
+      
+    
     }
 
 }  

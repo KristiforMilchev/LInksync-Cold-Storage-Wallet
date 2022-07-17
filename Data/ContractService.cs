@@ -54,7 +54,7 @@ namespace NFTLock.Data
             public BigInteger _mintAmount { get; set; }
         }
 
-        public async Task<decimal> GetAccountBalance(int network)
+        public static async Task<decimal> GetAccountBalance(int network)
         {
             try
             {
@@ -75,16 +75,17 @@ namespace NFTLock.Data
             }
         }
 
-        public async Task<decimal> CheckUserBalanceForContract(string ownerAddress)
+        public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract)
         {
  
             var balanceOfFunctionMessage = new BalanceOf()
             {
                 Owner = ownerAddress,
             };
+            var web3 = new Nethereum.Web3.Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
 
             var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
-            var balance = await balanceHandler.QueryAsync<BigInteger>(Contract, balanceOfFunctionMessage);
+            var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
             return int.Parse(balance.ToString());
         }
 
@@ -164,23 +165,31 @@ namespace NFTLock.Data
                     {
                         Symbol = "ETH",
                         Name = "ETH",
-                        Logo = "/images/tokenLogos/eth.png",
-                        IsChainCoin = true
-                    });
+                        Logo = "/images/tokenLogos/eth.jpg",
+                        IsChainCoin = true,
+                        Contracts = new List<TokenContract>
+                        {
+                            new TokenContract
+                            {
+                                ContractAddress = "",
+                                UserBalance = await GetAccountBalance(networkId)
+                            }
+                        }
+                    }); ;
                     break;
                 case 4:
                     tokens.Add(new Token
                     {
                         Symbol = "ETH",
                         Name = "ETH",
-                        Logo = "/images/tokenLogos/eth.png",
+                        Logo = "/images/tokenLogos/eth.jpg",
                         IsChainCoin = true
                     });
                     break;
                 default:
                     break;
             }
-
+ 
             tokens = await GetListedTokens(listedTokenData, tokens);
 
             return tokens;
@@ -191,6 +200,15 @@ namespace NFTLock.Data
             foreach(var token in listedTokenData)
             {
                 var currentToken = await GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                var contracts = new List<TokenContract>();
+
+                foreach (var getContract in currentToken.Contracts)
+                {
+                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress);
+                    contracts.Add(getContract);
+                }
+                currentToken.Contracts = contracts;
+
                 tokens.Add(currentToken);
             }
 
@@ -207,7 +225,7 @@ namespace NFTLock.Data
             // response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
             var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
-
+            
             return listedTokenData;
         }
     }

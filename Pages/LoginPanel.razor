@@ -72,7 +72,7 @@
     // Specify what you want to happen when the Elapsed event is raised.
     private  void OnTimedEvent(object source, ElapsedEventArgs e)
     {
-        if (MauiProgram.IsLogged)
+        if (MauiProgram.IsLogged && !string.IsNullOrEmpty(MauiProgram.PublicAddress))
         {
             if(aTimer != null)
             {
