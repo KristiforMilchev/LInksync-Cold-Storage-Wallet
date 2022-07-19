@@ -12,6 +12,12 @@ namespace SYNCWallet.Models
         public int Id { get; set; }
         public int Chainid { get; set; }
         public string Endpoint { get; set; }
+        public string Factory { get; set; }
+        public string Name { get; set; }
+        public string TokenSylmbol { get; set; }
+        public string CurrencyAddress { get; set; }
+        public string PairCurrency { get; set; }
 
+        
     }
 }
