@@ -1,0 +1,38 @@
+[
+  {
+    "IsProduction": false,
+    "Id": 1,
+    "Chainid": 4,
+    "Endpoint": "https://rinkeby.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e"
+  },
+  {
+    "IsProduction": true,
+    "Id": 1,
+    "Chainid": 1,
+    "Endpoint": "https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e"
+  },
+  {
+    "IsProduction": true,
+    "Id": 2,
+    "Chainid": 56,
+    "Endpoint": "https://bsc-dataseed1.ninicoin.io"
+  },
+  {
+    "IsProduction": false,
+    "Id": 2,
+    "Chainid": 97,
+    "Endpoint": "https://data-seed-prebsc-1-s1.binance.org:8545"
+  },
+  {
+    "IsProduction": true,
+    "Id": 3,
+    "Chainid": 137,
+    "Endpoint": "https://polygon-rpc.com"
+  },
+  {
+    "IsProduction": false,
+    "Id": 3,
+    "Chainid": 80001,
+    "Endpoint": "https://matic-mumbai.chainstacklabs.com"
+  }
+]

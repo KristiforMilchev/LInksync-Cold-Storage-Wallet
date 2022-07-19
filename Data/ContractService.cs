@@ -1,6 +1,8 @@
 ﻿ using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
+using Nethereum.JsonRpc.WebSocketStreamingClient;
+using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
@@ -12,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Numerics;
 using System.Reflection;
 using System.Text;
@@ -133,7 +136,7 @@ namespace NFTLock.Data
         {
 
 
-
+            GetTokenPrice();
             var listedTokenData = await GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
@@ -227,6 +230,80 @@ namespace NFTLock.Data
             var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
             
             return listedTokenData;
+        }
+
+        [Event("Sync")]
+        class PairSyncEventDTO : IEventDTO
+        {
+            [Parameter("uint112", "reserve0")]
+            public virtual BigInteger Reserve0 { get; set; }
+
+            [Parameter("uint112", "reserve1", 2)]
+            public virtual BigInteger Reserve1 { get; set; }
+        }
+
+
+        public partial class GetPairFunction : GetPairFunctionBase { }
+
+        [Function("getPair", "address")]
+        public class GetPairFunctionBase : FunctionMessage
+        {
+            [Parameter("address", "tokenA", 1)]
+            public virtual string TokenA { get; set; }
+            [Parameter("address", "tokenB", 2)]
+            public virtual string TokenB { get; set; }
+        }
+        
+
+        private static async void GetTokenPrice()
+        {
+
+            string uniSwapFactoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            var web3 = new Web3("https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e");
+
+
+            string daiAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
+            string wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+
+            var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
+                .QueryAsync<string>(uniSwapFactoryAddress,
+                    new GetPairFunction() { TokenA = daiAddress, TokenB = wethAddress });
+
+            var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
+             
+            using (var client = new StreamingWebSocketClient("wss://mainnet.infura.io/ws/v3/24e067d0dc7847f78b5a99a82f1cc38e"))
+            {
+                var subscription = new EthLogsObservableSubscription(client);
+                subscription.GetSubscriptionDataResponsesAsObservable().
+                             Subscribe(log =>
+                             {
+                                 try
+                                 {
+                                     EventLog<PairSyncEventDTO> decoded = Event<PairSyncEventDTO>.DecodeEvent(log);
+                                     if (decoded != null)
+                                     {
+                                         decimal reserve0 = Web3.Convert.FromWei(decoded.Event.Reserve0);
+                                         decimal reserve1 = Web3.Convert.FromWei(decoded.Event.Reserve1);
+                                         Debug.WriteLine($@"Price={reserve0 / reserve1}");
+                                     }
+                                     else Debug.WriteLine(@"Found not standard transfer log");
+                                 }
+                                 catch (Exception ex)
+                                 {
+                                     Debug.WriteLine(@"Log Address: " + log.Address + @" is not a standard transfer log:", ex.Message);
+                                 }
+                             });
+
+                await client.StartAsync();
+                subscription.GetSubscribeResponseAsObservable().Subscribe(id => Debug.WriteLine($"Subscribed with id: {id}"));
+                await subscription.SubscribeAsync(filter);
+
+                // run for a minute before unsubscribing
+                await Task.Delay(TimeSpan.FromMinutes(1));
+
+                await subscription.UnsubscribeAsync();
+            }
         }
     }
 }

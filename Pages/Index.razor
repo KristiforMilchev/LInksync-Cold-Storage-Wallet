@@ -6,80 +6,23 @@
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+ 
 
 
-<div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
-    <ol class="carousel-indicators">
-        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true"></li>
-        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="1" class=""></li>
-        <li data-bs-target="#carouselExampleDark" data-bs-slide-to="2" class=""></li>
-    </ol>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <div class="row">
-                <img src="/payphone.svg" width="222.24pt" height="224.48pt">
+<div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
+    <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+        <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
+            <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
+
             </div>
-            <div class="row">
+            <div class="row" style="margin-top: 50px;">
                 <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
-                    DISCOVER
+                    Connect ATmega328 compatable device.
                 </h2>
-            </div>
-            <div class="row">
-                <p style="font-size:18pt; text-align:center;padding:50px;">
-                    Creating your default account on Binance Smart Chain
-                </p>
-                <p style="text-align:center">
-                    @Address
-                </p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <div class="row">
-                <img src="/card.svg" width="222.24pt" height="224.48pt">
-
-            </div>
-            <div class="row">
-                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
-                    New Lock Discovered
-                </h2>
-            </div>
-            <div class="row">
-                <p style="font-size:18pt; text-align:center;padding:50px">
-                    We are setting the lock up, please mint a key for the lock on the next page.
-                </p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <div class="row">
-                <img src="/box.svg" width="222.24pt" height="224.48pt">
-
-            </div>
-            <div class="row">
-                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
-                    ENJOY
-                </h2>
-            </div>
-            <div class="row">
-                <p style="font-size:18pt; text-align:center;padding:50px;">
-                    Please mint a key and wait for the confirmation.
-                </p>
-            </div>
-            <div class="row" style="margin:50px;">
-                <button  type="button" class="justify-content-center w-100 btn btn-rounded btn-info d-flex align-items-center">
-                    <span style="width:100%;">Get started </span>
-                    <i class="fas fa-arrow-alt-circle-right"></i>
-                </button>
             </div>
         </div>
     </div>
-    <a class="carousel-control-prev" href="#carouselExampleDark" role="button" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselExampleDark" role="button" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </a>
 </div>
 
 @code {
@@ -123,21 +66,20 @@
     {
         if (!string.IsNullOrEmpty(port))
         {
-            if(aTimer != null)
-            {
-                aTimer.Stop();
-                aTimer.Dispose();
-            }
+
 
             var configStatus = MauiProgram.CheckConfigured();
             //var walletData = hardwareService.CreateAccount();
 
             if (configStatus)
             {
+
+                KillTimer();
                 NavigationManager.NavigateTo("LoginPanel");
             }
             else
             {
+                KillTimer();
                 NavigationManager.NavigateTo("Create");
 
             }
@@ -145,6 +87,16 @@
         else
         {
             CheckConnection = CheckConnection.AddMinutes(1);
+        }
+    }
+
+
+    private void KillTimer()
+    {
+        if (aTimer != null)
+        {
+            aTimer.Stop();
+            aTimer.Dispose();
         }
     }
 }
