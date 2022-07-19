@@ -136,62 +136,36 @@ namespace NFTLock.Data
         {
 
 
-            GetTokenPrice();
             var listedTokenData = await GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
 
 
 
-            switch (networkId)
+
+            var getNetworkData = MauiProgram.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == MauiProgram.IsDevelopment);
+
+            if(getNetworkData != null)
             {
-                case 97:
-                    tokens.Add(new Token
-                    {
-                        Symbol = "BNB",
-                        Name = "BNB",
-                        Logo = "/images/tokenLogos/bsc.png",
-                        IsChainCoin = true
-                    });
-                    break;
-                case 56:
-                    tokens.Add(new Token
-                    {
-                        Symbol = "BNB",
-                        Name = "BNB",
-                        Logo = "/images/tokenLogos/bsc.png",
-                        IsChainCoin = true
-                    });
-                    break;
-                case 1:
-                    tokens.Add(new Token
-                    {
-                        Symbol = "ETH",
-                        Name = "ETH",
-                        Logo = "/images/tokenLogos/eth.jpg",
-                        IsChainCoin = true,
-                        Contracts = new List<TokenContract>
+                tokens.Add(new Token
+                {
+                    Symbol = getNetworkData.TokenSylmbol,
+                    Name = getNetworkData.Name,
+                    Logo = "/images/tokenLogos/eth.jpg",
+                    IsChainCoin = true,
+                    Contracts = new List<TokenContract>
                         {
                             new TokenContract
                             {
-                                ContractAddress = "",
-                                UserBalance = await GetAccountBalance(networkId)
+                                ContractAddress = getNetworkData.CurrencyAddress,
+                                UserBalance = await GetAccountBalance(networkId),
+                                Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint)
                             }
                         }
-                    }); ;
-                    break;
-                case 4:
-                    tokens.Add(new Token
-                    {
-                        Symbol = "ETH",
-                        Name = "ETH",
-                        Logo = "/images/tokenLogos/eth.jpg",
-                        IsChainCoin = true
-                    });
-                    break;
-                default:
-                    break;
+                });
             }
+
+          
  
             tokens = await GetListedTokens(listedTokenData, tokens);
 
@@ -208,6 +182,7 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress);
+
                     contracts.Add(getContract);
                 }
                 currentToken.Contracts = contracts;
@@ -255,24 +230,23 @@ namespace NFTLock.Data
         }
         
 
-        private static async void GetTokenPrice()
+        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string pairCurrency, string endpoint)
         {
 
-            string uniSwapFactoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+            var result = default(decimal);
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-            var web3 = new Web3("https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e");
+            var web3 = new Web3(endpoint);
 
-
-            string daiAddress = "0x6b175474e89094c44da98b954eedeac495271d0f";
-            string wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+            var wss = endpoint.Replace("https://", "");
+        
 
             var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
-                .QueryAsync<string>(uniSwapFactoryAddress,
-                    new GetPairFunction() { TokenA = daiAddress, TokenB = wethAddress });
+                .QueryAsync<string>(factory,
+                    new GetPairFunction() { TokenA = pairCurrency, TokenB = baseCurrency });
 
             var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
              
-            using (var client = new StreamingWebSocketClient("wss://mainnet.infura.io/ws/v3/24e067d0dc7847f78b5a99a82f1cc38e"))
+            using (var client = new StreamingWebSocketClient($"wss://{wss}"))
             {
                 var subscription = new EthLogsObservableSubscription(client);
                 subscription.GetSubscriptionDataResponsesAsObservable().
@@ -286,6 +260,7 @@ namespace NFTLock.Data
                                          decimal reserve0 = Web3.Convert.FromWei(decoded.Event.Reserve0);
                                          decimal reserve1 = Web3.Convert.FromWei(decoded.Event.Reserve1);
                                          Debug.WriteLine($@"Price={reserve0 / reserve1}");
+                                         result = reserve0 / reserve1;
                                      }
                                      else Debug.WriteLine(@"Found not standard transfer log");
                                  }
@@ -304,6 +279,13 @@ namespace NFTLock.Data
 
                 await subscription.UnsubscribeAsync();
             }
+
+            while(result == default(decimal))
+            {
+
+            }
+
+            return result;
         }
     }
 }

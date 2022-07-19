@@ -3,36 +3,66 @@
     "IsProduction": false,
     "Id": 1,
     "Chainid": 4,
-    "Endpoint": "https://rinkeby.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e"
+    "Endpoint": "https://rinkeby.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e",
+    "Factory": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "Name": "ETH",
+    "TokenSylmbol": "ETH",
+    "CurrencyAddress": "0x8babbb98678facc7342735486c851abd7a0d17ca",
+    "PairCurrency": "0x8a9424745056Eb399FD19a0EC26A14316684e274"
   },
   {
     "IsProduction": true,
     "Id": 1,
     "Chainid": 1,
-    "Endpoint": "https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e"
+    "Endpoint": "https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e",
+    "Factory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    "Name": "ETH",
+    "TokenSylmbol": "ETH",
+    "CurrencyAddress": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "PairCurrency": "0x6b175474e89094c44da98b954eedeac495271d0f"
   },
   {
     "IsProduction": true,
     "Id": 2,
     "Chainid": 56,
-    "Endpoint": "https://bsc-dataseed1.ninicoin.io"
+    "Endpoint": "https://bsc-dataseed1.ninicoin.io",
+    "Factory": "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
+    "Name": "Binance Smart Chain",
+    "TokenSylmbol": "BNB",
+    "CurrencyAddress": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    "PairCurrency": "0x55d398326f99059fF775485246999027B3197955"
   },
   {
     "IsProduction": false,
     "Id": 2,
     "Chainid": 97,
-    "Endpoint": "https://data-seed-prebsc-1-s1.binance.org:8545"
+    "Endpoint": "https://data-seed-prebsc-1-s1.binance.org:8545",
+    "Factory": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "Name": "Binance Smart Chain",
+    "TokenSylmbol": "BNB",
+    "CurrencyAddress": "0xae13d989dac2f0debff460ac112a837c89baa7cd",
+    "PairCurrency": "0x7ef95a0fee0dd31b22626fa2e10ee6a223f8a684"
   },
   {
     "IsProduction": true,
     "Id": 3,
     "Chainid": 137,
-    "Endpoint": "https://polygon-rpc.com"
+    "Endpoint": "https://polygon-rpc.com",
+    "Factory": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+    "Name": "Polygon/ Matic",
+    "TokenSylmbol": "MATIC",
+    "CurrencyAddress": "0x0000000000000000000000000000000000001010",
+    "PairCurrency": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
   },
   {
     "IsProduction": false,
     "Id": 3,
     "Chainid": 80001,
-    "Endpoint": "https://matic-mumbai.chainstacklabs.com"
+    "Endpoint": "https://matic-mumbai.chainstacklabs.com",
+    "Factory": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "Name": "Polygon/ Matic",
+    "TokenSylmbol": "MATIC",
+    "CurrencyAddress": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+    "PairCurrency": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
   }
 ]

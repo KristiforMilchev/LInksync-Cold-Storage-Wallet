@@ -11,15 +11,9 @@ namespace SYNCWallet.Services.Implementation
     internal class Utilities
     {
 
-        public List<NetworkSettings> SetupNetworks()
+        public async Task<List<NetworkSettings>> SetupNetworks()
         {
-
-            var currentToken = await GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
-
-            return new List<NetworkSettings> { 
-            
-            };
-           
+            return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
         }
 
 
@@ -36,5 +30,6 @@ namespace SYNCWallet.Services.Implementation
 
             return listedTokenData;
         }
+
     }
 }
