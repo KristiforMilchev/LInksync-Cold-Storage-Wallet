@@ -160,7 +160,7 @@ namespace NFTLock.Data
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(networkId, getNetworkData.Endpoint),
-                                Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
+                               // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
                         }
                 });
@@ -168,12 +168,12 @@ namespace NFTLock.Data
 
           
  
-            tokens = await GetListedTokens(listedTokenData, tokens);
+            tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
 
             return tokens;
         }
 
-        private static async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens)
+        private static async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
         {
             foreach(var token in listedTokenData)
             {
@@ -183,7 +183,7 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress);
-
+                    getContract.Price = await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS);
                     contracts.Add(getContract);
                 }
                 currentToken.Contracts = contracts;
@@ -231,59 +231,23 @@ namespace NFTLock.Data
         }
         
 
-        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string pairCurrency, string endpoint, string ws)
+        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string ws)
         {
             try
             {
                 var result = default(decimal);
-                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-                var web3 = new Web3(endpoint);
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("X-API-Key", "0pEwf8PIgFMnSTgRV7UcAd1nn8lRUmmXoDoMqg8LpbIP2Aj0pvs9jWnkwZ93EoNp");
+                var url = $"https://deep-index.moralis.io/api/v2/erc20/{baseCurrency}/price?chain={ws}&exchange={factory}";
+                HttpResponseMessage response = await client.GetAsync(url);
 
-                var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
-                    .QueryAsync<string>(factory,
-                        new GetPairFunction() { TokenA = pairCurrency, TokenB = baseCurrency });
+                // response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var listedTokenData = JsonConvert.DeserializeObject<MoralisToken>(responseBody);
 
-                var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
-                using (var client = new StreamingWebSocketClient(ws))
-                {
-                    var subscription = new EthLogsObservableSubscription(client);
-                    subscription.GetSubscriptionDataResponsesAsObservable().
-                                 Subscribe(log =>
-                                 {
-                                     try
-                                     {
-                                         EventLog<PairSyncEventDTO> decoded = Event<PairSyncEventDTO>.DecodeEvent(log);
-                                         if (decoded != null)
-                                         {
-                                             decimal reserve0 = Web3.Convert.FromWei(decoded.Event.Reserve0);
-                                             decimal reserve1 = Web3.Convert.FromWei(decoded.Event.Reserve1);
-                                             Debug.WriteLine($@"Price={reserve0 / reserve1}");
-                                             result = reserve0 / reserve1;
-                                         }
-                                         else Debug.WriteLine(@"Found not standard transfer log");
-                                     }
-                                     catch (Exception ex)
-                                     {
-                                         Debug.WriteLine(@"Log Address: " + log.Address + @" is not a standard transfer log:", ex.Message);
-                                     }
-                                 });
+               
 
-                    await client.StartAsync();
-                    subscription.GetSubscribeResponseAsObservable().Subscribe(id => Debug.WriteLine($"Subscribed with id: {id}"));
-                    await subscription.SubscribeAsync(filter);
-
-                    // run for a minute before unsubscribing
-                    await Task.Delay(TimeSpan.FromMinutes(1));
-
-                    await subscription.UnsubscribeAsync();
-                }
-
-                while (result == default(decimal))
-                {
-
-                }
-
-                return result;
+                return listedTokenData.usdPrice;
             }
             catch (Exception e)
             {

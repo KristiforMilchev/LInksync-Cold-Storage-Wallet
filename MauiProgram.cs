@@ -27,7 +27,7 @@ public static class MauiProgram
 
     public static async Task<MauiApp> CreateMauiApp()
     {
-        IsDevelopment = false;
+        IsDevelopment = true;
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
