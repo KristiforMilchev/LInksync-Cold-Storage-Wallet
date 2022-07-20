@@ -55,7 +55,7 @@
     System.Timers.Timer aTimer { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        if (MauiProgram.IsLogged)
+        if (MauiProgram.IsLogged && !string.IsNullOrEmpty(MauiProgram.PublicAddress))
         {
             NavigationManager.NavigateTo("/Landing");
 
