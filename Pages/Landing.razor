@@ -4,6 +4,7 @@
 @using SYNCWallet.Models
 @using System.Security.Cryptography
 @using System.Text
+@using SYNCWallet.Services.Implementation
  
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -197,11 +198,15 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        //Load Network Settings
+        var utils = new Utilities();
+        MauiProgram.NetworkSettings = await utils.SetupNetworks();
+
         TokenName = "SYNC";
         Authenication = new AuthenicationHandler();
         WalletAddress = Authenication.GetDefault();
 
-        Tokens = await Authenication.GetSupportedTokens(1); //Get All tokens and their balance
+        Tokens = await Authenication.GetSupportedTokens(2); //Get All tokens and their balance
         
     
     }
