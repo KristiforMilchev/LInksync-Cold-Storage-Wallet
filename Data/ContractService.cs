@@ -57,18 +57,19 @@ namespace NFTLock.Data
             public BigInteger _mintAmount { get; set; }
         }
 
-        public static async Task<decimal> GetAccountBalance(int network)
+        public static async Task<decimal> GetAccountBalance(int network, string endpoint)
         {
             try
             {
                 var publicKey = MauiProgram.PublicAddress;
-                var web3 = new Nethereum.Web3.Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+                var web3 = new Nethereum.Web3.Web3(endpoint);
                 var balance = await web3.Eth.GetBalance.SendRequestAsync(publicKey);
                 var etherAmount = Web3.Convert.FromWei(balance.Value);
 
                 Console.WriteLine(web3);
                 Console.WriteLine("Get txCount " + etherAmount);
                 Console.ReadLine();
+
                 return etherAmount;
             }
             catch (Exception e )
@@ -158,7 +159,7 @@ namespace NFTLock.Data
                             new TokenContract
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
-                                UserBalance = await GetAccountBalance(networkId),
+                                UserBalance = await GetAccountBalance(networkId, getNetworkData.Endpoint),
                                 Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint)
                             }
                         }
@@ -232,60 +233,68 @@ namespace NFTLock.Data
 
         private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string pairCurrency, string endpoint)
         {
-
-            var result = default(decimal);
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-            var web3 = new Web3(endpoint);
-
-            var wss = endpoint.Replace("https://", "");
-        
-
-            var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
-                .QueryAsync<string>(factory,
-                    new GetPairFunction() { TokenA = pairCurrency, TokenB = baseCurrency });
-
-            var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
-             
-            using (var client = new StreamingWebSocketClient($"wss://{wss}"))
+            try
             {
-                var subscription = new EthLogsObservableSubscription(client);
-                subscription.GetSubscriptionDataResponsesAsObservable().
-                             Subscribe(log =>
-                             {
-                                 try
+                var result = default(decimal);
+                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                var web3 = new Web3(endpoint);
+
+                var wss = endpoint.Replace("https://", "wss://");
+
+
+                var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
+                    .QueryAsync<string>(factory,
+                        new GetPairFunction() { TokenA = pairCurrency, TokenB = baseCurrency });
+
+                var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
+                using (var client = new StreamingWebSocketClient(wss))
+                {
+                    var subscription = new EthLogsObservableSubscription(client);
+                    subscription.GetSubscriptionDataResponsesAsObservable().
+                                 Subscribe(log =>
                                  {
-                                     EventLog<PairSyncEventDTO> decoded = Event<PairSyncEventDTO>.DecodeEvent(log);
-                                     if (decoded != null)
+                                     try
                                      {
-                                         decimal reserve0 = Web3.Convert.FromWei(decoded.Event.Reserve0);
-                                         decimal reserve1 = Web3.Convert.FromWei(decoded.Event.Reserve1);
-                                         Debug.WriteLine($@"Price={reserve0 / reserve1}");
-                                         result = reserve0 / reserve1;
+                                         EventLog<PairSyncEventDTO> decoded = Event<PairSyncEventDTO>.DecodeEvent(log);
+                                         if (decoded != null)
+                                         {
+                                             decimal reserve0 = Web3.Convert.FromWei(decoded.Event.Reserve0);
+                                             decimal reserve1 = Web3.Convert.FromWei(decoded.Event.Reserve1);
+                                             Debug.WriteLine($@"Price={reserve0 / reserve1}");
+                                             result = reserve0 / reserve1;
+                                         }
+                                         else Debug.WriteLine(@"Found not standard transfer log");
                                      }
-                                     else Debug.WriteLine(@"Found not standard transfer log");
-                                 }
-                                 catch (Exception ex)
-                                 {
-                                     Debug.WriteLine(@"Log Address: " + log.Address + @" is not a standard transfer log:", ex.Message);
-                                 }
-                             });
+                                     catch (Exception ex)
+                                     {
+                                         Debug.WriteLine(@"Log Address: " + log.Address + @" is not a standard transfer log:", ex.Message);
+                                     }
+                                 });
 
-                await client.StartAsync();
-                subscription.GetSubscribeResponseAsObservable().Subscribe(id => Debug.WriteLine($"Subscribed with id: {id}"));
-                await subscription.SubscribeAsync(filter);
+                    await client.StartAsync();
+                    subscription.GetSubscribeResponseAsObservable().Subscribe(id => Debug.WriteLine($"Subscribed with id: {id}"));
+                    await subscription.SubscribeAsync(filter);
 
-                // run for a minute before unsubscribing
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                    // run for a minute before unsubscribing
+                    await Task.Delay(TimeSpan.FromMinutes(1));
 
-                await subscription.UnsubscribeAsync();
+                    await subscription.UnsubscribeAsync();
+                }
+
+                while (result == default(decimal))
+                {
+
+                }
+
+                return result;
             }
-
-            while(result == default(decimal))
+            catch (Exception e)
             {
 
+                Debug.WriteLine(e);
+                return 0;
             }
-
-            return result;
+           
         }
     }
 }

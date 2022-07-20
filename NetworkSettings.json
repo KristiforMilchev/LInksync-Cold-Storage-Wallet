@@ -37,7 +37,7 @@
     "Id": 2,
     "Chainid": 97,
     "Endpoint": "https://data-seed-prebsc-1-s1.binance.org:8545",
-    "Factory": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "Factory": "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     "Name": "Binance Smart Chain",
     "TokenSylmbol": "BNB",
     "CurrencyAddress": "0xae13d989dac2f0debff460ac112a837c89baa7cd",
