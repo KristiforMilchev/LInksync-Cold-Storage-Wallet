@@ -117,10 +117,10 @@
                                                 contract = token.Contracts.FirstOrDefault();
                                             }
                                             <tr>
-                                                <td style="width:50px;">
+                                                <td style="width:50px; text-align:left">
                                                     <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
                                                 </td>
-                                                <td>
+                                                <td style="text-align:left;">
                                                     <h6 class="font-weight-medium mb-0">@token.Name</h6>
                                                     <small class="text-muted">
                                                         @token.Symbol
@@ -128,30 +128,28 @@
                                                 </td>
                                                 @if (contract != null)
                                                 {
-                                                    <td>
+                                                    <td class="text-muted">
 
                                                         @contract.UserBalance
 
                                                     </td>
-                                                    <td>
-                                                        <span class="badge bg-success px-2 py-1">    
-                                                            @if (contract.Price == null)
-                                                            {
-                                                                @: "--"
-                                                            }
-                                                            else
-                                                            {
-                                                                @contract.Price
-                                                            }
-                                                        </span>
+                                                    <td class="text-muted">
+                                                        @if (contract.Price == null)
+                                                        {
+                                                            @: "--"
+                                                        }
+                                                        else
+                                                        {
+                                                            @contract.Price
+                                                        }
                                                     </td>
                                                 }
                                                 else
                                                 {
-                                                    <td>
+                                                    <td class="text-muted">
                                                        --
                                                     </td>
-                                                    <td><span class="badge bg-success px-2 py-1">$ --</span></td>
+                                                    <td class="text-muted">$ -- </td>
                                                 }
 
                                             </tr>

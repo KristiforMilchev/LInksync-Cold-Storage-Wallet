@@ -97,7 +97,7 @@ namespace NFTLock.Data
         public static decimal ConvertToDex(BigInteger blockNumber, int decimals)
         {
             var convert = decimal.Parse(blockNumber.ToString());
-            var num =  convert * (decimal) Math.Pow(10, decimals);
+            var num =  convert / (decimal) Math.Pow(10, decimals);
             return num;
         }
 
@@ -160,7 +160,7 @@ namespace NFTLock.Data
                 {
                     Symbol = getNetworkData.TokenSylmbol,
                     Name = getNetworkData.Name,
-                    Logo = "/images/tokenLogos/eth.jpg",
+                    Logo = "/images/tokenLogos/bsc.png",
                     IsChainCoin = true,
                     Contracts = new List<TokenContract>
                         {
