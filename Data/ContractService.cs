@@ -160,7 +160,7 @@ namespace NFTLock.Data
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(networkId, getNetworkData.Endpoint),
-                                Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint)
+                                Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
                         }
                 });
@@ -231,7 +231,7 @@ namespace NFTLock.Data
         }
         
 
-        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string pairCurrency, string endpoint)
+        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string pairCurrency, string endpoint, string ws)
         {
             try
             {
@@ -239,15 +239,12 @@ namespace NFTLock.Data
                 System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
                 var web3 = new Web3(endpoint);
 
-                var wss = endpoint.Replace("https://", "wss://");
-
-
                 var pairContractAddress = await web3.Eth.GetContractQueryHandler<GetPairFunction>()
                     .QueryAsync<string>(factory,
                         new GetPairFunction() { TokenA = pairCurrency, TokenB = baseCurrency });
 
                 var filter = web3.Eth.GetEvent<PairSyncEventDTO>(pairContractAddress).CreateFilterInput();
-                using (var client = new StreamingWebSocketClient(wss))
+                using (var client = new StreamingWebSocketClient(ws))
                 {
                     var subscription = new EthLogsObservableSubscription(client);
                     subscription.GetSubscriptionDataResponsesAsObservable().
