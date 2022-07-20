@@ -79,18 +79,26 @@ namespace NFTLock.Data
             }
         }
 
-        public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract)
+        public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract, string endpoint, int decimals)
         {
  
             var balanceOfFunctionMessage = new BalanceOf()
             {
                 Owner = ownerAddress,
             };
-            var web3 = new Nethereum.Web3.Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+            var web3 = new Nethereum.Web3.Web3(endpoint);
 
             var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
             var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
-            return int.Parse(balance.ToString());
+            var convert = ConvertToDex(balance, decimals);
+            return convert;
+        }
+
+        public static decimal ConvertToDex(BigInteger blockNumber, int decimals)
+        {
+            var convert = decimal.Parse(blockNumber.ToString());
+            var num =  convert * (decimal) Math.Pow(10, decimals);
+            return num;
         }
 
         public async Task<string> MintNftKey()
@@ -182,8 +190,13 @@ namespace NFTLock.Data
 
                 foreach (var getContract in currentToken.Contracts)
                 {
-                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress);
-                    getContract.Price = await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS);
+                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+
+                    if (getContract.UserBalance > 0)
+                        getContract.Price = getContract.UserBalance * await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS);
+                    else
+                        getContract.Price = 0;
+
                     contracts.Add(getContract);
                 }
                 currentToken.Contracts = contracts;
