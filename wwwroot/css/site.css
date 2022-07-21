@@ -878,3 +878,11 @@
     outline: 0;
     box-shadow: unset,transparent;
 }
+
+.v-middle td, .v-middle th {
+    vertical-align: middle;
+    text-align: center;
+}
+.table > :not(:last-child) > :last-child > * {
+     text-align: center;
+}

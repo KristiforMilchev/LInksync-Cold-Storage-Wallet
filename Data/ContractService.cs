@@ -97,7 +97,7 @@ namespace NFTLock.Data
         public static decimal ConvertToDex(BigInteger blockNumber, int decimals)
         {
             var convert = decimal.Parse(blockNumber.ToString());
-            var num =  convert * (decimal) Math.Pow(10, decimals);
+            var num =  convert / (decimal) Math.Pow(10, decimals);
             return num;
         }
 
@@ -160,7 +160,7 @@ namespace NFTLock.Data
                 {
                     Symbol = getNetworkData.TokenSylmbol,
                     Name = getNetworkData.Name,
-                    Logo = "/images/tokenLogos/eth.jpg",
+                    Logo = "/images/tokenLogos/bsc.png",
                     IsChainCoin = true,
                     Contracts = new List<TokenContract>
                         {
@@ -191,11 +191,22 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-
+                    var getTokenPrice = await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS); 
+                    
                     if (getContract.UserBalance > 0)
-                        getContract.Price = getContract.UserBalance * await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS);
+                    {
+                        getContract.Price = getContract.UserBalance * getTokenPrice;
+                        getContract.CurrentPrice = getTokenPrice;
+                    }  
                     else
+                    {
                         getContract.Price = 0;
+                        getContract.CurrentPrice = getTokenPrice;
+                    }
+
+                    (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                    getContract.MarketCap = tokenMarketData.mCap;
+                    getContract.CirculatingSupply = tokenMarketData.circulating;
 
                     contracts.Add(getContract);
                 }
@@ -205,6 +216,19 @@ namespace NFTLock.Data
             }
 
             return tokens;
+        }
+
+        private static async Task<(decimal, decimal)> GetContractMarketCap(decimal supply, decimal getTokenPrice, string contractAddress, string endpoint, int decimals)
+        {
+            var getBurned1 = await CheckUserBalanceForContract("0x000000000000000000000000000000000000dead", contractAddress, endpoint, decimals);
+            var getBurned2 = await CheckUserBalanceForContract("0x0000000000000000000000000000000000000001", contractAddress, endpoint, decimals);
+
+            var circulatingSupply = supply - (getBurned1 + getBurned2);
+
+            var mCap = circulatingSupply * getTokenPrice;
+
+
+            return (circulatingSupply, mCap);
         }
 
         private static async Task<T> GetRequest<T>(string url)
