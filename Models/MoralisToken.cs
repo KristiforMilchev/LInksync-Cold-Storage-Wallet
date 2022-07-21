@@ -21,5 +21,4 @@ namespace SYNCWallet.Models
         public string exchangeAddress { get; set; }
         public string exchangeName { get; set; }
     }
-
 }

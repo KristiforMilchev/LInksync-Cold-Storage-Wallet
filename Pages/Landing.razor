@@ -54,7 +54,13 @@
                         <!-- Row -->
                         <div class="row">
                             <div class="col-8">
-                                <span class="display-6">0.00000458 <i class="ti-angle-down fs-3 text-danger"></i></span>
+                                <span class="display-6">
+                                    @if(SelectedToken != null)
+                                    {
+                                        @SelectedToken.CurrentPrice
+                                    }
+                                    <i class="ti-angle-down fs-3 text-danger"></i>
+                                </span>
                                 <h6>Price</h6>
                             </div>
 
@@ -69,7 +75,13 @@
                         <!-- Row -->
                         <div class="row">
                             <div class="col-8">
-                                <span class="display-6">500 000 <i class="ti-angle-up fs-3 text-success"></i></span>
+                                <span class="display-6">
+                                    @if (SelectedToken != null)
+                                    {
+                                        @SelectedToken.CirculatingSupply
+                                    }
+                                    <i class="ti-angle-up fs-3 text-success"></i>    
+                                </span>
                                 <h6>Circulating Supply</h6>
                             </div>
                         </div>
@@ -83,7 +95,13 @@
                         <!-- Row -->
                         <div class="row">
                             <div class="col-8">
-                                <span class="display-6">$ 6 000 000 <i class="ti-angle-up fs-3 text-success"></i></span>
+                                <span class="display-6">
+                                    @if(SelectedToken != null)
+                                    {
+                                        @SelectedToken.CurrentPrice
+                                    }                                
+                                    <i class="ti-angle-up fs-3 text-success"></i>
+                                </span>
                                 <h6>Market Cap</h6>
                             </div>
                         </div>
@@ -116,7 +134,7 @@
                                             {
                                                 contract = token.Contracts.FirstOrDefault();
                                             }
-                                            <tr>
+                                            <tr @onclick="(() => SelectToken(contract))">
                                                 <td style="width:50px; text-align:left">
                                                     <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
                                                 </td>
@@ -182,6 +200,9 @@
     List<Token> Tokens { get; set; }
     public string WalletAddress { get; set; }
 
+    public TokenContract SelectedToken { get; set; }
+
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (!IsChartRendered)
@@ -205,8 +226,17 @@
         WalletAddress = Authenication.GetDefault();
 
         Tokens = await Authenication.GetSupportedTokens(2); //Get All tokens and their balance
-        
-    
+
+
     }
 
+
+    private void SelectToken(TokenContract contract)
+    {
+        InvokeAsync(() =>
+        {
+            SelectedToken = contract;
+            StateHasChanged();
+        });
+    }
 }  
