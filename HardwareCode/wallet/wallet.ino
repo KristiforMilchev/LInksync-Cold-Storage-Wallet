@@ -123,9 +123,13 @@ void loop() {
                 char Buf[readPK.length()+ 1];
                 readPK.toCharArray(Buf, readPK.length()+ 1);
                 String test =  String(Buf);
+                Serial.println();
                 Serial.println("#SR:" ); 
+                Serial.println();
                 Serial.println(Buf); 
+                Serial.println();
                 Serial.println("#SR:"); 
+                Serial.println();
 
                 EEPROM.write(0, 3); //PK Part 1 
 

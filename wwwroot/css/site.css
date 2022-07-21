@@ -886,3 +886,7 @@
 .table > :not(:last-child) > :last-child > * {
      text-align: center;
 }
+
+html body .display-6 {
+    font-size: 1.5rem;
+}
