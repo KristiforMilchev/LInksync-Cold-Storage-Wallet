@@ -57,7 +57,8 @@
                                 <span class="display-6">
                                     @if(SelectedToken != null)
                                     {
-                                        @SelectedToken.CurrentPrice
+                                        @SelectedContract.CurrentPrice
+                                        <span style="margin-left:5px;">@SelectedToken.Symbol</span>
                                     }
                                     <i class="ti-angle-down fs-3 text-danger"></i>
                                 </span>
@@ -78,7 +79,8 @@
                                 <span class="display-6">
                                     @if (SelectedToken != null)
                                     {
-                                        @SelectedToken.CirculatingSupply
+                                        @SelectedContract.CirculatingSupply.ToString("#.##")
+                                        <span style="margin-left:5px;">@SelectedToken.Symbol </span>
                                     }
                                     <i class="ti-angle-up fs-3 text-success"></i>    
                                 </span>
@@ -98,7 +100,7 @@
                                 <span class="display-6">
                                     @if(SelectedToken != null)
                                     {
-                                        @SelectedToken.CurrentPrice
+                                        @SelectedContract.MarketCap.ToString("C2")
                                     }                                
                                     <i class="ti-angle-up fs-3 text-success"></i>
                                 </span>
@@ -134,7 +136,7 @@
                                             {
                                                 contract = token.Contracts.FirstOrDefault();
                                             }
-                                            <tr @onclick="(() => SelectToken(contract))">
+                                            <tr @onclick="(() => SelectToken(contract, token))">
                                                 <td style="width:50px; text-align:left">
                                                     <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
                                                 </td>
@@ -200,7 +202,8 @@
     List<Token> Tokens { get; set; }
     public string WalletAddress { get; set; }
 
-    public TokenContract SelectedToken { get; set; }
+    public Token SelectedToken{ get; set; }
+    public TokenContract SelectedContract { get; set; }
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -231,11 +234,12 @@
     }
 
 
-    private void SelectToken(TokenContract contract)
+    private void SelectToken(TokenContract contract, Token token)
     {
         InvokeAsync(() =>
         {
-            SelectedToken = contract;
+            SelectedToken = token;
+            SelectedContract = contract;
             StateHasChanged();
         });
     }
