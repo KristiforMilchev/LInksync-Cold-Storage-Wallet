@@ -101,6 +101,13 @@ namespace NFTLock.Data
             return num;
         }
 
+
+        public static decimal ConvertToDexDecimal(decimal number, int decimals)
+        {
+            var num = number / (decimal)Math.Pow(10, decimals);
+            return num;
+        }
+
         public async Task<string> MintNftKey()
         {
             var addFactFunction = contract.GetFunction("mint");
@@ -191,8 +198,9 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    var getTokenPrice = await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS); 
-                    
+                    var getTokenPrice = await CheckContractPrice("0x1c06a11e94B5502d011Bbd240F23d1c147561DAb", getContract.ContractAddress, "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 9, 18, network.Endpoint);
+                    // await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS); 
+
                     if (getContract.UserBalance > 0)
                     {
                         getContract.Price = getContract.UserBalance * getTokenPrice;
@@ -217,6 +225,15 @@ namespace NFTLock.Data
 
             return tokens;
         }
+
+        public static async Task<decimal> CheckContractPrice(string contractAddress, string token, string pair, int tokenDecimals, int pairDecimals, string endpoint)
+        {
+            var tokenAmount = await CheckUserBalanceForContract(contractAddress, token, endpoint, tokenDecimals);
+            var pairAmount = await CheckUserBalanceForContract(contractAddress, pair, endpoint, pairDecimals);
+
+            return ConvertToDexDecimal((pairAmount / tokenAmount), (pairDecimals - tokenDecimals));
+        }
+
 
         private static async Task<(decimal, decimal)> GetContractMarketCap(decimal supply, decimal getTokenPrice, string contractAddress, string endpoint, int decimals)
         {
