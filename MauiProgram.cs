@@ -81,7 +81,7 @@ public static class MauiProgram
     {
         _serialPort = new SerialPort();
         _serialPort.PortName = ComPort;
-        _serialPort.BaudRate = 9600;
+        _serialPort.BaudRate = 115200;
         _serialPort.Open();
         var currentCMD = string.Empty;
         Task.Run(() =>
@@ -106,9 +106,17 @@ public static class MauiProgram
                 if (a.Contains("#SR:"))
                 {
                     var getPK = a.Split("#SR:");
-                    PK = getPK[1].Replace(Environment.NewLine, "");
-                    IsLogged = true;
-                    SetPublic();
+                    if(getPK.Length > 1)
+                    {
+                        var tpm = getPK[1].Replace(Environment.NewLine, ""); 
+                        if(getPK.Length > 2)
+                        {
+                            tpm += getPK[2].Replace(Environment.NewLine, "");
+                        }
+                        PK = tpm;
+                        IsLogged = true;
+                        SetPublic();
+                    }
 
                 }
                 else
