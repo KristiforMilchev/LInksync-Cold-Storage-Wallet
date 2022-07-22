@@ -23,7 +23,7 @@
 //EPPROM ebcryption storage structure 
  
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   //ClearMemmory();
  }
 
@@ -40,8 +40,7 @@ String Pass = "";
 // the loop function runs over and over again forever
 void loop() {
 
-   String receiveVal;     
-
+   String receiveVal;    
     if(Serial.available() > 0)  
     {          
         receiveVal = Serial.readString();
@@ -116,20 +115,22 @@ void loop() {
             String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
             String readPK = readStringFromEEPROM(41); //Get PK from EEPROM 
  
-  
+            Serial.flush();
+
 
             if(Pass.equals(readPw))
             {
                 char Buf[readPK.length()+ 1];
                 readPK.toCharArray(Buf, readPK.length()+ 1);
                 String test =  String(Buf);
-                Serial.println();
-                Serial.println("#SR:" ); 
-                Serial.println();
-                Serial.println(Buf); 
-                Serial.println();
-                Serial.println("#SR:"); 
-                Serial.println();
+                Serial.flush();
+ 
+                Serial.println("#SR:" );
+            
+                Serial.flush();
+                Serial.println(readPK); 
+               
+           
 
                 EEPROM.write(0, 3); //PK Part 1 
 
