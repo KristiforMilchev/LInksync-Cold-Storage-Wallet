@@ -94,6 +94,7 @@ namespace NFTLock.Data
             return convert;
         }
 
+       
         public static decimal ConvertToDex(BigInteger blockNumber, int decimals)
         {
             var convert = decimal.Parse(blockNumber.ToString());
@@ -226,12 +227,14 @@ namespace NFTLock.Data
             return tokens;
         }
 
+
+        //Calculates the price between the Liquidity pool of the main token X and the wrapped pair Y
         public static async Task<decimal> CheckContractPrice(string contractAddress, string token, string pair, int tokenDecimals, int pairDecimals, string endpoint)
         {
-            var tokenAmount = await CheckUserBalanceForContract(contractAddress, token, endpoint, tokenDecimals);
-            var pairAmount = await CheckUserBalanceForContract(contractAddress, pair, endpoint, pairDecimals);
-
-            return ConvertToDexDecimal((pairAmount / tokenAmount), (pairDecimals - tokenDecimals));
+            var x = await CheckUserBalanceForContract(contractAddress, token, endpoint, tokenDecimals); // Main token 
+            var y = await CheckUserBalanceForContract(contractAddress, pair, endpoint, pairDecimals); //Pair Token
+            var pairOverToken = (y / x); // We devide the pair over the main token to get the current token price in the native token pair.
+            return pairOverToken; 
         }
 
 
