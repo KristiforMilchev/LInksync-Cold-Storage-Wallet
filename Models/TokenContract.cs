@@ -18,5 +18,8 @@ namespace SYNCWallet.Models
         public decimal CirculatingSupply { get; set; }
         public decimal MarketCap { get; set; }
         public decimal CurrentPrice { get; set; }
+        public string MainLiquidityPool { get; set; }
+        public string PairTokenAddress { get; set; }
+        public string ListedExchangeRouter { get; set; }
     }
 }
