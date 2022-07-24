@@ -256,7 +256,7 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, 9, 18, network.Endpoint);
+                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
                     var pairs = new string[2];
                     pairs[0] = getContract.PairTokenAddress;
                     pairs[1] = network.PairCurrency;

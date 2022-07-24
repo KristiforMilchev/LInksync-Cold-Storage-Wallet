@@ -39,5 +39,21 @@ namespace SYNCWallet.Services.Implementation
            
         }
 
+        /// <summary>
+        /// Truncates a price to the 14th decimal to make it more user friendly
+        /// Example 0.00000000275465465654 ->  0.0000000027
+        /// Parameters:
+        /// <param name="price">The input amount to be truncated, returns the same value if it's less then 14 characters.</param>
+        /// </summary>
+        public static string TruncateDecimals(decimal price)
+        {
+            var data = price.ToString();
+
+            //Return the same value in case it's less than expected.
+            if (data.Length < 14)
+                return data; 
+
+            return data.Substring(0, 14); //Truncate to the 14th character
+        }
     }
 }

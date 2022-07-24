@@ -17,7 +17,14 @@
  <NavMenu>
 
  </NavMenu>
-
+ <style>
+     .flexInnerRow{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+     }
+ </style>
  
 
 <div class="container">
@@ -57,8 +64,8 @@
                                 <span class="display-6">
                                     @if(SelectedToken != null)
                                     {
-                                        @SelectedContract.CurrentPrice
-                                        <span style="margin-left:5px;">@SelectedToken.Symbol</span>
+                                        @Utilities.TruncateDecimals(SelectedContract.CurrentPrice)
+                                         <span style="margin-left:5px;">@SelectedToken.Symbol</span>
                                     }
                                     <i class="ti-angle-down fs-3 text-danger"></i>
                                 </span>
@@ -115,74 +122,154 @@
         <div class="row" style="margin:0;">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: scroll;">
+             
+                 
+                        <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: scroll;">
 
-                        <div class="table-responsive">
-                            <table class="table stylish-table v-middle mb-0 no-wrap">
-                                <thead>
-                                    <tr>
-                                        <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
-                                        <th class="border-0 text-muted fw-normal">Amount</th>
-                                        <th class="border-0 text-muted fw-normal">Price USDT</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(Tokens != null)
-                                    {
-                                        @foreach (var token in Tokens)
+                            <div class="table-responsive" style="display:@HideTokenList" id="TokenList">
+                                <table class="table stylish-table v-middle mb-0 no-wrap">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
+                                            <th class="border-0 text-muted fw-normal">Amount</th>
+                                            <th class="border-0 text-muted fw-normal">Price USDT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if(Tokens != null)
                                         {
-                                            var contract = default(TokenContract);
-                                            if (token.Contracts != null && token.Contracts.Count > 0)
+                                            @foreach (var token in Tokens)
                                             {
-                                                contract = token.Contracts.FirstOrDefault();
+                                                var contract = default(TokenContract);
+                                                if (token.Contracts != null && token.Contracts.Count > 0)
+                                                {
+                                                    contract = token.Contracts.FirstOrDefault();
+                                                }
+                                                <tr @onclick="(() => SelectToken(contract, token))">
+                                                    <td style="width:50px; text-align:left">
+                                                        <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
+                                                    </td>
+                                                    <td style="text-align:left;">
+                                                        <h6 class="font-weight-medium mb-0">@token.Name</h6>
+                                                        <small class="text-muted">
+                                                            @token.Symbol
+                                                        </small>
+                                                    </td>
+                                                    @if (contract != null)
+                                                    {
+                                                        <td class="text-muted">
+
+                                                            @contract.UserBalance.ToString("#.##")
+
+                                                        </td>
+                                                        <td class="text-muted">
+                                                            @if (contract.Price == null)
+                                                            {
+                                                                @: "--"
+                                                            }
+                                                            else
+                                                            {
+                                                               @Utilities.TruncateDecimals(contract.Price)
+                                                            }
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-muted">
+                                                           --
+                                                        </td>
+                                                        <td class="text-muted">$ -- </td>
+                                                    }
+
+                                                </tr>
+
+
                                             }
-                                            <tr @onclick="(() => SelectToken(contract, token))">
-                                                <td style="width:50px; text-align:left">
-                                                    <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
-                                                </td>
-                                                <td style="text-align:left;">
-                                                    <h6 class="font-weight-medium mb-0">@token.Name</h6>
-                                                    <small class="text-muted">
-                                                        @token.Symbol
-                                                    </small>
-                                                </td>
-                                                @if (contract != null)
-                                                {
-                                                    <td class="text-muted">
-
-                                                        @contract.UserBalance
-
-                                                    </td>
-                                                    <td class="text-muted">
-                                                        @if (contract.Price == null)
-                                                        {
-                                                            @: "--"
-                                                        }
-                                                        else
-                                                        {
-                                                            @contract.Price
-                                                        }
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="text-muted">
-                                                       --
-                                                    </td>
-                                                    <td class="text-muted">$ -- </td>
-                                                }
-
-                                            </tr>
-
-
                                         }
-                                    }
                                    
                                     
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                            @if (SelectedToken != null)
+                            {
+                                <div id="SendToken" style="display:@HideTokenSend">
+                                    <div class="row" style="    margin-top: 25px;">
+                                    <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
+                                    </div>
+                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                                            display: flex;
+                                                                            flex-direction: row;
+                                                                            justify-content: center;">
+                                        
+                                    </div>
+                                    <div  class="flexInnerRow">
+                                        <h2 style="text-align:center">
+                                            @SelectedToken.Name
+                                        </h2>
+                                        
+                                    </div>
+                                    <div class="flexInnerRow">
+
+                                        <p style="width: 602px;">
+                                            @SelectedToken.Description
+                                        </p>
+                                    </div>
+                                    <div class="flexInnerRow">
+                                            <div style="display: flex;flex-direction: row;width: 510px;justify-content: space-evenly;">
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
+                                                    <i class="fab fa-telegram"></i>
+                                                </button>
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
+                                                    <i class="mdi mdi-web"></i>
+                                                </button>
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
+                                                    <i class="mdi mdi-medium"></i>
+                                                </button>
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
+                                                    <i class="mdi mdi-discord"></i>
+                                                </button>
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
+                                                    <i class="mdi mdi-reddit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="flexInnerRow">
+                                            <div class="form-floating distanceTop" style="    width: 600px;">
+                                                <input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+                                                <label>
+                                                    <i class="me-2 icon-wallet"></i>
+                                                    <span class="border-start border-danger ps-3 ">Wallet Address</span>
+                                                </label>
+
+                                            </div>
+                                        </div>
+                                        <div class="flexInnerRow">
+                                            <div class="form-floating distanceTop form-group" style="    width: 600px;     display: flex;">
+                                                <input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+                                                <button @onclick="SetMaxAmount" class="btn btn-outline-secondary" type="button">MAX</button>
+                    
+                                                <label  >
+                                                    <i class="me-2 mdi mdi-lock"></i>
+                                                    <span class="border-start border-danger ps-3 ">Amount</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                                        display: flex;
+                                                                        flex-direction: row;
+                                                                        justify-content: center;">
+                                            <button style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                                <i class="icon-wallet"></i>
+                                                Send
+                                            </button>
+                                        </div>
+                            
+                                </div>
+                            }
                         </div>
-                    </div>
+                  
                 </div>
             </div>
         </div>
@@ -204,6 +291,8 @@
 
     public Token SelectedToken{ get; set; }
     public TokenContract SelectedContract { get; set; }
+    private string HideTokenList{ get; set; }
+    private string HideTokenSend{ get; set; }
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -220,6 +309,8 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        HideTokenList = "";
+        HideTokenSend = "none";
         //Load Network Settings
         var utils = new Utilities();
         MauiProgram.NetworkSettings = await utils.SetupNetworks();
@@ -240,6 +331,25 @@
         {
             SelectedToken = token;
             SelectedContract = contract;
+            HideTokenList = "none";
+            HideTokenSend = "";
+
+            StateHasChanged();
+        });
+    }
+
+    private void SetMaxAmount()
+    {
+
+    }
+
+    private void CancelSend()
+    {
+        InvokeAsync(() =>
+        {
+            HideTokenList = "";
+            HideTokenSend = "none";
+
             StateHasChanged();
         });
     }
