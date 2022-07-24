@@ -256,13 +256,11 @@ namespace NFTLock.Data
                 foreach (var getContract in currentToken.Contracts)
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    var getTokenPrice = await CheckContractPrice("0x1c06a11e94B5502d011Bbd240F23d1c147561DAb", getContract.ContractAddress, "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 9, 18, network.Endpoint);
+                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, 9, 18, network.Endpoint);
                     var pairs = new string[2];
-                    pairs[0] = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-                    pairs[1] = "0x55d398326f99059fF775485246999027B3197955";
-                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, "0x10ED43C718714eb63d5aA57B78B54704E256024E"); //Convert to USDT
-                    
-                    // await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS); 
+                    pairs[0] = getContract.PairTokenAddress;
+                    pairs[1] = network.PairCurrency;
+                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
 
                     if (getContract.UserBalance > 0)
                     {
