@@ -1,4 +1,5 @@
-﻿ using Nethereum.ABI.FunctionEncoding.Attributes;
+﻿using NBitcoin;
+using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
@@ -57,6 +58,20 @@ namespace NFTLock.Data
             public BigInteger _mintAmount { get; set; }
         }
 
+
+        [Function("getAmountsOut", "uint256[]")]
+        public class ConvertRate : FunctionMessage
+        {
+            [Parameter("uint256", "amountIn", 1)]
+            public BigInteger TokensToSell { get; set; }
+            
+            [Parameter("address[]", "path", 2)]
+            public string[] Addresses { get; set; }
+        }
+
+
+        
+        
         public static async Task<decimal> GetAccountBalance(int network, string endpoint)
         {
             try
@@ -78,6 +93,48 @@ namespace NFTLock.Data
                 return 0;
             }
         }
+
+
+
+        /// <summary>
+        /// This is a base method for a price converter, it's main purpose is to convert the input amount of tokens from the native token to USD
+        /// In order to perform the conversion it creates the call to the trading router taking the value of 1 of the pair token to USD 
+        /// Then multiply the tokens over the price of 1 Native token to USD
+        /// 
+        /// Example 1 BNB at the time of writing this method 262 USD if we input 0.00000000000032 bnb we will get a conversion rate of 0.00000000008384 USD
+        /// 
+        /// Parameters:
+        /// <param name="tokens">The input amount of tokens that has to be converted, example 0.0000000032 bnb to usd</param>
+        /// <param name="addresses">Array of contract addresses, first is the token that we are converting, second contract is in the currency that we are converting to.</param>
+        /// <param name="endpoint">Blockchain endpoint, https address of the Blockchain network </param>        
+        /// <param name="router">Public contract address of the router where we want to check the price.</param>
+        /// </summary>
+        public static async Task<decimal> ConvertTokenToUsd(decimal tokens, string[] addresses, string endpoint, string router)
+        {
+            try
+            {
+                var convertRateFunction = new ConvertRate
+                {
+                    TokensToSell = 1,
+                    Addresses = addresses
+                };
+
+                var web3 = new Nethereum.Web3.Web3(endpoint);
+
+                var balanceHandler = web3.Eth.GetContractQueryHandler<ConvertRate>();
+                
+                var balance = await balanceHandler.QueryAsync<List<BigInteger>>(router, convertRateFunction);
+                //var convert = ConvertToDex(balance, 18);
+                return tokens * (decimal)balance.ElementAt(1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return 0;
+            }
+         
+        }
+
 
         public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract, string endpoint, int decimals)
         {
@@ -200,6 +257,11 @@ namespace NFTLock.Data
                 {
                     getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
                     var getTokenPrice = await CheckContractPrice("0x1c06a11e94B5502d011Bbd240F23d1c147561DAb", getContract.ContractAddress, "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 9, 18, network.Endpoint);
+                    var pairs = new string[2];
+                    pairs[0] = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+                    pairs[1] = "0x55d398326f99059fF775485246999027B3197955";
+                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, "0x10ED43C718714eb63d5aA57B78B54704E256024E"); //Convert to USDT
+                    
                     // await GetTokenPrice(network.Factory, getContract.ContractAddress, network.WS); 
 
                     if (getContract.UserBalance > 0)
