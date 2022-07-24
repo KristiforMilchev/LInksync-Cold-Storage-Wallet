@@ -523,6 +523,19 @@
 			$("#pincode").show();
 			$("#confirm").hide();
 			$("#Preview").hide();
+		}
+
+		function ImportTokens() {
+            document.getElementById("ImportTokenSettings").style.setProperty("display", "");
+            document.getElementById("SetupNetworkPanel").style.setProperty("display", "none");
+			$("#SidebarMenu").click();
+		}
+
+
+		function ImportNewNetwork() {
+            document.getElementById("ImportTokenSettings").style.setProperty("display", "none");
+            document.getElementById("SetupNetworkPanel").style.setProperty("display", ""); 
+            $("#SidebarMenu").click();
         }
 	</script>
 

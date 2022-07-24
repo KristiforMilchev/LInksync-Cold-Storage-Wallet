@@ -28,10 +28,41 @@
  
 
 <div class="container">
-    <div class="row">
-        <p style="text-align:center;">
+    <div class="flexInnerRow">
+        <p style="margin:auto;">
             @MauiProgram.PublicAddress
         </p>
+        <div class="NetworkDropdown">
+            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
+                <i class="me-2 mdi mdi-access-point-network"></i>
+                <span id="network">BSC</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end user-dd animated flipInY">
+
+                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(56)">
+                    <i class="me-2 mdi mdi-access-point-network"></i>
+                    BSC
+                </a>
+
+                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(1)">
+                    <i class="me-2 mdi mdi-access-point-network"></i>
+                    ETH
+                </a>
+
+                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(137)">
+                    <i class="me-2 mdi mdi-access-point-network"></i>
+                    POLYGON
+                </a>
+
+            </div>
+            <img width="25" height="25" id="imgNetwork" src="/images/tokenLogos/bsc.png" style="margin-right:10px;">
+            <button class="btn btn-outline-secondary" @onclick="OpenNetworkImport" type="button">
+                  <i class="fas fa-cog"></i>
+                Network Settings
+
+            </button>
+ 
+        </div>
     </div>
     <!-- Row -->
     <div class="row">
@@ -127,13 +158,22 @@
                         <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: scroll;">
 
                             <div class="table-responsive" style="display:@HideTokenList" id="TokenList">
+
+                                <button class="btn btn-outline-secondary" @onclick="ToggleTokenImport" type="button">
+                                    <i class="fas fa-cog"></i>
+                                    Import Custom
+
+                                </button>
                                 <table class="table stylish-table v-middle mb-0 no-wrap">
+                                    
                                     <thead>
+                                
                                         <tr>
                                             <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
                                             <th class="border-0 text-muted fw-normal">Amount</th>
                                             <th class="border-0 text-muted fw-normal">Price USDT</th>
                                         </tr>
+
                                     </thead>
                                     <tbody>
                                         @if(Tokens != null)
@@ -352,5 +392,15 @@
 
             StateHasChanged();
         });
+    }
+
+    private async void ToggleTokenImport()
+    {
+        await JS.InvokeVoidAsync("ImportTokens");
+    }
+
+    private async void OpenNetworkImport()
+    {
+        await JS.InvokeVoidAsync("ImportNewNetwork");
     }
 }  
