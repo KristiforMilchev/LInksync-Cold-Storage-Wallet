@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
+using SYNCWallet.Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -210,7 +211,7 @@ namespace NFTLock.Data
         {
 
 
-            var listedTokenData = await GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+            var listedTokenData = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
 
@@ -239,49 +240,87 @@ namespace NFTLock.Data
                 });
             }
 
-          
- 
+
+            
+
             tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
 
+            if (!File.Exists($"{MauiProgram.DefaultPath}/LocalTokens.json"))
+                File.WriteAllText($"{MauiProgram.DefaultPath}/LocalTokens.json", "");
+
+            var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalTokens.json");
+
+            var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
+
+            if(tokenList != null)
+            {
+                //Filter only by selected network
+                tokenList = tokenList.Where(x => x.Contracts.Any(y => y.Network == networkId)).ToList();
+
+                foreach (var currentToken in tokenList)
+                {
+                    var current = currentToken;
+                    var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
+                    currentToken.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                }
+            }
+         
+
             return tokens;
+        }
+
+        private static async Task<decimal> GetImportedData(NetworkSettings network, TokenContract getContract)
+        {
+    
+            return await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
         }
 
         private static async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
         {
             foreach(var token in listedTokenData)
             {
-                var currentToken = await GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
                 var contracts = new List<TokenContract>();
-
+                var includeInList = false;
                 foreach (var getContract in currentToken.Contracts)
                 {
-                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
-                    var pairs = new string[2];
-                    pairs[0] = getContract.PairTokenAddress;
-                    pairs[1] = network.PairCurrency;
-                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
+                    if(getContract.Network == network.Id)
+                    {
+                        includeInList = true;
+                        getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                        var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
+                        var pairs = new string[2];
+                        pairs[0] = getContract.PairTokenAddress;
+                        pairs[1] = network.PairCurrency;
+                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
 
-                    if (getContract.UserBalance > 0)
-                    {
-                        getContract.Price = getContract.UserBalance * getTokenPrice;
-                        getContract.CurrentPrice = getTokenPrice;
-                    }  
-                    else
-                    {
-                        getContract.Price = 0;
-                        getContract.CurrentPrice = getTokenPrice;
+                        if (getContract.UserBalance > 0)
+                        {
+                            getContract.Price = getContract.UserBalance * getTokenPrice;
+                            getContract.CurrentPrice = getTokenPrice;
+                        }
+                        else
+                        {
+                            getContract.Price = 0;
+                            getContract.CurrentPrice = getTokenPrice;
+                        }
+
+                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                        getContract.MarketCap = tokenMarketData.mCap;
+                        getContract.CirculatingSupply = tokenMarketData.circulating;
+
+                        contracts.Add(getContract);
                     }
-
-                    (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    getContract.MarketCap = tokenMarketData.mCap;
-                    getContract.CirculatingSupply = tokenMarketData.circulating;
-
-                    contracts.Add(getContract);
+            
                 }
-                currentToken.Contracts = contracts;
 
-                tokens.Add(currentToken);
+                //Important only add to the list of contracts in case contract exists on the selected network.
+                if(includeInList)
+                {
+                    currentToken.Contracts = contracts;
+                    tokens.Add(currentToken);
+                }
+
             }
 
             return tokens;
@@ -311,19 +350,6 @@ namespace NFTLock.Data
             return (circulatingSupply, mCap);
         }
 
-        private static async Task<T> GetRequest<T>(string url)
-        {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "request");
-            HttpResponseMessage response = await client.GetAsync(url);
-
-
-            // response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
-            
-            return listedTokenData;
-        }
 
         [Event("Sync")]
         class PairSyncEventDTO : IEventDTO
@@ -348,31 +374,20 @@ namespace NFTLock.Data
         }
         
 
-        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string ws)
+        private async Task<string> ImportToken(string contractAddress,string pairToken, string endpoint, string factory)
         {
-            try
+            var balanceOfFunctionMessage = new GetPairFunctionBase()
             {
-                var result = default(decimal);
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("X-API-Key", "0pEwf8PIgFMnSTgRV7UcAd1nn8lRUmmXoDoMqg8LpbIP2Aj0pvs9jWnkwZ93EoNp");
-                var url = $"https://deep-index.moralis.io/api/v2/erc20/{baseCurrency}/price?chain={ws}&exchange={factory}";
-                HttpResponseMessage response = await client.GetAsync(url);
+                TokenA = contractAddress,
+                TokenB = pairToken
 
-                // response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var listedTokenData = JsonConvert.DeserializeObject<MoralisToken>(responseBody);
+            };
+            var web3 = new Nethereum.Web3.Web3(endpoint);
 
-               
+            var routerResolver = web3.Eth.GetContractQueryHandler<GetPairFunctionBase>();
+            var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
 
-                return listedTokenData.usdPrice;
-            }
-            catch (Exception e)
-            {
-
-                Debug.WriteLine(e);
-                return 0;
-            }
-           
+            return router;
         }
     }
 }
