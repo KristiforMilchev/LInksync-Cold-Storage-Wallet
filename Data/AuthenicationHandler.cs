@@ -40,7 +40,12 @@ public class AuthenicationHandler
 
         var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
-        if(!convertedNetworkList.Any(x=>x.Chainid == chainID))
+
+        //Create the collection in case it's empty
+        if (convertedNetworkList == null)
+            convertedNetworkList = new List<NetworkSettings>();
+
+        if (!convertedNetworkList.Any(x=>x.Chainid == chainID))
         {
             convertedNetworkList.Add(new NetworkSettings
             {
@@ -64,7 +69,11 @@ public class AuthenicationHandler
         var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalTokens.json");
 
         var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
-
+        
+        //Create the collection in case it's empty
+        if(tokenList == null)
+            tokenList = new List<Token>();
+        
         tokenList.Add(new Token
         {
             Symbol = symbol,

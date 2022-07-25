@@ -261,7 +261,24 @@ namespace NFTLock.Data
                 {
                     var current = currentToken;
                     var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
-                    currentToken.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                    current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                    var contract = current.Contracts.FirstOrDefault(x => x.Network == networkId).ContractAddress;
+
+
+                    if(!string.IsNullOrEmpty(getNetworkData.Factory))
+                    {
+                        var pairExists = await CheckExchangelisting(contract, getNetworkData.CurrencyAddress, getNetworkData.Endpoint, getNetworkData.Factory);
+                        var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+                        var pairs = new string[2];
+
+                        pairs[0] = getContract.PairTokenAddress;
+                        pairs[1] = getNetworkData.PairCurrency;
+                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
+                        current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
+                        current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
+                    }
+
+                    tokens.Add(current);
                 }
             }
          
@@ -374,7 +391,7 @@ namespace NFTLock.Data
         }
         
 
-        private async Task<string> ImportToken(string contractAddress,string pairToken, string endpoint, string factory)
+        private static async Task<string> CheckExchangelisting(string contractAddress,string pairToken, string endpoint, string factory)
         {
             var balanceOfFunctionMessage = new GetPairFunctionBase()
             {
