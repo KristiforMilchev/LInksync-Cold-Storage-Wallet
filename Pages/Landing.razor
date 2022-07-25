@@ -14,7 +14,7 @@
 <p id="submitTrigger" style="display:none" onclick="DataSubmitted">
 
 </p>
- <NavMenu>
+<NavMenu>
 
  </NavMenu>
  <style>
@@ -43,14 +43,17 @@
         <div class="NetworkDropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
                 <i class="me-2 mdi mdi-access-point-network"></i>
-                <span id="network">@SelectedNetwork.Name</span>
+                @if(SelectedNetwork != null)
+                {
+                    <span id="network">@SelectedNetwork.Name</span>
+                }
             </a>
             <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;"> 
                 @if (Networks != null)
                 {
                     @foreach (var network in Networks)
                     {
-                        <a class="dropdown-item" href="#" @onclick="(() => NetworkChanged(network))">
+                        <a class="dropdown-item"  @onclick="(() => NetworkChanged(network))">
                             <i class="me-2 mdi mdi-access-point-network"></i>
                             @network.Name
                         </a>
@@ -157,7 +160,7 @@
                 <div class="card">
              
                  
-                        <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: scroll;">
+                        <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: hidden;">
 
                             <div class="table-responsive" style="display:@HideTokenList" id="TokenList">
 
@@ -332,6 +335,7 @@
     private List<NetworkSettings> Networks { get; set; }
     public string WalletAddress { get; set; }
 
+
     public NetworkSettings SelectedNetwork { get; set; }
     public Token SelectedToken{ get; set; }
     public TokenContract SelectedContract { get; set; }
@@ -340,7 +344,7 @@
 
 
 
-      
+
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -361,14 +365,16 @@
         HideTokenSend = "none";
 
         TokenName = "SYNC";
+        Authenication = new AuthenicationHandler();
 
         //Load Network Settings
         var utils = new Utilities();
         MauiProgram.NetworkSettings = await utils.SetupNetworks();
-        Networks = MauiProgram.NetworkSettings;
+        Networks = MauiProgram.NetworkSettings.Where(x=> x.IsProduction == MauiProgram.IsDevelopment).ToList();
+        SelectedNetwork = Networks.FirstOrDefault();
         WalletAddress = Authenication.GetDefault();
-        DefaultToToken();
-      
+        Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+
     }
 
     private void NetworkChanged(NetworkSettings network)
@@ -383,12 +389,14 @@
 
     private async void DefaultToToken()
     {
-        Authenication = new AuthenicationHandler();
+        InvokeAsync( async () =>
+        {
+            Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+            StateHasChanged();
+        });
 
-        Tokens = await Authenication.GetSupportedTokens(2); //Get All tokens and their balance
 
-        SelectToken(Tokens.FirstOrDefault().Contracts.FirstOrDefault(), Tokens.FirstOrDefault());
-    }
+     }
 
     private void SelectToken(TokenContract contract, Token token)
     {
@@ -421,6 +429,8 @@
 
     private async void ToggleTokenImport()
     {
+
+
         await JS.InvokeVoidAsync("ImportTokens");
     }
 
@@ -428,5 +438,17 @@
     {
         await JS.InvokeVoidAsync("ImportNewNetwork");
     }
- 
+
+    public async void ImportNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
+    {
+        await JS.InvokeVoidAsync("ImportNewNetwork");
+        Authenication.SetupNetwork(networkName, networkSymbol, rpcUrl, chainID, blockExplorer);
+    }
+
+    public async void ImportToken(string contractAddress, string symbol, int delimiter)
+    {
+        await JS.InvokeVoidAsync("ImportTokens");
+        Authenication.ImportToken(contractAddress, symbol, delimiter, SelectedNetwork.Id);
+    }
+    
 }  

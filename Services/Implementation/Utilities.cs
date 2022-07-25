@@ -14,7 +14,20 @@ namespace SYNCWallet.Services.Implementation
 
         public async Task<List<NetworkSettings>> SetupNetworks()
         {
-            return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
+
+            if (!File.Exists($"{MauiProgram.DefaultPath}/LocalNetworks.json"))
+                return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
+            else
+            {
+                var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
+
+                var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalNetworks.json");
+                var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
+
+                whiteListedNetworks.AddRange(convertedNetworkList);
+                return whiteListedNetworks;
+            }
+       
         }
 
         public static async Task<T> GetRequest<T>(string url)

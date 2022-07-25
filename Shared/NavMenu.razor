@@ -1,4 +1,5 @@
 ﻿@using NFTLock.Data
+@using SYNCWallet.Pages
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
 
@@ -15,7 +16,7 @@
 		<div id="SetupNetworkPanel">
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@NetworkName" class="form-control inputStyle" placeholder="BSC Mainnet">
+					<input id="TokensToSend" type="text" @bind-value="NetworkName" class="form-control inputStyle" placeholder="BSC Mainnet">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Network Name</span>
@@ -25,7 +26,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@RPCUrl" class="form-control inputStyle" placeholder="https://bsc-dataseed1.ninicoin.io">
+					<input id="TokensToSend" type="text" @bind-value="RPCUrl" class="form-control inputStyle" placeholder="https://bsc-dataseed1.ninicoin.io">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">New RPC URL</span>
@@ -35,7 +36,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@ChainID" class="form-control inputStyle" placeholder="56">
+					<input id="TokensToSend" type="text" @bind-value="ChainID" class="form-control inputStyle" placeholder="56">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Chain ID</span>
@@ -45,7 +46,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@NetworkSymbol" class="form-control inputStyle" placeholder="BNB">
+					<input id="TokensToSend" type="text" @bind-value="NetworkSymbol" class="form-control inputStyle" placeholder="BNB">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Currency Symbol</span>
@@ -55,7 +56,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@BlockExplorer" class="form-control inputStyle" placeholder="https://bscscan.com/">
+					<input id="TokensToSend" type="text" @bind-value="BlockExplorer" class="form-control inputStyle" placeholder="https://bscscan.com/">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Block Explorer</span>
@@ -67,7 +68,7 @@
 								display: flex;
 								flex-direction: row;
 								justify-content: center;">
-				<button style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+				<button style="width: 300px;" @onclick="ImportNetwork"  type="button" class="btn waves-effect waves-light btn-rounded btn-info">
 					<i class="icon-wallet"></i>
 					Add Network
 				</button>
@@ -76,7 +77,7 @@
 		<div id="ImportTokenSettings" style="display:none;">
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@ContractAddress" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" @bind-value="ContractAddress" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Contract Address</span>
@@ -86,7 +87,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@Symbol" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" @bind-value="Symbol" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">SYMBOL</span>
@@ -96,7 +97,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" data-bind="@Decimals" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" @bind-value="Decimals" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Decimals</span>
@@ -108,7 +109,7 @@
 								display: flex;
 								flex-direction: row;
 								justify-content: center;">
-				<button style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+				<button style="width: 300px;"  type="button" class="btn waves-effect waves-light btn-rounded btn-info">
 					<i class="icon-wallet"></i>
 					Import Token
 				</button>
@@ -144,6 +145,18 @@
 		NavigationManager.NavigateTo(location);
 	}
 
-	 
+
+	private void ImportNetwork()
+	{
+		var landing = new Landing();
+		landing.ImportNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
+	}
+
+
+	private void ImportToken()
+	{
+		var landing = new Landing();
+		landing.ImportToken(ContractAddress, Symbol, Decimals);
+	}
 
 }
