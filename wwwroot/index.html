@@ -536,6 +536,14 @@
             document.getElementById("ImportTokenSettings").style.setProperty("display", "none");
             document.getElementById("SetupNetworkPanel").style.setProperty("display", ""); 
             $("#SidebarMenu").click();
+		}
+
+		function FixPosition() {
+			var transform = document.getElementById("dropdownNetworks").style.getPropertyValue("Transform");
+			document.getElementById("dropdownNetworks").style.setProperty("postion", "absolute !important");
+			document.getElementById("dropdownNetworks").style.setProperty("left", 0);
+            document.getElementById("dropdownNetworks").style.setProperty("top", 0);
+
         }
 	</script>
 

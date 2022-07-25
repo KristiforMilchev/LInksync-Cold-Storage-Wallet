@@ -24,6 +24,14 @@
         justify-content: center;
         padding: 10px;
      }
+
+     .dropdown-menu.show {
+        display: block;
+        position: absolute !important;
+        left: 68% !important;
+        top: 4% !important;
+        background: #282931;
+    }
  </style>
  
 
@@ -33,33 +41,27 @@
             @MauiProgram.PublicAddress
         </p>
         <div class="NetworkDropdown">
-            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
+            <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
                 <i class="me-2 mdi mdi-access-point-network"></i>
-                <span id="network">BSC</span>
+                <span id="network">@SelectedNetwork.Name</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-end user-dd animated flipInY">
-
-                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(56)">
-                    <i class="me-2 mdi mdi-access-point-network"></i>
-                    BSC
-                </a>
-
-                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(1)">
-                    <i class="me-2 mdi mdi-access-point-network"></i>
-                    ETH
-                </a>
-
-                <a class="dropdown-item" href="#" onclick="RequestChangeNetwork(137)">
-                    <i class="me-2 mdi mdi-access-point-network"></i>
-                    POLYGON
-                </a>
-
+            <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;"> 
+                @if (Networks != null)
+                {
+                    @foreach (var network in Networks)
+                    {
+                        <a class="dropdown-item" href="#" @onclick="(() => NetworkChanged(network))">
+                            <i class="me-2 mdi mdi-access-point-network"></i>
+                            @network.Name
+                        </a>
+                    }
+         
+                }
             </div>
-            <img width="25" height="25" id="imgNetwork" src="/images/tokenLogos/bsc.png" style="margin-right:10px;">
-            <button class="btn btn-outline-secondary" @onclick="OpenNetworkImport" type="button">
-                  <i class="fas fa-cog"></i>
-                Network Settings
 
+            <button class="btn btn-outline-secondary" @onclick="OpenNetworkImport" type="button">
+                <i class="fas fa-cog"></i>
+                Network Settings
             </button>
  
         </div>
@@ -327,12 +329,18 @@
     private bool IsChartRendered { get; set; }
     AuthenicationHandler Authenication { get; set; }
     List<Token> Tokens { get; set; }
+    private List<NetworkSettings> Networks { get; set; }
     public string WalletAddress { get; set; }
 
+    public NetworkSettings SelectedNetwork { get; set; }
     public Token SelectedToken{ get; set; }
     public TokenContract SelectedContract { get; set; }
     private string HideTokenList{ get; set; }
     private string HideTokenSend{ get; set; }
+
+
+
+      
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -351,19 +359,36 @@
     {
         HideTokenList = "";
         HideTokenSend = "none";
+
+        TokenName = "SYNC";
+
         //Load Network Settings
         var utils = new Utilities();
         MauiProgram.NetworkSettings = await utils.SetupNetworks();
-
-        TokenName = "SYNC";
-        Authenication = new AuthenicationHandler();
+        Networks = MauiProgram.NetworkSettings;
         WalletAddress = Authenication.GetDefault();
+        DefaultToToken();
+      
+    }
+
+    private void NetworkChanged(NetworkSettings network)
+    {
+        InvokeAsync(() =>{
+            SelectedNetwork = network;
+            DefaultToToken();
+            StateHasChanged();
+        });
+    }
+
+
+    private async void DefaultToToken()
+    {
+        Authenication = new AuthenicationHandler();
 
         Tokens = await Authenication.GetSupportedTokens(2); //Get All tokens and their balance
 
-
+        SelectToken(Tokens.FirstOrDefault().Contracts.FirstOrDefault(), Tokens.FirstOrDefault());
     }
-
 
     private void SelectToken(TokenContract contract, Token token)
     {
@@ -403,4 +428,5 @@
     {
         await JS.InvokeVoidAsync("ImportNewNetwork");
     }
+ 
 }  

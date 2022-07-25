@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
+using SYNCWallet.Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -210,7 +211,7 @@ namespace NFTLock.Data
         {
 
 
-            var listedTokenData = await GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+            var listedTokenData = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
 
@@ -250,7 +251,7 @@ namespace NFTLock.Data
         {
             foreach(var token in listedTokenData)
             {
-                var currentToken = await GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
                 var contracts = new List<TokenContract>();
 
                 foreach (var getContract in currentToken.Contracts)
@@ -311,19 +312,6 @@ namespace NFTLock.Data
             return (circulatingSupply, mCap);
         }
 
-        private static async Task<T> GetRequest<T>(string url)
-        {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "request");
-            HttpResponseMessage response = await client.GetAsync(url);
-
-
-            // response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
-            
-            return listedTokenData;
-        }
 
         [Event("Sync")]
         class PairSyncEventDTO : IEventDTO
@@ -348,31 +336,20 @@ namespace NFTLock.Data
         }
         
 
-        private async static Task<decimal> GetTokenPrice(string factory, string baseCurrency, string ws)
+        private async Task<string> ImportToken(string contractAddress,string pairToken, string endpoint, string factory)
         {
-            try
+            var balanceOfFunctionMessage = new GetPairFunctionBase()
             {
-                var result = default(decimal);
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Add("X-API-Key", "0pEwf8PIgFMnSTgRV7UcAd1nn8lRUmmXoDoMqg8LpbIP2Aj0pvs9jWnkwZ93EoNp");
-                var url = $"https://deep-index.moralis.io/api/v2/erc20/{baseCurrency}/price?chain={ws}&exchange={factory}";
-                HttpResponseMessage response = await client.GetAsync(url);
+                TokenA = contractAddress,
+                TokenB = pairToken
 
-                // response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var listedTokenData = JsonConvert.DeserializeObject<MoralisToken>(responseBody);
+            };
+            var web3 = new Nethereum.Web3.Web3(endpoint);
 
-               
+            var routerResolver = web3.Eth.GetContractQueryHandler<GetPairFunctionBase>();
+            var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
 
-                return listedTokenData.usdPrice;
-            }
-            catch (Exception e)
-            {
-
-                Debug.WriteLine(e);
-                return 0;
-            }
-           
+            return router;
         }
     }
 }

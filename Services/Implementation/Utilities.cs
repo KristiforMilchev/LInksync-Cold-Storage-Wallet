@@ -17,7 +17,7 @@ namespace SYNCWallet.Services.Implementation
             return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
         }
 
-        private static async Task<T> GetRequest<T>(string url)
+        public static async Task<T> GetRequest<T>(string url)
         {
             try
             {

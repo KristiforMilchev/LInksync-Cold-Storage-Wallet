@@ -15,7 +15,7 @@
 		<div id="SetupNetworkPanel">
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="BSC Mainnet">
+					<input id="TokensToSend" type="text" data-bind="@NetworkName" class="form-control inputStyle" placeholder="BSC Mainnet">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Network Name</span>
@@ -25,7 +25,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="https://bsc-dataseed1.ninicoin.io">
+					<input id="TokensToSend" type="text" data-bind="@RPCUrl" class="form-control inputStyle" placeholder="https://bsc-dataseed1.ninicoin.io">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">New RPC URL</span>
@@ -35,7 +35,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="56">
+					<input id="TokensToSend" type="text" data-bind="@ChainID" class="form-control inputStyle" placeholder="56">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Chain ID</span>
@@ -45,7 +45,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="BNB">
+					<input id="TokensToSend" type="text" data-bind="@NetworkSymbol" class="form-control inputStyle" placeholder="BNB">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Currency Symbol</span>
@@ -55,7 +55,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="https://bscscan.com/">
+					<input id="TokensToSend" type="text" data-bind="@BlockExplorer" class="form-control inputStyle" placeholder="https://bscscan.com/">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Block Explorer</span>
@@ -76,7 +76,7 @@
 		<div id="ImportTokenSettings" style="display:none;">
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" data-bind="@ContractAddress" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Contract Address</span>
@@ -86,7 +86,7 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" data-bind="@Symbol" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">SYMBOL</span>
@@ -96,10 +96,10 @@
 			</div>
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" data-bind="@Decimals" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
-						<span class="border-start border-danger ps-3 ">SYMBOL</span>
+						<span class="border-start border-danger ps-3 ">Decimals</span>
 					</label>
 
 				</div>
@@ -127,6 +127,17 @@
 
 @code {
 
+	//Import Network Binding
+	public string NetworkName {get; set;}
+	public string  RPCUrl { get; set; }
+	public int ChainID { get; set; }
+	public string NetworkSymbol {get; set;}
+	public string BlockExplorer { get; set; }
+
+	//Import Token Binding
+	public string ContractAddress { get; set; }
+	public string Symbol { get; set; }
+	public int Decimals { get; set; }
 
 	private void OpenMenu(string location)
 	{

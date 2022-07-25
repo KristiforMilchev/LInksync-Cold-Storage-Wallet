@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
+using SYNCWallet.Services.Implementation;
+using static SYNCWallet.Models.GithubTokensModel;
 
 namespace NFTLock.Data;
 
@@ -45,8 +47,9 @@ public class AuthenicationHandler
          return await ContractService.GetNetworkTokens(networkId);
         
     }
- 
-}
+
+   
+}   
 
 
  
