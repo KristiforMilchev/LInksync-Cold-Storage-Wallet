@@ -372,6 +372,7 @@
         MauiProgram.NetworkSettings = await utils.SetupNetworks();
         Networks = MauiProgram.NetworkSettings.Where(x=> x.IsProduction == MauiProgram.IsDevelopment).ToList();
         SelectedNetwork = Networks.FirstOrDefault();
+        MauiProgram.ActiveNetwork = SelectedNetwork;
         WalletAddress = Authenication.GetDefault();
         Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
 
@@ -381,6 +382,7 @@
     {
         InvokeAsync(() =>{
             SelectedNetwork = network;
+            MauiProgram.ActiveNetwork = SelectedNetwork;
             DefaultToToken();
             StateHasChanged();
         });
@@ -396,7 +398,7 @@
         });
 
 
-     }
+    }
 
     private void SelectToken(TokenContract contract, Token token)
     {
@@ -441,14 +443,16 @@
 
     public async void ImportNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
     {
-        await JS.InvokeVoidAsync("ImportNewNetwork");
+        //  await JS.InvokeVoidAsync("ImportNewNetwork");
+        Authenication = new AuthenicationHandler();
         Authenication.SetupNetwork(networkName, networkSymbol, rpcUrl, chainID, blockExplorer);
     }
 
     public async void ImportToken(string contractAddress, string symbol, int delimiter)
     {
-        await JS.InvokeVoidAsync("ImportTokens");
-        Authenication.ImportToken(contractAddress, symbol, delimiter, SelectedNetwork.Id);
+        //    await JS.InvokeVoidAsync("ImportTokens");
+        Authenication = new AuthenicationHandler();
+        Authenication.ImportToken(contractAddress, symbol, delimiter, MauiProgram.ActiveNetwork.Id);
     }
     
 }  

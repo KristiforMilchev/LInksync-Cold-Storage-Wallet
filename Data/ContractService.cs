@@ -261,7 +261,8 @@ namespace NFTLock.Data
                 {
                     var current = currentToken;
                     var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
-                    currentToken.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                    current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                    tokens.Add(current);
                 }
             }
          

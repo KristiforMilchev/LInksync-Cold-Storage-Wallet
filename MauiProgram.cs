@@ -24,7 +24,7 @@ public static class MauiProgram
     public static string PublicAddress { get; set; }
     public static List<NetworkSettings> NetworkSettings { get; set; }
     public static bool IsDevelopment { get; set; }
-
+    public static NetworkSettings ActiveNetwork { get; set; }
     public static async Task<MauiApp> CreateMauiApp()
     {
         IsDevelopment = true;

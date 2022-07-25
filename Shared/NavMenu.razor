@@ -109,7 +109,7 @@
 								display: flex;
 								flex-direction: row;
 								justify-content: center;">
-				<button style="width: 300px;"  type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+				<button style="width: 300px;" @onclick="ImportToken" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
 					<i class="icon-wallet"></i>
 					Import Token
 				</button>
@@ -146,15 +146,18 @@
 	}
 
 
-	private void ImportNetwork()
+	private async void ImportNetwork()
 	{
+		await JS.InvokeVoidAsync("ImportNewNetwork");
+
 		var landing = new Landing();
 		landing.ImportNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
 	}
 
 
-	private void ImportToken()
+	private async void ImportToken()
 	{
+		await JS.InvokeVoidAsync("ImportTokens");
 		var landing = new Landing();
 		landing.ImportToken(ContractAddress, Symbol, Decimals);
 	}
