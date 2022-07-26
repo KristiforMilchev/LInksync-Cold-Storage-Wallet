@@ -506,16 +506,31 @@
 		function OpenSeedConfimr() {
 			$("#Options").hide();
 			$("#Preview").show();
+			$("#pincode").hide();
+            $("#ImportConfirm").hide();
 		}
+
+        function OpenImportConfirm() {
+            $("#Options").hide();
+			$("#Preview").hide();
+			$("#pincode").hide();
+            $("#ImportConfirm").show();
+
+            
+        }
 
 		function ConfirmSeed() {
             $("#Preview").hide();
 			$("#confirm").show();
+            $("#pincode").hide();
+
 		}
 
 		function ReturnToSeedSave() {
             $("#Preview").show();
-            $("#confirm").hide();
+			$("#confirm").hide();
+			$("#pincode").hide();
+            $("#ImportConfirm").hide();
 		}
 
 		function SetPin() {
@@ -523,6 +538,7 @@
 			$("#pincode").show();
 			$("#confirm").hide();
 			$("#Preview").hide();
+            $("#ImportConfirm").hide();
 		}
 
 		function ImportTokens() {
@@ -544,6 +560,14 @@
 			document.getElementById("dropdownNetworks").style.setProperty("left", 0);
             document.getElementById("dropdownNetworks").style.setProperty("top", 0);
 
+		}
+
+		function GetImportWords() {
+			var words = [];
+			for (var i = 0; i <= 12; i++) {
+                words.push($("#Val_" + i).val());
+			}
+			return words;
         }
 	</script>
 

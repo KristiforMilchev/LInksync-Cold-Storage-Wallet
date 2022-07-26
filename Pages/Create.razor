@@ -44,7 +44,7 @@
                         display: flex;
                         justify-content: center;
                         margin: 10px;"></i>
-                        <button onclick="LoginPublic()" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                        <button @onclick="ImportAccountScreen" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
                             Import Existing
                         </button>
                     </div>
@@ -131,6 +131,47 @@
         </div>
 
     </div>
+
+    <div class="row" id="ImportConfirm" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
+        <div class="card" style="padding: 0;overflow: hidden;">
+            <div class="card-body">
+                <div>
+                    <button onclick="ReturnToSeedSave()" style="width: 200px; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                        Retrun
+                    </button>
+                </div>
+                <div class="row" style="flex-wrap: wrap;
+                                        flex-direction: row;
+                                        align-content: center;
+                                        align-items: flex-start;
+                                        justify-content: center;">
+
+                        @for(var i = 0; i <= 12; i++)
+                        {
+                            Word currentWord = new Word();
+                            <div class="col-md-3" style="text-align: center;
+                                                            border: 1px solid #999999;
+                                                            border-radius: 7px;
+                                                            padding: 0;
+                                                            margin: 5px;">
+                            <input type="text" id="Val_@i" class="form-control inputStyle" placeholder="Name of seed word at position">
+                                @i
+                                
+                            </div>
+                          
+                        }
+                   
+                     
+                </div>
+
+
+                <button @onclick="(() => CheckWallet())" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                    Import Seed
+                </button>
+            </div>
+        </div>
+
+    </div>
     <div class="row" id="pincode" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
         <div class="card" style="padding: 0;overflow: hidden;">
             <div class="card-body">
@@ -190,6 +231,33 @@
         JS.InvokeVoidAsync("OpenSeedConfimr");
     }
 
+
+    private void ImportAccountScreen()
+    {
+        JS.InvokeVoidAsync("OpenImportConfirm");
+
+    }
+
+    private async void CheckWallet()
+    {
+        var hardwareService = new HardwareService();
+        var getWords = await JS.InvokeAsync<List<string>>("GetImportWords");
+        var words = new List<Word>();
+
+  
+
+        getWords.ForEach(x =>
+        {
+            words.Add(new Models.Word
+            {
+                Name = x
+            });
+        });
+        Wallet = hardwareService.ImportAccount(words);
+
+        SetPin();
+    }
+
     private void ConfirmWallet()
     {
         JS.InvokeVoidAsync("ConfirmSeed");
@@ -206,7 +274,7 @@
         {
             var last = Words.ElementAt(WordNum);
 
-            if (last.Name == Word)
+            if (Selected.Name == Word)
             {
 
                 Validated++;
@@ -241,11 +309,11 @@
             var PK = hardwareService.Encrypt(Wallet.PrivateKey, PassCode);
 
             MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
-                {
-                    Cmd = "NEW",
-                    Password = passwrod,
-                    PrivateKey = PK
-                }));
+            {
+                Cmd = "NEW",
+                Password = passwrod,
+                PrivateKey = PK
+            }));
 
             NavigationManager.NavigateTo("/LoginPanel");
         }

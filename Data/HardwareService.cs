@@ -13,11 +13,12 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using System.Security.Cryptography;
 using SYNCWallet.Models;
- 
+using SYNCWallet.Services.Implementation;
+
 namespace NFTLock.Data
 {
-    internal class HardwareService
-    {
+internal class HardwareService
+{
 
         
         public void Lock()
@@ -73,36 +74,60 @@ namespace NFTLock.Data
            
         }
 
-        public CryptoWallet CreateAccount()
+        public CryptoWallet ImportAccount(List<Word> words)
         {
-            var ecKey = Nethereum.Signer.EthECKey.GenerateKey();
-            var recovered = ecKey.GetPrivateKeyAsBytes();
-            var privateKey = ecKey.GetPrivateKeyAsBytes().ToHex();
-            var privateKey2 = recovered.ToHex();
+            var Pk = string.Empty;
+            var i = 0;
 
-            var account = new Account(privateKey, 97);
+            words.ForEach(x =>
+            {
+                Pk += Utilities.BinaryToString(x.Name);
+                i++;
+            });
+
+        
+
+
+            var account = new Account(Pk, 56);
 
             return new CryptoWallet
             {
                 Address = account.Address,
                 Card = "",
                 Name = "Account 1",
-                PrivateKey = privateKey,
-                Words = GenerateWords(recovered)
+                PrivateKey = Pk,
+                Words = words
+            };
+        }
+
+        public CryptoWallet CreateAccount()
+        {
+            var ecKey = Nethereum.Signer.EthECKey.GenerateKey();
+            var recovered = ecKey.GetPrivateKey();
+
+            var chunks = Utilities.Split(recovered,5).ToList();
+            var account = new Account(recovered, 97);
+
+            return new CryptoWallet
+            {
+                Address = account.Address,
+                Card = "",
+                Name = "Account 1",
+                PrivateKey = recovered,
+                Words = GenerateWords(chunks)
             };
         }
 
 
-        public List<Word> GenerateWords(byte[] bytes)
+        public List<Word> GenerateWords(List<string> chunks)
         {
             var seeePhrase = new SeedPhase();
             var i = 0;
             List<Word> words = new List<Word>();
-            bytes.ToList().ForEach(x =>
+            chunks.ToList().ForEach(x =>
             {
-                string yourByteString = Convert.ToString(x, 2).PadLeft(8, '0');
-                var cByte = Convert.ToByte(yourByteString, 2);
-
+                string yourByteString = Utilities.StringToBinary(x);
+ 
 
  
                 words.Add(new Word
