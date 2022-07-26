@@ -98,5 +98,19 @@ namespace SYNCWallet.Services.Implementation
             }
             return sb.ToString();
         }
+
+        public static decimal SetDecimalPoint(decimal value, int delimeter)
+        {
+
+            var result = value * (decimal)Math.Pow(10, delimeter);
+            return result;
+        }
+
+        public static decimal ConvertToDex(decimal value, int delimeter)
+        {
+
+            var result = value / (decimal)Math.Pow(10, delimeter);
+            return result;
+        }
     }
 }

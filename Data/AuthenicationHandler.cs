@@ -99,7 +99,12 @@ public class AuthenicationHandler
     {
         var hs = new HardwareService();
         var privateKey = hs.DecryptAesEncoded(MauiProgram.PK, pass);
-        var wallet = new Account(privateKey, 97);
+        var chainId = 97;
+        if (MauiProgram.ActiveNetwork != null)
+            chainId = MauiProgram.ActiveNetwork.Chainid;
+        
+        
+        var wallet = new Account(privateKey, chainId);
 
  
         return wallet;

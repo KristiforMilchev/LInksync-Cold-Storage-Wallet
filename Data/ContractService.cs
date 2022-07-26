@@ -1,5 +1,6 @@
 ﻿using NBitcoin;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.BlockchainProcessing.BlockStorage.Entities;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
@@ -29,7 +30,7 @@ namespace NFTLock.Data
     {
 
         private readonly Web3 web3;
-        private readonly Contract contract;
+        private readonly Nethereum.Contracts.Contract contract;
         private readonly Account account;
         string Contract { get; set; }
         private static readonly HexBigInteger GAS = new HexBigInteger(4600000);
@@ -40,6 +41,10 @@ namespace NFTLock.Data
             this.account = new Account(privateKey,97);
             this.web3 = new Web3(account, provider);
             this.contract = web3.Eth.GetContract(abi, contractAddress);
+        }
+        public ContractService()
+        {
+        
         }
 
         [Function("balanceOf", "uint256")]
@@ -432,6 +437,106 @@ namespace NFTLock.Data
             var totalSupply = await routerResolver.QueryAsync<BigInteger>(contractAddress, totalSupplyFunction);
 
             return ConvertToDex(totalSupply, tokenDecimals);
+        }
+
+        [Function("transfer", "bool")]
+        public class TransferTokenFunction : FunctionMessage
+        {
+            [Parameter("address", "_to", 1)]
+            public string To { get; set; }
+
+            [Parameter("uint256", "_value", 2)]
+            public BigInteger TokenAmount { get; set; }
+        }
+
+        public async Task<bool> ExecutePayments(string receiver, TokenContract token, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
+        {
+
+            var PayerAddress =  account.Address;
+            var trans = new TransferTokenFunction();
+ 
+
+            var Account = account;
+
+            var netowrkEndpoint = endpoint;
+            var web3 = new Web3(Account, netowrkEndpoint);
+            var transferHandler = web3.Eth.GetContractTransactionHandler<TransferTokenFunction>();
+
+            try
+            {
+                var transferAmount = default(BigInteger);
+                transferAmount = (BigInteger)Utilities.SetDecimalPoint(amountToSend, token.Decimals);
+
+                var transfer = new TransferTokenFunction()
+                {
+                    FromAddress = PayerAddress,
+                    To = receiver,
+                    TokenAmount = transferAmount,
+
+                };
+
+                if (chainId == 97 || chainId == 56)
+                    transfer.GasPrice = Nethereum.Web3.Web3.Convert.ToWei(15, UnitConversion.EthUnit.Gwei);
+
+
+                if (chainId == 137)
+                {
+                    transfer.GasPrice = Nethereum.Web3.Web3.Convert.ToWei(105, UnitConversion.EthUnit.Gwei);
+
+                }
+
+
+                var estimate = await transferHandler.EstimateGasAsync(token.ContractAddress, transfer);
+
+                if (chainId == 137)
+                {
+                    transfer.Gas = estimate.Value + 15000000;
+
+                }
+                else
+                    transfer.Gas = estimate.Value;
+
+
+                trans = transfer;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Executing payment transaction failed");
+                Console.WriteLine(ex.ToString());
+                return false;
+
+            }
+
+
+
+            trans.Nonce = await Account.NonceService.GetNextNonceAsync();
+            var transactionReceipt = default(string);
+
+            var logged = false;
+            try
+            {
+                transactionReceipt = await transferHandler.SendRequestAsync(token.ContractAddress, trans);
+            }
+            catch (Exception e)
+            {
+                logged = true;
+                
+            }
+
+            if (transactionReceipt != null)
+            {
+                var txHash = string.Empty;
+                if (!logged)
+                {
+                    
+                    txHash = transactionReceipt;
+                    MauiProgram.TxHash = txHash;
+                }
+            }
+            return true;
+
+
         }
     }
 }
