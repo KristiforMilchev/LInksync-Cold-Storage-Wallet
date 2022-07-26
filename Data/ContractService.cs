@@ -271,11 +271,18 @@ namespace NFTLock.Data
                         var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
                         var pairs = new string[2];
 
-                        pairs[0] = getContract.PairTokenAddress;
+                        pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
                         pairs[1] = getNetworkData.PairCurrency;
-                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
+                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, "0x10ED43C718714eb63d5aA57B78B54704E256024E"); //Convert to USDT
                         current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
                         current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
+
+                        var totalSupply = await CheckExistingSupply(getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                        getContract.Supply = totalSupply;
+
+                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                        current.Contracts.FirstOrDefault(x => x.Network == networkId).MarketCap = tokenMarketData.mCap;
+                        current.Contracts.FirstOrDefault(x => x.Network == networkId).CirculatingSupply = tokenMarketData.circulating;
                     }
 
                     tokens.Add(current);
@@ -288,7 +295,6 @@ namespace NFTLock.Data
 
         private static async Task<decimal> GetImportedData(NetworkSettings network, TokenContract getContract)
         {
-    
             return await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
         }
 
@@ -389,7 +395,13 @@ namespace NFTLock.Data
             [Parameter("address", "tokenB", 2)]
             public virtual string TokenB { get; set; }
         }
-        
+
+
+        [Function("totalSupply", "uint256")]
+        public class GetTokenSupply : FunctionMessage
+        {
+ 
+        }
 
         private static async Task<string> CheckExchangelisting(string contractAddress,string pairToken, string endpoint, string factory)
         {
@@ -405,6 +417,21 @@ namespace NFTLock.Data
             var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
 
             return router;
+        }
+
+        private static async Task<decimal> CheckExistingSupply(string contractAddress, string endpoint, int tokenDecimals)
+        {
+            var totalSupplyFunction = new GetTokenSupply()
+            {
+
+
+            };
+            var web3 = new Nethereum.Web3.Web3(endpoint);
+
+            var routerResolver = web3.Eth.GetContractQueryHandler<GetTokenSupply>();
+            var totalSupply = await routerResolver.QueryAsync<BigInteger>(contractAddress, totalSupplyFunction);
+
+            return ConvertToDex(totalSupply, tokenDecimals);
         }
     }
 }
