@@ -5,6 +5,8 @@ using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
+using System.Diagnostics;
+using System.Text;
 using static SYNCWallet.Models.GithubTokensModel;
 
 namespace NFTLock.Data;
@@ -98,6 +100,8 @@ public class AuthenicationHandler
         var hs = new HardwareService();
         var privateKey = hs.DecryptAesEncoded(MauiProgram.PK, pass);
         var wallet = new Account(privateKey, 97);
+
+ 
         return wallet;
     }
 
@@ -107,7 +111,16 @@ public class AuthenicationHandler
         
     }
 
-   
+    private string ToHex(byte[] value, bool prefix = false)
+    {
+        return System.Text.Encoding.UTF8.GetString(value);
+    }
+
+    static byte ConvertBinaryToText(string seq)
+    {
+        return Convert.ToByte(seq, 2);
+
+    }
 }   
 
 
