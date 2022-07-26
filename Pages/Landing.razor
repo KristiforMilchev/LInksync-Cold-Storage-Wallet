@@ -1,10 +1,14 @@
 ﻿@page "/Landing"
 @using NFTLock.Data
+@using Nethereum.Contracts
+@using Nethereum.Web3
 @using Newtonsoft.Json
+@using SYNCWallet.Data
 @using SYNCWallet.Models
 @using System.Security.Cryptography
 @using System.Text
 @using SYNCWallet.Services.Implementation
+@using System.Timers
  
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -162,7 +166,7 @@
                  
                         <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: hidden;">
 
-                            <div class="table-responsive" style="display:@HideTokenList" id="TokenList">
+                            <div class="table-responsive" style="display:@MauiProgram.HideTokenList" id="TokenList">
 
                                 <button class="btn btn-outline-secondary" @onclick="ToggleTokenImport" type="button">
                                     <i class="fas fa-cog"></i>
@@ -243,7 +247,7 @@
                             </div>
                             @if (SelectedToken != null)
                             {
-                                <div id="SendToken" style="display:@HideTokenSend">
+                                <div id="SendToken" style="display:@MauiProgram.HideTokenSend">
                                     <div class="row" style="    margin-top: 25px;">
                                     <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
                                     </div>
@@ -293,7 +297,7 @@
                                         </div>
                                         <div class="flexInnerRow">
                                             <div class="form-floating distanceTop" style="    width: 600px;">
-                                                <input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+                                        <input @bind-value="ReceiverAddress" class="form-control inputStyle">
                                                 <label>
                                                     <i class="me-2 icon-wallet"></i>
                                                     <span class="border-start border-danger ps-3 ">Wallet Address</span>
@@ -303,7 +307,7 @@
                                         </div>
                                         <div class="flexInnerRow">
                                             <div class="form-floating distanceTop form-group" style="    width: 600px;     display: flex;">
-                                                <input id="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+                                            <input @bind-value="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
                                                 <button @onclick="SetMaxAmount" class="btn btn-outline-secondary" type="button">MAX</button>
                     
                                                 <label  >
@@ -317,7 +321,7 @@
                                                                         display: flex;
                                                                         flex-direction: row;
                                                                         justify-content: center;">
-                                            <button style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                            <button style="width: 300px;" @onclick="SendToken" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
                                                 <i class="icon-wallet"></i>
                                                 Send
                                             </button>
@@ -325,6 +329,49 @@
                             
                                 </div>
                             }
+                            <div style="display:@MauiProgram.ShowPinPanel">
+                                <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+                                    <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
+                                        <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                                            <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
+
+                                        </div>
+                                        <div class="row" style="margin-top: 50px;">
+                                            <div class="card" style="padding: 0;overflow: hidden;">
+                                                <div class="card-header bg-light">
+                                                    <h4 class="mb-0 text-white" style="text-align:center">Login</h4>
+                                                </div>
+                                                <div class="card-body">
+                 
+                                                    <div class="form-floating distanceTop">
+                                                        <input id="LPassword" @bind-value="Password" type="password" class="form-control inputStyle" placeholder="Test Password"  >
+                                                        <label>
+                                                            <i class="me-2 mdi mdi-lock"></i>
+                                                            <span class="border-start border-danger ps-3 ">Password</span>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                        display: flex;
+                                                        flex-direction: row;
+                                                        justify-content: center;">
+                                                        <button @onclick="EnterPin" style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                                            <i class="icon-wallet"></i>
+                                                            Unlock
+                                                        </button>
+                                                    </div>
+                         
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:@MauiProgram.ShowLoader">
+                                <div class="spinner-border text-danger" role="status">
+                                    <span class="sr-only">Sending transaction please wait</span>
+                                </div>
+                            </div>
                         </div>
                   
                 </div>
@@ -351,10 +398,11 @@
     public NetworkSettings SelectedNetwork { get; set; }
     public Token SelectedToken{ get; set; }
     public TokenContract SelectedContract { get; set; }
-    private string HideTokenList{ get; set; }
-    private string HideTokenSend{ get; set; }
 
+    private decimal TokensToSend { get; set; }
+    private string ReceiverAddress { get; set; }
 
+    private string Password { get; set; }
 
 
 
@@ -373,8 +421,10 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        HideTokenList = "";
-        HideTokenSend = "none";
+        MauiProgram.HideTokenList = "";
+        MauiProgram.HideTokenSend = "none";
+        MauiProgram.ShowPinPanel = "none";
+        MauiProgram.ShowLoader = "none";
 
         TokenName = "SYNC";
         Authenication = new AuthenicationHandler();
@@ -418,8 +468,11 @@
         {
             SelectedToken = token;
             SelectedContract = contract;
-            HideTokenList = "none";
-            HideTokenSend = "";
+            MauiProgram.SelectedContract = contract;
+            MauiProgram.HideTokenList = "none";
+            MauiProgram.ShowPinPanel = "none";
+            MauiProgram.ShowLoader = "none";
+            MauiProgram.HideTokenSend = "";
 
             StateHasChanged();
         });
@@ -434,8 +487,11 @@
     {
         InvokeAsync(() =>
         {
-            HideTokenList = "";
-            HideTokenSend = "none";
+            MauiProgram.HideTokenList = "";
+            MauiProgram.HideTokenSend = "none";
+            MauiProgram.ShowPinPanel = "none";
+            MauiProgram.ShowLoader = "none";
+
 
             StateHasChanged();
         });
@@ -466,5 +522,52 @@
         Authenication = new AuthenicationHandler();
         Authenication.ImportToken(contractAddress, symbol, delimiter, MauiProgram.ActiveNetwork.Id);
     }
-    
+
+
+    private void SendToken()
+    {
+        InvokeAsync(() =>
+        {
+            MauiProgram.HideTokenList = "none";
+            MauiProgram.HideTokenSend = "none";
+            MauiProgram.ShowLoader = "none";
+            MauiProgram.ShowPinPanel = "";
+            StateHasChanged();
+
+        });
+    }
+
+    private async void EnterPin()
+    {
+        var hardwareService = new HardwareService();
+        var passwrod = hardwareService.Encrypt(Password, "iV1z@$H8");
+        MauiProgram.KeepPrivateSingle = true;
+        MauiProgram.Amount = TokensToSend;
+        MauiProgram.ReceiverAddress = ReceiverAddress;
+
+        MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+        {
+            Cmd = "Login",
+            Password = passwrod,
+            PrivateKey = "+"
+        }));
+
+        MauiProgram.Pass = Password;
+        await InvokeAsync(() =>
+        {
+            MauiProgram.ShowLoader = "";
+            MauiProgram.HideTokenList = "none";
+            MauiProgram.HideTokenSend = "none";
+            MauiProgram.ShowPinPanel = "none";
+            StateHasChanged();
+
+        });
+
+        //Delay to decode the PK from the device.
+        Thread.Sleep(1000);
+
+        var paymentService = new PaymentService();
+        var result = await paymentService.BeginTransaction();
+    }
+
 }  

@@ -3,6 +3,7 @@ using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using NFTLock.Data;
 using SYNCWallet.Models;
+using SYNCWallet.Pages;
 using SYNCWallet.Services.Implementation;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -27,6 +28,19 @@ public static class MauiProgram
     public static List<NetworkSettings> NetworkSettings { get; set; }
     public static bool IsDevelopment { get; set; }
     public static NetworkSettings ActiveNetwork { get; set; }
+    public static bool KeepPrivateSingle { get; set; }
+    public static string ReceiverAddress { get; set; }
+    public static decimal Amount { get; set; }
+    public static System.Timers.Timer TransactionTimer { get; set; }
+    public static TokenContract SelectedContract { get; set; }
+    public static string TxHash { get; set; }
+
+    public static string HideTokenList = "none";
+    public static string HideTokenSend = "none";
+    public static string ShowPinPanel = "none";
+    public static string ShowLoader = "none";
+
+
     public static async Task<MauiApp> CreateMauiApp()
     {
         IsDevelopment = true;
@@ -143,6 +157,7 @@ public static class MauiProgram
             AuthenicationHandler handler = new AuthenicationHandler();
             var wallet = handler.UnlockWallet(Pass);
             PublicAddress = wallet.Address;
+             
             if(PublicAddress == null)
             {
 
@@ -155,7 +170,10 @@ public static class MauiProgram
                 IsLogged = false;
             }
             Debug.WriteLine(PublicAddress);
-            PK = string.Empty;
+
+            if(!KeepPrivateSingle)
+                PK = string.Empty;
+           
         }
         catch (Exception e)
         {
@@ -168,11 +186,7 @@ public static class MauiProgram
         var lastCmd = currentCMD.Split(Environment.NewLine).LastOrDefault();
         switch (lastCmd)
         {
-            case "B1#":
-                SoundPlayer player = new SoundPlayer();
-                player.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\doorbell-1.wav";
-                player.Play();
-                break;
+ 
             case "#CFS1":
                 IsConfigured = true;
                 ConfigResponse = true;
@@ -198,5 +212,10 @@ public static class MauiProgram
         _serialPort.WriteLine(value);
         _serialPort.DiscardOutBuffer();
         _serialPort.DiscardInBuffer();
+    }
+    public static void ClearCredentials()
+    {
+        PK = string.Empty;
+        Pass = string.Empty;
     }
 }
