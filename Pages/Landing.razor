@@ -553,7 +553,7 @@
         }));
 
         MauiProgram.Pass = Password;
-        InvokeAsync(() =>
+        await InvokeAsync(() =>
         {
             MauiProgram.ShowLoader = "";
             MauiProgram.HideTokenList = "none";
@@ -562,6 +562,9 @@
             StateHasChanged();
 
         });
+
+        //Delay to decode the PK from the device.
+        Thread.Sleep(1000);
 
         var paymentService = new PaymentService();
         var result = await paymentService.BeginTransaction();

@@ -28,6 +28,10 @@ namespace SYNCWallet.Data
             var contractService = new ContractService();
             await contractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
 
+            //Clear PK, password etc.
+
+            MauiProgram.ClearCredentials();
+
             MauiProgram.TransactionTimer = new System.Timers.Timer();
             MauiProgram.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             MauiProgram.TransactionTimer.Interval = 5000;
@@ -87,6 +91,8 @@ namespace SYNCWallet.Data
                 Timestamp = DateTime.UtcNow,
                 TransactionHash = transactionReceipt.TransactionHash
             };
+            MauiProgram.TxHash = String.Empty;
+
             return true;
         }
     }

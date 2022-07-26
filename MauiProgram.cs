@@ -173,11 +173,7 @@ public static class MauiProgram
 
             if(!KeepPrivateSingle)
                 PK = string.Empty;
-            else
-            {
-                var landing = new Landing();
-                landing.BeginTransaction();
-            }
+           
         }
         catch (Exception e)
         {
@@ -216,5 +212,10 @@ public static class MauiProgram
         _serialPort.WriteLine(value);
         _serialPort.DiscardOutBuffer();
         _serialPort.DiscardInBuffer();
+    }
+    public static void ClearCredentials()
+    {
+        PK = string.Empty;
+        Pass = string.Empty;
     }
 }
