@@ -1,4 +1,4 @@
-C:\Users\krisk\AppData\Local\Temp\arduino_build_145852\core\main.cpp.o: \
+C:\Users\krisk\AppData\Local\Temp\arduino_build_504690\core\main.cpp.o: \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\main.cpp \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/binary.h \

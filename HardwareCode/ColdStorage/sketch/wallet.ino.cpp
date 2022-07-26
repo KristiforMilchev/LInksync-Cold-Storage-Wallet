@@ -1,4 +1,4 @@
-#line 1 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+#line 1 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 /*
   SYNC Hardware cold wallet
 
@@ -16,51 +16,182 @@
 #include "Arduino.h"
 #include "EEPROM.h"
 #include "AESLib.h"
+#include "ArduinoJson.h"
 
-#line 19 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+
+ 
+
+//EPPROM ebcryption storage structure 
+ 
+#line 25 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 void setup();
-#line 26 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+#line 41 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 void loop();
-#line 55 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+#line 167 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
+void EncryptInitial(String password , String privateKey);
+#line 182 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 void writeStringToEEPROM(int addrOffset, const String &strToWrite);
-#line 65 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+#line 192 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 String readStringFromEEPROM(int addrOffset);
-#line 19 "C:\\Users\\krisk\\source\\repos\\SYNCWallet\\SYNCWallet\\HardwareCode\\wallet\\wallet.ino"
+#line 205 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
+void ClearMemmory();
+#line 25 "C:\\ProjectsNew\\LInksync-Cold-Storage-Wallet\\HardwareCode\\wallet\\wallet.ino"
 void setup() {
-  Serial.begin(9600);
- 
- 
-}
+  Serial.begin(115200);
+  //ClearMemmory();
+ }
 
+
+
+String cmd = "";
+String readConcurrent = "";
+bool ShouldReadPassword = false;
+bool ShouldReadPK = false;
+
+uint8_t signPassword;
+String Pass = "";
+ bool tpm = false;
 // the loop function runs over and over again forever
 void loop() {
 
-   char receiveVal;     
-     
+   String receiveVal;    
     if(Serial.available() > 0)  
     {          
-        receiveVal = Serial.read();  
-        if(receiveVal == "#CF")
+        receiveVal = Serial.readString();
+        int str_len = receiveVal.length() + 1; 
+        char char_array[str_len];
+        receiveVal.toCharArray(char_array, str_len); 
+        StaticJsonDocument<512> doc;
+ 
+        DeserializationError error = deserializeJson(doc, char_array);
+        
+        if (error) {
+          Serial.print(F("deserializeJson() failed: "));
+          Serial.println(error.f_str());
+          return;
+        }
+        
+        const char* Cmd = doc["Cmd"]; // "CF"
+        const char* PrivateKey = doc["PrivateKey"]; // nullptr
+        const char* Password = doc["Password"]; // nullptr
+        String currentCMD = Cmd;
+        String PK = PrivateKey;
+        String Pass = Password;
+        
+ 
+
+        
+        // Test if parsing succeeds.
+        if (error) {
+           Serial.println(error.f_str());
+          return;
+        }
+
+        if(currentCMD.equals("CF"))
         {
-           String res = readStringFromEEPROM(0);
-           Serial.println(res);
+           cmd = "";
+           receiveVal= "";
+           Serial.flush();
+
+           //  Serial.println(encrypted.Password);
+
+           byte decryptParity = EEPROM.read(0);
+ 
+           if(decryptParity != 0)
+           {
+               Serial.write("#CFS1"); 
+           }
+           else
+           {
+               Serial.write("#CFS2"); 
+           }
+           
+        }
+      
+
+        if(currentCMD.equals("NEW"))
+        {
+          Serial.println("Stopping to read private key");
+          // Serial.println(readConcurrent);
+           ShouldReadPK = false;
+
+           Serial.flush();
+ 
+           EncryptInitial(Pass,PK);
+           readConcurrent = "";
+           cmd = "";
+      
         }
        
+        if(currentCMD.equals("Login"))
+        {
+            byte decryptParity = EEPROM.read(0);
+            String readPw = readStringFromEEPROM(1); //Get PWD from EEPROM
+            String readPK = readStringFromEEPROM(41); //Get PK from EEPROM 
+ 
+            Serial.flush();
+
+
+            if(Pass.equals(readPw))
+            {
+                char Buf[readPK.length()+ 1];
+                readPK.toCharArray(Buf, readPK.length()+ 1);
+                String test =  String(Buf);
+                Serial.flush();
+ 
+                Serial.println("#SR:" );
+            
+                Serial.flush();
+                Serial.println(readPK); 
+               
+           
+
+                EEPROM.write(0, 3); //PK Part 1 
+
+            }
+            else
+            {
+              if(decryptParity == 3)
+              {
+                   EEPROM.write(0, 2); //PK Part 1 
+
+              }
+              else if(decryptParity == 2)
+              {
+                 EEPROM.write(0, 1); //PK Part 1 
+              }
+              else
+              {
+                 Serial.println("Cleaning memory");
+                 ClearMemmory();
+              }
+              Serial.write("#ERL"); 
+            }
+        }
+       
+  
+        
+        
+       delay(10);
     }     
     
-    uint8_t key[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
-    char data[] = "0123456789012345";
-    aes256_enc_single(key, data);
-    Serial.print("encrypted:");
-    Serial.println(data);
-    aes256_dec_single(key, data);
-    Serial.print("decrypted:");
-    Serial.println(data);
-      
-    String retrievedString = readStringFromEEPROM(0);
-    //Serial.print("The String we read from EEPROM: ");
-    //Serial.println(retrievedString);
+
 }
+
+void EncryptInitial(String password , String privateKey)
+{
+    delay(100);
+ 
+   //Write values to EEPROM
+
+
+   EEPROM.write(0, 3); //PK Part 1 
+   writeStringToEEPROM(1, password); //PK Part 1 
+   writeStringToEEPROM(41, privateKey); //PK Part 2 
+ 
+ 
+}
+
 
 void writeStringToEEPROM(int addrOffset, const String &strToWrite)
 {
@@ -83,6 +214,18 @@ String readStringFromEEPROM(int addrOffset)
   data[newStrLen] = '\0'; // !!! NOTE !!! Remove the space between the slash "/" and "0" (I've added a space because otherwise there is a display bug)
   return String(data);
 }
+
+
+void ClearMemmory()
+{
+  for (int i = 0; i < 1000; i++)
+  {
+    EEPROM.write(i,0);
+    Serial.println(EEPROM.read(i));
+  }
+}
+ 
+ 
 
 
  

@@ -1,4 +1,4 @@
-C:\Users\krisk\AppData\Local\Temp\arduino_build_145852\core\wiring_analog.c.o: \
+C:\Users\krisk\AppData\Local\Temp\arduino_build_504690\core\wiring_analog.c.o: \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\wiring_analog.c \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\wiring_private.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h \
