@@ -1,5 +1,5 @@
-C:\Users\krisk\AppData\Local\Temp\arduino_build_145852\sketch\wallet.ino.cpp.o: \
- C:\Users\krisk\AppData\Local\Temp\arduino_build_145852\sketch\wallet.ino.cpp \
+C:\Users\krisk\AppData\Local\Temp\arduino_build_504690\sketch\wallet.ino.cpp.o: \
+ C:\Users\krisk\AppData\Local\Temp\arduino_build_504690\sketch\wallet.ino.cpp \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
@@ -12,4 +12,7 @@ C:\Users\krisk\AppData\Local\Temp\arduino_build_145852\sketch\wallet.ino.cpp.o: 
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\variants\standard/pins_arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src/EEPROM.h \
- C:\Program\ Files\ (x86)\Arduino\libraries\AESLib/AESLib.h
+ C:\Program\ Files\ (x86)\Arduino\libraries\AESLib/AESLib.h \
+ C:\Users\krisk\OneDrive\Documents\Arduino\libraries\ArduinoJson\src/ArduinoJson.h \
+ C:\Users\krisk\OneDrive\Documents\Arduino\libraries\ArduinoJson\src/ArduinoJson.hpp \
+ C:\Users\krisk\OneDrive\Documents\Arduino\libraries\ArduinoJson\src/ArduinoJson/Configuration.hpp
