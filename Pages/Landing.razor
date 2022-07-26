@@ -101,7 +101,7 @@
                                     @if(SelectedToken != null)
                                     {
                                         @Utilities.TruncateDecimals(SelectedContract.CurrentPrice)
-                                         <span style="margin-left:5px;">@SelectedToken.Symbol</span>
+                                         <span style="margin-left:5px;"> USD </span>
                                     }
                                     <i class="ti-angle-down fs-3 text-danger"></i>
                                 </span>
@@ -123,7 +123,7 @@
                                     @if (SelectedToken != null)
                                     {
                                         @SelectedContract.CirculatingSupply.ToString("#.##")
-                                        <span style="margin-left:5px;">@SelectedToken.Symbol </span>
+                                        <span style="margin-left:5px;"> @SelectedToken.Symbol </span>
                                     }
                                     <i class="ti-angle-up fs-3 text-success"></i>    
                                 </span>
@@ -192,7 +192,14 @@
                                                 }
                                                 <tr @onclick="(() => SelectToken(contract, token))">
                                                     <td style="width:50px; text-align:left">
-                                                        <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
+                                                        @if(string.IsNullOrEmpty(token.Logo))
+                                                        {
+                                                        <i class="mdi mdi-alert" style="font-size: 2rem;color: #f3bb2b;"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
+                                                        }
                                                     </td>
                                                     <td style="text-align:left;">
                                                         <h6 class="font-weight-medium mb-0">@token.Name</h6>
@@ -203,9 +210,7 @@
                                                     @if (contract != null)
                                                     {
                                                         <td class="text-muted">
-
-                                                            @contract.UserBalance.ToString("#.##")
-
+                                                            @Utilities.TruncateDecimals(contract.UserBalance)
                                                         </td>
                                                         <td class="text-muted">
                                                             @if (contract.Price == null)
@@ -257,7 +262,14 @@
                                     <div class="flexInnerRow">
 
                                         <p style="width: 602px;">
-                                            @SelectedToken.Description
+                                            @if(!string.IsNullOrEmpty(SelectedToken.Description))
+                                            {
+                                                @SelectedToken.Description
+                                            }
+                                            else
+                                            {
+                                                @: This token, is not officially listed on the vetted token list, trading and transfering it may cause substancial damage to your entire portfolio!
+                                            }
                                         </p>
                                     </div>
                                     <div class="flexInnerRow">
