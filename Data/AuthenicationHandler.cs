@@ -99,6 +99,10 @@ public class AuthenicationHandler
     {
         var hs = new HardwareService();
         var privateKey = hs.DecryptAesEncoded(MauiProgram.PK, pass);
+
+        if (string.IsNullOrEmpty(privateKey))
+            return null;
+
         var chainId = 97;
         if (MauiProgram.ActiveNetwork != null)
             chainId = MauiProgram.ActiveNetwork.Chainid;

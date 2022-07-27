@@ -193,28 +193,37 @@ internal class HardwareService
 
         public string DecryptAesEncoded(string text, string password)
         {
-            string textToDecrypt = text;
-            string ToReturn = "";
-            string publickey = password;
-            string secretkey = password;
-            byte[] privatekeyByte = { };
-            privatekeyByte = System.Text.Encoding.UTF8.GetBytes(secretkey);
-            byte[] publickeybyte = { };
-            publickeybyte = System.Text.Encoding.UTF8.GetBytes(publickey);
-            MemoryStream ms = null;
-            CryptoStream cs = null;
-            byte[] inputbyteArray = new byte[textToDecrypt.Replace(" ", "+").Length];
-            inputbyteArray = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
-            using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
+            try
             {
-                ms = new MemoryStream();
-                cs = new CryptoStream(ms, des.CreateDecryptor(publickeybyte, privatekeyByte), CryptoStreamMode.Write);
-                cs.Write(inputbyteArray, 0, inputbyteArray.Length);
-                cs.FlushFinalBlock();
-                Encoding encoding = Encoding.UTF8;
-                ToReturn = encoding.GetString(ms.ToArray());
+                string textToDecrypt = text;
+                string ToReturn = "";
+                string publickey = password;
+                string secretkey = password;
+                byte[] privatekeyByte = { };
+                privatekeyByte = System.Text.Encoding.UTF8.GetBytes(secretkey);
+                byte[] publickeybyte = { };
+                publickeybyte = System.Text.Encoding.UTF8.GetBytes(publickey);
+                MemoryStream ms = null;
+                CryptoStream cs = null;
+                byte[] inputbyteArray = new byte[textToDecrypt.Replace(" ", "+").Length];
+                inputbyteArray = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
+                using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
+                {
+                    ms = new MemoryStream();
+                    cs = new CryptoStream(ms, des.CreateDecryptor(publickeybyte, privatekeyByte), CryptoStreamMode.Write);
+                    cs.Write(inputbyteArray, 0, inputbyteArray.Length);
+                    cs.FlushFinalBlock();
+                    Encoding encoding = Encoding.UTF8;
+                    ToReturn = encoding.GetString(ms.ToArray());
+                }
+                return ToReturn;
             }
-            return ToReturn;
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return String.Empty;
+            }
+         
         }
     }
 }

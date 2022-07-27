@@ -563,11 +563,27 @@
 
         });
 
-        //Delay to decode the PK from the device.
-        Thread.Sleep(1000);
+        MauiProgram.TransactionTimer = new System.Timers.Timer();
+        MauiProgram.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+        MauiProgram.TransactionTimer.Interval = 5000;
+        MauiProgram.TransactionTimer.Start();
 
-        var paymentService = new PaymentService();
-        var result = await paymentService.BeginTransaction();
     }
+
+    // Specify what you want to happen when the Elapsed event is raised.
+    private async void OnTimedEvent(object source, ElapsedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(MauiProgram.PK))
+        {
+            MauiProgram.TransactionTimer.Stop();
+            MauiProgram.TransactionTimer.Dispose();
+
+
+            var paymentService = new PaymentService();
+            var result = await paymentService.BeginTransaction();
+        }
+       
+    }
+
 
 }  
