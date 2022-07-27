@@ -4,6 +4,7 @@ using Nethereum.BlockchainProcessing.BlockStorage.Entities;
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.WebSocketStreamingClient;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.RPC.Reactive.Eth.Subscriptions;
 using Nethereum.Util;
 using Nethereum.Web3;
@@ -537,6 +538,23 @@ namespace NFTLock.Data
             return true;
 
 
+        }
+
+        public async Task<bool> ExecuteNative(string receiver, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
+        {
+            var web3 = new Web3(account, endpoint);
+
+            var transaction = web3.Eth.GetEtherTransferService();
+            var nounceVal = await account.NonceService.GetNextNonceAsync();
+            var gasPrice = default(BigInteger);
+
+            web3.TransactionManager.UseLegacyAsDefault = true;
+            var trans = transaction.TransferEtherAsync(receiver, amountToSend,null,null,nounceVal).GetAwaiter().GetResult();
+
+
+            MauiProgram.TxHash = trans;
+
+            return true;
         }
     }
 }

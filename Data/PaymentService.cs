@@ -1,5 +1,8 @@
-﻿using Nethereum.Contracts;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using Nethereum.Web3.Accounts;
 using NFTLock.Data;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
@@ -26,54 +29,76 @@ namespace SYNCWallet.Data
             var auth = new AuthenicationHandler();
             var wallet = auth.UnlockWallet(MauiProgram.Pass);
             var contractService = new ContractService();
-            await contractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
+
+            if(wallet == null)
+                return null; 
+
+            if (string.IsNullOrEmpty(MauiProgram.SelectedContract.ContractAddress))
+                await contractService.ExecuteNative(MauiProgram.ReceiverAddress, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
+            else
+                await contractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
 
             //Clear PK, password etc.
 
-            MauiProgram.ClearCredentials();
+          
 
-            MauiProgram.TransactionTimer = new System.Timers.Timer();
-            MauiProgram.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            MauiProgram.TransactionTimer.Interval = 5000;
-            MauiProgram.TransactionTimer.Start();
+            var dateTime = DateTime.UtcNow.AddSeconds(30);
 
             while(TransactionResult == null)
             {
-
+                if(DateTime.UtcNow > dateTime)
+                {
+                    await ValidateTransaction(MauiProgram.TxHash);
+                    dateTime = DateTime.UtcNow.AddSeconds(30);
+                }
+                
             }
-
+            MauiProgram.ClearCredentials();
             return TransactionResult;
         }
 
-        // Specify what you want to happen when the Elapsed event is raised.
-        private async void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(MauiProgram.TxHash))
-            {
-                MauiProgram.TransactionTimer.Stop();
-                MauiProgram.TransactionTimer.Dispose();
-            }
-            else
-                await ValidateTransaction(MauiProgram.TxHash);
-        }
-
+    
         public async Task<bool> ValidateTransaction(string txHash)
         {
 
             var auth = new AuthenicationHandler();
-            var Account = auth.UnlockWallet(MauiProgram.Pass);
+            var account =  auth.UnlockWallet(MauiProgram.Pass);
+   
 
-            var web3 = new Web3(Account, MauiProgram.ActiveNetwork.Endpoint);
+
+            var web3 = new Web3(account, MauiProgram.ActiveNetwork.Endpoint);
             var transactionReceipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txHash);
             if (transactionReceipt == null) //Check if transaction is processed in case it fails sent it to quoue;
             {
 
                 return false;
             }
-
+           
             var transferEventOutput = transactionReceipt.DecodeAllEvents<TransferEventDTO>();
             if (transferEventOutput.Count == 0)
-                return false;
+            {
+                if (transactionReceipt.Succeeded())
+                {
+                    TransactionResult = new TransactionResult
+                    {
+                        Amount = 0,
+                        From = transactionReceipt.From,
+                        To = transactionReceipt.To,
+                        Timestamp = DateTime.UtcNow,
+                        TransactionHash = transactionReceipt.TransactionHash
+                    };
+                    MauiProgram.TxHash = String.Empty;
+                    return true;
+                }
+                else if (transactionReceipt.Failed())
+                {
+                    
+                    MauiProgram.TxHash = String.Empty;
+                    return false;
+                }
+            }
+                
+
             var transferEvent = transferEventOutput.FirstOrDefault().Event;
 
 
