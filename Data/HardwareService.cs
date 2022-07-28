@@ -20,16 +20,8 @@ namespace NFTLock.Data
 internal class HardwareService
 {
 
-        
-        public void Lock()
-        {
-            MauiProgram.WriteState("1");
-        }
+  
 
-        public void Unlock()
-        {
-            MauiProgram.WriteState("0");
-        }
 
         public string DeviceConnected()
         {
@@ -43,35 +35,31 @@ internal class HardwareService
                 Debug.WriteLine(port);
                 MauiProgram.ComPort = port;
                 current = port;
+                CreateNewDevice(current);
             }
             return current;
         }
 
-        public void CreateNewDevice()
+        public void CreateNewDevice(string port)
         {
             string[] hexFileContents;
-            hexFileContents = File.ReadAllLines(@"C:\Users\krisk\source\repos\SYNCWallet\SYNCWallet\HardwareCode\wallet\wallet.ino");
-
+  
             try
-            {
-
-                
+            { 
                var uploader = new ArduinoSketchUploader(
                new ArduinoSketchUploaderOptions()
                {
-                   FileName = @"C:\Users\krisk\source\repos\SYNCWallet\SYNCWallet\HardwareCode\ColdStorage\wallet.ino.hex",
-                   PortName = "COM3",
+                   FileName = @$"{MauiProgram.DefaultPath}\HardwareCode\ColdStorage\wallet.ino.standard.hex",
+                   PortName = port,
                    ArduinoModel = ArduinoModel.UnoR3
                });
 
-                uploader.UploadSketch();
+               uploader.UploadSketch();
             }
             catch (Exception e)
             {
-
                 Debug.WriteLine(e.ToString());
             }
-           
         }
 
         public CryptoWallet ImportAccount(List<Word> words)

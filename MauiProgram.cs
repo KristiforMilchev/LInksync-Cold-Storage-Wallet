@@ -20,7 +20,7 @@ public static class MauiProgram
     private static SerialPort _serialPort { get; set; }
     public static string ComPort { get; set; }
     public static bool ConfigResponse { get; set; }
-    private static bool IsConfigured { get; set; }
+    public static bool IsConfigured { get; set; }
     public static bool RecordPK { get; set; }
     public static string PK { get; set; }
     public static string Pass { get; set; }
@@ -78,8 +78,7 @@ public static class MauiProgram
     public static bool CheckConfigured()
     {
         StartSerial();
-
-
+ 
         MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
         {
             Cmd = "CF",

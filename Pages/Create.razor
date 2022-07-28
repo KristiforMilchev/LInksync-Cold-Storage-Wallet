@@ -314,7 +314,8 @@
                 Password = passwrod,
                 PrivateKey = PK
             }));
-
+            MauiProgram.IsConfigured = true;
+            MauiProgram.ConfigResponse = true;
             NavigationManager.NavigateTo("/LoginPanel");
         }
         catch (Exception e)

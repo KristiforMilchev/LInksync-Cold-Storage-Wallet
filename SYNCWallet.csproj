@@ -14,15 +14,19 @@
 
 		<!-- Display name -->
 		<ApplicationTitle>SYNCWallet</ApplicationTitle>
+    <!-- App Identifier -->
+    <ApplicationId>Collaborativesoft</ApplicationId>
+    <ApplicationIdGuid>15E612FC-7344-4F59-B4E9-6E53C73CB66A</ApplicationIdGuid>
 
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.syncwallet</ApplicationId>
-		<ApplicationIdGuid>1138A4C6-A499-4A14-B8CC-1C9AE4A9EDA1</ApplicationIdGuid>
 
-		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
 
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
+    <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
+    <PackageCertificateThumbprint>DE4A573483180042B5BA9D308A190ECAB074E109</PackageCertificateThumbprint>
+    
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
