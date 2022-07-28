@@ -18,7 +18,7 @@
 <p id="submitTrigger" style="display:none" onclick="DataSubmitted">
 
 </p>
-<NavMenu>
+<NavMenu NetworkAdded="ImportNetwork" TokenImported="ImportToken">
 
  </NavMenu>
  <style>
@@ -555,41 +555,29 @@
         await JS.InvokeVoidAsync("ImportNewNetwork");
     }
 
-    public async void ImportNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
+    public async Task ImportNetwork()
     {
-        //  await JS.InvokeVoidAsync("ImportNewNetwork");
-        Authenication = new AuthenicationHandler();
-        var result = Authenication.SetupNetwork(networkName, networkSymbol, rpcUrl, chainID, blockExplorer);
+   
 
-        if(result)
+        await InvokeAsync(async () =>
         {
+            var utils = new Utilities();
+            MauiProgram.NetworkSettings = await utils.SetupNetworks();
+            Networks = MauiProgram.NetworkSettings.Where(x => x.IsProduction == MauiProgram.IsDevelopment).ToList();
+            StateHasChanged();
 
-            await InvokeAsync(async () =>
-            {
-                var utils = new Utilities();
-                MauiProgram.NetworkSettings = await utils.SetupNetworks();
-                Networks = MauiProgram.NetworkSettings.Where(x => x.IsProduction == MauiProgram.IsDevelopment).ToList();
-                StateHasChanged();
-
-            });
-        }
+        });
+       
 
     }
 
-    public async void ImportToken(string contractAddress, string symbol, int delimiter)
+    public async Task ImportToken()
     {
-        //    await JS.InvokeVoidAsync("ImportTokens");
-        Authenication = new AuthenicationHandler();
-        var result = Authenication.ImportToken(contractAddress, symbol, delimiter, MauiProgram.ActiveNetwork.Id);
-    
-        if(result)
+        await InvokeAsync(async () =>
         {
-             await InvokeAsync(async () =>
-             {
-                 Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
-                 StateHasChanged();
-             });
-        }
+            Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+            StateHasChanged();
+        });
     }
 
 

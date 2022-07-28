@@ -159,6 +159,10 @@ public static class MauiProgram
         {
             AuthenicationHandler handler = new AuthenicationHandler();
             var wallet = handler.UnlockWallet(Pass);
+
+            if (wallet == null)
+                return; 
+
             PublicAddress = wallet.Address;
              
             if(PublicAddress == null)
