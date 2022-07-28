@@ -128,6 +128,13 @@
 
 @code {
 
+	[Parameter]
+	public EventCallback NetworkAdded { get; set; }
+
+	[Parameter]
+	public EventCallback TokenImported { get; set; }
+
+
 	//Import Network Binding
 	public string NetworkName {get; set;}
 	public string  RPCUrl { get; set; }
@@ -149,17 +156,20 @@
 	private async void ImportNetwork()
 	{
 		await JS.InvokeVoidAsync("ImportNewNetwork");
-
-		var landing = new Landing();
-		landing.ImportNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
+		var Authenication = new AuthenicationHandler();
+		var result = Authenication.SetupNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
+		await NetworkAdded.InvokeAsync();
 	}
 
 
 	private async void ImportToken()
 	{
 		await JS.InvokeVoidAsync("ImportTokens");
-		var landing = new Landing();
-		landing.ImportToken(ContractAddress, Symbol, Decimals);
+
+		var Authenication = new AuthenicationHandler();
+		var result = Authenication.ImportToken(ContractAddress, Symbol, Decimals, MauiProgram.ActiveNetwork.Id);
+		await TokenImported.InvokeAsync();
+
 	}
 
 }

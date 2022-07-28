@@ -18,7 +18,7 @@
 <p id="submitTrigger" style="display:none" onclick="DataSubmitted">
 
 </p>
-<NavMenu>
+<NavMenu NetworkAdded="ImportNetwork" TokenImported="ImportToken">
 
  </NavMenu>
  <style>
@@ -372,6 +372,48 @@
                                     <span class="sr-only">Sending transaction please wait</span>
                                 </div>
                             </div>
+
+                        <div style="display:@MauiProgram.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
+                                @if(Receipt != null && SelectedToken != null)
+                                {
+                                    <div class="row">
+                                        <p>
+                                            From: <span>@Receipt.From</span>
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p>
+                                            To: <span>@Receipt.To</span>
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p>
+                                            At: <span>@Receipt.Timestamp.ToShortDateString() @Receipt.Timestamp.ToShortTimeString()</span>
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p>
+                                            Hash: <span>@Receipt.TransactionHash</span>
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <p>
+                                            Sent Amount: <span>@TokensToSend @SelectedToken.Symbol</span>
+                                        </p>
+                                    </div>
+                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                            display: flex;
+                                                            flex-direction: row;
+                                                            justify-content: center;">
+                                        <button @onclick="CloseReceipt" style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                            <i class="icon-wallet"></i>
+                                            Ok
+                                        </button>
+                                    </div>
+                                }
+                                   
+                              
+                            </div>
                         </div>
                   
                 </div>
@@ -404,7 +446,9 @@
 
     private string Password { get; set; }
 
-
+    TransactionResult Receipt { get; set; }
+    System.Timers.Timer BalanceCheck { get; set; }
+    DateTime NextCheck { get; set; }
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -421,10 +465,20 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        NextCheck = NextCheck.AddMinutes(1);
         MauiProgram.HideTokenList = "";
         MauiProgram.HideTokenSend = "none";
         MauiProgram.ShowPinPanel = "none";
         MauiProgram.ShowLoader = "none";
+        MauiProgram.Receipt = "none";
+
+
+        BalanceCheck = new System.Timers.Timer();
+        BalanceCheck= new System.Timers.Timer();
+        BalanceCheck.Elapsed += new ElapsedEventHandler(OnBalanceUpdate);
+        BalanceCheck.Interval = 5000;
+        BalanceCheck.Start();
+
 
         TokenName = "SYNC";
         Authenication = new AuthenicationHandler();
@@ -453,7 +507,7 @@
 
     private async void DefaultToToken()
     {
-        InvokeAsync( async () =>
+        await  InvokeAsync( async () =>
         {
             Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
             StateHasChanged();
@@ -469,6 +523,7 @@
             SelectedToken = token;
             SelectedContract = contract;
             MauiProgram.SelectedContract = contract;
+            MauiProgram.Receipt = "none";
             MauiProgram.HideTokenList = "none";
             MauiProgram.ShowPinPanel = "none";
             MauiProgram.ShowLoader = "none";
@@ -491,6 +546,7 @@
             MauiProgram.HideTokenSend = "none";
             MauiProgram.ShowPinPanel = "none";
             MauiProgram.ShowLoader = "none";
+            MauiProgram.Receipt = "none";
 
 
             StateHasChanged();
@@ -509,18 +565,29 @@
         await JS.InvokeVoidAsync("ImportNewNetwork");
     }
 
-    public async void ImportNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
+    public async Task ImportNetwork()
     {
-        //  await JS.InvokeVoidAsync("ImportNewNetwork");
-        Authenication = new AuthenicationHandler();
-        Authenication.SetupNetwork(networkName, networkSymbol, rpcUrl, chainID, blockExplorer);
+
+
+        await InvokeAsync(async () =>
+        {
+            var utils = new Utilities();
+            MauiProgram.NetworkSettings = await utils.SetupNetworks();
+            Networks = MauiProgram.NetworkSettings.Where(x => x.IsProduction == MauiProgram.IsDevelopment).ToList();
+            StateHasChanged();
+
+        });
+
+
     }
 
-    public async void ImportToken(string contractAddress, string symbol, int delimiter)
+    public async Task ImportToken()
     {
-        //    await JS.InvokeVoidAsync("ImportTokens");
-        Authenication = new AuthenicationHandler();
-        Authenication.ImportToken(contractAddress, symbol, delimiter, MauiProgram.ActiveNetwork.Id);
+        await InvokeAsync(async () =>
+        {
+            Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+            StateHasChanged();
+        });
     }
 
 
@@ -528,6 +595,7 @@
     {
         InvokeAsync(() =>
         {
+            MauiProgram.Receipt = "none";
             MauiProgram.HideTokenList = "none";
             MauiProgram.HideTokenSend = "none";
             MauiProgram.ShowLoader = "none";
@@ -553,15 +621,7 @@
         }));
 
         MauiProgram.Pass = Password;
-        await InvokeAsync(() =>
-        {
-            MauiProgram.ShowLoader = "";
-            MauiProgram.HideTokenList = "none";
-            MauiProgram.HideTokenSend = "none";
-            MauiProgram.ShowPinPanel = "none";
-            StateHasChanged();
 
-        });
 
         MauiProgram.TransactionTimer = new System.Timers.Timer();
         MauiProgram.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
@@ -578,12 +638,60 @@
             MauiProgram.TransactionTimer.Stop();
             MauiProgram.TransactionTimer.Dispose();
 
+            await InvokeAsync(() =>
+            {
+                MauiProgram.ShowLoader = "";
+                MauiProgram.HideTokenList = "none";
+                MauiProgram.HideTokenSend = "none";
+                MauiProgram.ShowPinPanel = "none";
+                MauiProgram.Receipt = "none";
+
+                StateHasChanged();
+
+            });
 
             var paymentService = new PaymentService();
             var result = await paymentService.BeginTransaction();
+
+            if (result != null)
+            {
+                await InvokeAsync(() =>
+                {
+                    MauiProgram.ShowLoader = "none";
+                    MauiProgram.HideTokenList = "none";
+                    MauiProgram.HideTokenSend = "none";
+                    MauiProgram.ShowPinPanel = "none";
+                    MauiProgram.Receipt = "flex";
+                    Receipt = result;
+                    StateHasChanged();
+
+                });
+            }
         }
-       
+
+
+    }
+
+    private void OnBalanceUpdate(object source, ElapsedEventArgs e)
+    {
+
+        if(DateTime.UtcNow > NextCheck)
+            DefaultToToken();
     }
 
 
+    private async void CloseReceipt()
+    {
+        await InvokeAsync(() =>
+        {
+            MauiProgram.ShowLoader = "none";
+            MauiProgram.HideTokenList = "";
+            MauiProgram.HideTokenSend = "none";
+            MauiProgram.ShowPinPanel = "none";
+            MauiProgram.Receipt = "none";
+            SelectedContract.UserBalance -= TokensToSend;
+            StateHasChanged();
+
+        });
+    }
 }  
