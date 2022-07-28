@@ -447,7 +447,8 @@
     private string Password { get; set; }
 
     TransactionResult Receipt { get; set; }
-
+    System.Timers.Timer BalanceCheck { get; set; }
+    DateTime NextCheck { get; set; }
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -464,11 +465,20 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        NextCheck = NextCheck.AddMinutes(1);
         MauiProgram.HideTokenList = "";
         MauiProgram.HideTokenSend = "none";
         MauiProgram.ShowPinPanel = "none";
         MauiProgram.ShowLoader = "none";
         MauiProgram.Receipt = "none";
+
+
+        BalanceCheck = new System.Timers.Timer();
+        BalanceCheck= new System.Timers.Timer();
+        BalanceCheck.Elapsed += new ElapsedEventHandler(OnBalanceUpdate);
+        BalanceCheck.Interval = 5000;
+        BalanceCheck.Start();
+
 
         TokenName = "SYNC";
         Authenication = new AuthenicationHandler();
@@ -497,7 +507,7 @@
 
     private async void DefaultToToken()
     {
-        InvokeAsync( async () =>
+        await  InvokeAsync( async () =>
         {
             Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
             StateHasChanged();
@@ -557,7 +567,7 @@
 
     public async Task ImportNetwork()
     {
-   
+
 
         await InvokeAsync(async () =>
         {
@@ -567,7 +577,7 @@
             StateHasChanged();
 
         });
-       
+
 
     }
 
@@ -658,8 +668,15 @@
                 });
             }
         }
-    
-       
+
+
+    }
+
+    private void OnBalanceUpdate(object source, ElapsedEventArgs e)
+    {
+
+        if(DateTime.UtcNow > NextCheck)
+            DefaultToToken();
     }
 
 
