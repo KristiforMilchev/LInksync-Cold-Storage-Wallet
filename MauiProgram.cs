@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.WebView.Maui;
+﻿using ArduinoUploader.Hardware;
+using Microsoft.AspNetCore.Components.WebView.Maui;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using NFTLock.Data;
@@ -9,12 +10,12 @@ using SYNCWallet.Services.Implementation;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Media;
-using static NBitcoin.Scripting.OutputDescriptor;
-
+ 
 namespace SYNCWallet;
 
 public static class MauiProgram
 {
+    public static ArduinoModel DeviceType { get; set; }
     public static string DefaultPath { get; set; }
     public static string ContractABI { get; set; }
     private static SerialPort _serialPort { get; set; }
