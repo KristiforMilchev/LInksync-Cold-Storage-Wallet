@@ -221,9 +221,6 @@ namespace NFTLock.Data
 
             var tokens = new List<Token>();
 
-
-
-
             var getNetworkData = MauiProgram.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == MauiProgram.IsDevelopment);
 
             if(getNetworkData != null)
@@ -245,9 +242,6 @@ namespace NFTLock.Data
                         }
                 });
             }
-
-
-            
 
             tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
 
