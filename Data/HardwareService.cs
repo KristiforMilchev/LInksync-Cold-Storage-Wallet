@@ -14,6 +14,7 @@ using Nethereum.Web3.Accounts;
 using System.Security.Cryptography;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
+using System.Net;
 
 namespace NFTLock.Data
 {
@@ -40,16 +41,31 @@ internal class HardwareService
             return current;
         }
 
-        public void CreateNewDevice(string port)
+        public async void CreateNewDevice(string port)
         {
             string[] hexFileContents;
-  
+            string userName = Environment.UserName;
+            
             try
-            { 
+            {
+                if (!File.Exists(@$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"))
+                {
+                    using (WebClient wc = new WebClient())
+                    {
+
+                         wc.DownloadFile(
+                            // Param1 = Link of file
+                            new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
+                            // Param2 = Path to save
+                            @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"
+                        );
+                    }
+                }
+
                var uploader = new ArduinoSketchUploader(
                new ArduinoSketchUploaderOptions()
                {
-                   FileName = @$"{MauiProgram.DefaultPath}\HardwareCode\ColdStorage\wallet.ino.standard.hex",
+                   FileName = @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex",
                    PortName = port,
                    ArduinoModel = ArduinoModel.UnoR3
                });
@@ -59,6 +75,7 @@ internal class HardwareService
             catch (Exception e)
             {
                 Debug.WriteLine(e.ToString());
+ 
             }
         }
 
