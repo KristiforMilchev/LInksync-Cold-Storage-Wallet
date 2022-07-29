@@ -1,12 +1,6 @@
-﻿using ArduinoUploader.Hardware;
-using ArduinoUploader;
+﻿
 using SYNCWallet;
-using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using NFTLock.Models;
 using Nethereum.Hex.HexConvertors.Extensions;
@@ -15,10 +9,13 @@ using System.Security.Cryptography;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
 using System.Net;
+using RJCP.IO.Ports;
+using ArduinoUploader.Hardware;
+using ArduinoUploader;
 
 namespace NFTLock.Data
 {
-internal class HardwareService
+    internal class HardwareService
 {
 
   
@@ -26,58 +23,68 @@ internal class HardwareService
 
         public string DeviceConnected()
         {
-            string[] ports = SerialPort.GetPortNames();
+            string[] portNames = SerialPortStream.GetPortNames();
+
+         //   string[] ports = SerialPort.GetPortNames();
 
             Debug.WriteLine("The following serial ports were found:");
             var current = string.Empty;
             // Display each port name to the console.
-            foreach (string port in ports)
+            foreach (string port in portNames)
             {
                 Debug.WriteLine(port);
                 MauiProgram.ComPort = port;
                 current = port;
-                CreateNewDevice(current);
             }
             return current;
         }
 
-        public async void CreateNewDevice(string port)
+        public List<ArduinoModel> GetSupportedDevices()
         {
-            string[] hexFileContents;
+            return new List<ArduinoModel> { ArduinoModel.Leonardo, ArduinoModel.Mega1284, ArduinoModel.Mega2560, ArduinoModel.Micro, ArduinoModel.NanoR2, ArduinoModel.NanoR3, ArduinoModel.UnoR3 };
+        }
+
+        public async Task<bool> CreateNewDevice(string port)
+        {
             string userName = Environment.UserName;
             
-            try
+           
+            if (!File.Exists(@$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"))
             {
-                if (!File.Exists(@$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"))
+                using (WebClient wc = new WebClient())
                 {
-                    using (WebClient wc = new WebClient())
-                    {
 
-                         wc.DownloadFile(
-                            // Param1 = Link of file
-                            new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
-                            // Param2 = Path to save
-                            @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"
-                        );
-                    }
+                        wc.DownloadFile(
+                        // Param1 = Link of file
+                        new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
+                        // Param2 = Path to save
+                        @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex"
+                    );
                 }
-
-               var uploader = new ArduinoSketchUploader(
-               new ArduinoSketchUploaderOptions()
-               {
-                   FileName = @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex",
-                   PortName = port,
-                   ArduinoModel = ArduinoModel.UnoR3
-               });
-
-               uploader.UploadSketch();
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.ToString());
- 
-            }
+
+
+            ConfigureHardware(MauiProgram.DeviceType, @$"C:\Users\{userName}\Downloads\wallet.ino.standard.hex", port);
+
+
+            return true;
+
         }
+
+        private void ConfigureHardware(ArduinoModel device,string path, string port)
+        {
+            var uploader = new ArduinoSketchUploader(
+                  new ArduinoSketchUploaderOptions()
+                  {
+                      FileName = path,
+                      PortName = port,
+                      ArduinoModel = device
+                  });
+
+            uploader.UploadSketch();
+
+        }
+   
 
         public CryptoWallet ImportAccount(List<Word> words)
         {
