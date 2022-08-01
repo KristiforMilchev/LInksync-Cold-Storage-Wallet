@@ -59,7 +59,7 @@ public static class MauiProgram
         #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
         #endif
-        Os = Utilities.GetCurrentOs();
+        Os = Utilities.GetOsDatFolder();
    
 
         DefaultPath = AppDomain.CurrentDomain.BaseDirectory;
