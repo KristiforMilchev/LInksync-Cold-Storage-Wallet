@@ -1,12 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SYNCWallet.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SYNCWallet.Services.Implementation
 {
@@ -24,8 +19,8 @@ namespace SYNCWallet.Services.Implementation
 
                 var filesContent = File.ReadAllText($"{GetOsSavePath()}/LocalNetworks.json");
                 var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
-
-                whiteListedNetworks.AddRange(convertedNetworkList);
+                if(convertedNetworkList != null)
+                    whiteListedNetworks.AddRange(convertedNetworkList);
                 return whiteListedNetworks;
             }
        

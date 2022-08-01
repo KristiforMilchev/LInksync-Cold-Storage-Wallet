@@ -517,8 +517,12 @@
     {
         await  InvokeAsync( async () =>
         {
-            Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
-            StateHasChanged();
+            if(SelectedNetwork != null)
+            {
+                Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+                StateHasChanged();
+            }
+
         });
 
 
