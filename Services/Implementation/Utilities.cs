@@ -16,13 +16,13 @@ namespace SYNCWallet.Services.Implementation
         public async Task<List<NetworkSettings>> SetupNetworks()
         {
 
-            if (!File.Exists($"{GetOsDatFolder()}/LocalNetworks.json"))
+            if (!File.Exists($"{GetOsSavePath()}/LocalNetworks.json"))
                 return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
             else
             {
                 var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
 
-                var filesContent = File.ReadAllText($"{GetOsDatFolder()}/LocalNetworks.json");
+                var filesContent = File.ReadAllText($"{GetOsSavePath()}/LocalNetworks.json");
                 var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
                 whiteListedNetworks.AddRange(convertedNetworkList);
@@ -114,7 +114,7 @@ namespace SYNCWallet.Services.Implementation
             return result;
         }
 
-        public static int GetOsDatFolder()
+        public static int GetSystemOs()
         {
 
             if (SYNCWallet.Models.OperatingSystem.IsWindows())
@@ -126,6 +126,29 @@ namespace SYNCWallet.Services.Implementation
 
             return 0;
         }
- 
+
+
+        public static string GetOsSavePath()
+        {
+            var result = string.Empty;
+            string userName = Environment.UserName;
+            switch (MauiProgram.Os)
+            {
+                case 1:
+                    result = $@"C:\Users\{userName}\Documents";
+                    break;
+
+                case 2:
+                    result = $@"home/{userName}";
+                    break;
+
+                case 3:
+                    result = $@"home/{userName}";
+                    break;
+            }
+
+            return result;
+        }
+
     }
 }
