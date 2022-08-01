@@ -300,6 +300,9 @@ namespace NFTLock.Data
 
         private static async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
         {
+            if (listedTokenData == null)
+                return tokens;
+
             foreach(var token in listedTokenData)
             {
                 var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
