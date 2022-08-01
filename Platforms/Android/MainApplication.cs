@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Runtime;
+using SYNCWallet;
 
 namespace NFTLock;
 
@@ -11,5 +12,5 @@ public class MainApplication : MauiApplication
     {
     }
 
-    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp().GetAwaiter().GetResult();
 }
