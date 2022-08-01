@@ -245,10 +245,10 @@ namespace NFTLock.Data
 
             tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
 
-            if (!File.Exists($"{MauiProgram.DefaultPath}/LocalTokens.json"))
-                File.WriteAllText($"{MauiProgram.DefaultPath}/LocalTokens.json", "");
+            if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalTokens.json"))
+                File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", "");
 
-            var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalTokens.json");
+            var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json");
 
             var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
 

@@ -83,7 +83,7 @@ void loop() {
 
            byte decryptParity = EEPROM.read(0);
  
-           if(decryptParity != 0)
+           if(decryptParity != 0xFF)
            {
                Serial.write("#CFS1"); 
            }

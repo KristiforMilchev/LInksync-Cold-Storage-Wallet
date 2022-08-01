@@ -35,10 +35,10 @@ public class AuthenicationHandler
 
     public bool SetupNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
     {
-        if (!File.Exists($"{MauiProgram.DefaultPath}/LocalNetworks.json"))
-            File.WriteAllText($"{MauiProgram.DefaultPath}/LocalNetworks.json", "");
+        if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalNetworks.json"))
+            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json", "");
 
-        var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalNetworks.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json");
 
         var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
@@ -59,7 +59,7 @@ public class AuthenicationHandler
                 TokenSylmbol = networkSymbol
             });
 
-            File.WriteAllText($"{MauiProgram.DefaultPath}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
+            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
             return true;
         }
 
@@ -68,10 +68,10 @@ public class AuthenicationHandler
 
     public bool ImportToken(string contractAddress, string symbol, int delimiter, int network)
     {
-        if (!File.Exists($"{MauiProgram.DefaultPath}/LocalTokens.json"))
-            File.WriteAllText($"{MauiProgram.DefaultPath}/LocalTokens.json", "");
+        if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalTokens.json"))
+            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", "");
 
-        var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalTokens.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json");
 
         var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
         
@@ -98,7 +98,7 @@ public class AuthenicationHandler
                 }
             }
             });
-            File.WriteAllText($"{MauiProgram.DefaultPath}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
+            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
             return true;
         }
     }

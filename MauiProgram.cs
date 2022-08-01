@@ -16,6 +16,7 @@ namespace SYNCWallet;
 public static class MauiProgram
 {
     public static ArduinoModel DeviceType { get; set; }
+    public static int Os { get; set; }
     public static string DefaultPath { get; set; }
     public static string ContractABI { get; set; }
     private static SerialPort _serialPort { get; set; }
@@ -58,7 +59,7 @@ public static class MauiProgram
         #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
         #endif
-
+        Os = Utilities.GetCurrentOs();
    
 
         DefaultPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -78,20 +79,42 @@ public static class MauiProgram
 
     public static bool CheckConfigured()
     {
-        StartSerial();
- 
-        MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+        try
         {
-            Cmd = "CF",
-            Password = "",
-            PrivateKey = ""
-        }));
-        while (!ConfigResponse)
-        {
+            StartSerial();
 
+            var pingAgain = DateTime.UtcNow.AddSeconds(3);
+            
+            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            {
+                Cmd = "CF",
+                Password = "",
+                PrivateKey = ""
+            }));
+
+            while (!ConfigResponse)
+            {
+                if (DateTime.UtcNow > pingAgain)
+                {
+                    MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                    {
+                        Cmd = "CF",
+                        Password = "",
+                        PrivateKey = ""
+                    }));
+                    pingAgain = DateTime.UtcNow.AddSeconds(3);
+                }
+            }
+
+            return IsConfigured;
         }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
 
-        return IsConfigured;
+            return false;
+        }
+  
     }
 
 

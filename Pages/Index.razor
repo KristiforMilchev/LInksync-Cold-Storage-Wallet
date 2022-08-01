@@ -4,6 +4,8 @@
 @using System.Numerics
 @using ArduinoUploader.Hardware
 @using NFTLock.Data
+@using System.IO.Ports
+@using System.Diagnostics
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -19,12 +21,12 @@
             </div>
             <div class="row" style="margin-top: 50px;">
                 <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
-                    Connect ATmega328 compatable device.
+                    Connect and select ATmega328 compatable device.
                 </h2>
             </div>
-            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
+            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400; text-align:center;">
                 <i class="me-2 mdi mdi-access-point-network"></i>
-                <span id="network">@DeviceModel.ToString()</span>
+                <span id="network" style="text-align:center; width:100%;">@DeviceModel.ToString()</span>
                 
             </a>
             <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;">
@@ -49,7 +51,6 @@
     private HardwareService HardwareService { get; set; }
     private string Address { get; set; }
     private string Port{ get; set; }
-    private DateTime CheckConnection { get; set; }
 
     public ArduinoModel DeviceModel { get; set; }
     public List<ArduinoModel> Devices { get; set; }
@@ -59,10 +60,7 @@
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(DateTime.UtcNow > CheckConnection)
-        {
 
-        }
         return base.OnAfterRenderAsync(firstRender);
     }
 
@@ -73,7 +71,7 @@
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
 
-        var port = HardwareService.DeviceConnected();
+        Port = HardwareService.DeviceConnected();
         aTimer = new System.Timers.Timer();
         aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         aTimer.Interval = 5000;
@@ -86,38 +84,48 @@
     {
 
         Port = HardwareService.DeviceConnected();
-        if(string.IsNullOrEmpty(Port))
+        if(!string.IsNullOrEmpty(Port))
         {
             aTimer.Stop();
             aTimer.Dispose();
         }
     }
 
-    private async void CheckDeviceConnected(string port)
+    private async Task<bool> CheckDeviceConnected(string port)
     {
-        var firmwareUpdated = await HardwareService.CreateNewDevice(port);
-
-        if (!string.IsNullOrEmpty(port) && firmwareUpdated)
-        {
-            var configStatus = MauiProgram.CheckConfigured();
  
-            if (configStatus)
-            {
 
-                KillTimer();
-                NavigationManager.NavigateTo("LoginPanel");
-            }
-            else
-            {
-                KillTimer();
-                NavigationManager.NavigateTo("Create");
 
-            }
-        }
-        else
+        try
         {
-            CheckConnection = CheckConnection.AddMinutes(1);
+            if (!string.IsNullOrEmpty(port))
+            {
+                var firmwareUpdated = await HardwareService.CreateNewDevice(port);
+
+                var configStatus = MauiProgram.CheckConfigured();
+
+                if (configStatus && firmwareUpdated)
+                {
+
+                    KillTimer();
+                    NavigationManager.NavigateTo("LoginPanel");
+                }
+                else
+                {
+                    KillTimer();
+                    NavigationManager.NavigateTo("Create");
+
+                }
+            }
+           
         }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+     
+        return true;
     }
 
 
@@ -132,14 +140,16 @@
 
     private void DeviceChanged(ArduinoModel deviceType)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
             DeviceModel = deviceType;
             MauiProgram.DeviceType = deviceType;
+            await CheckDeviceConnected(Port);
             StateHasChanged();
-            CheckDeviceConnected(Port);
 
         });
+
+        
 
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,13 +16,13 @@ namespace SYNCWallet.Services.Implementation
         public async Task<List<NetworkSettings>> SetupNetworks()
         {
 
-            if (!File.Exists($"{MauiProgram.DefaultPath}/LocalNetworks.json"))
+            if (!File.Exists($"{GetOsDatFolder()}/LocalNetworks.json"))
                 return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
             else
             {
                 var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
 
-                var filesContent = File.ReadAllText($"{MauiProgram.DefaultPath}/LocalNetworks.json");
+                var filesContent = File.ReadAllText($"{GetOsDatFolder()}/LocalNetworks.json");
                 var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
                 whiteListedNetworks.AddRange(convertedNetworkList);
@@ -112,5 +113,19 @@ namespace SYNCWallet.Services.Implementation
             var result = value / (decimal)Math.Pow(10, delimeter);
             return result;
         }
+
+        public static int GetOsDatFolder()
+        {
+
+            if (SYNCWallet.Models.OperatingSystem.IsWindows())
+                return 1;
+            if (SYNCWallet.Models.OperatingSystem.IsLinux())
+                return 2;
+            if (SYNCWallet.Models.OperatingSystem.IsMacOS())
+                return 3;
+
+            return 0;
+        }
+ 
     }
 }
