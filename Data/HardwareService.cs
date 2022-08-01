@@ -49,7 +49,7 @@ namespace NFTLock.Data
             string userName = Environment.UserName;
             
            
-            if (!File.Exists(@$"{Utilities.GetOsDatFolder()}\wallet.ino.standard.hex"))
+            if (!File.Exists(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"))
             {
                 using (WebClient wc = new WebClient())
                 {
@@ -58,13 +58,13 @@ namespace NFTLock.Data
                         // Param1 = Link of file
                         new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
                         // Param2 = Path to save
-                        @$"{Utilities.GetOsDatFolder()}\wallet.ino.standard.hex"
+                        @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"
                     );
                 }
             }
 
 
-            ConfigureHardware(MauiProgram.DeviceType, @$"{Utilities.GetOsDatFolder()}\wallet.ino.standard.hex", port);
+            ConfigureHardware(MauiProgram.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
 
             Debug.WriteLine("Device Updated");
             return true;

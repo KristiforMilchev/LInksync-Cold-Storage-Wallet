@@ -35,10 +35,10 @@ public class AuthenicationHandler
 
     public bool SetupNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
     {
-        if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalNetworks.json"))
-            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json", "");
+        if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalNetworks.json"))
+            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json", "");
 
-        var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json");
 
         var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
@@ -59,7 +59,7 @@ public class AuthenicationHandler
                 TokenSylmbol = networkSymbol
             });
 
-            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
+            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
             return true;
         }
 
@@ -68,10 +68,10 @@ public class AuthenicationHandler
 
     public bool ImportToken(string contractAddress, string symbol, int delimiter, int network)
     {
-        if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalTokens.json"))
-            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", "");
+        if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
+            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
 
-        var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
 
         var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
         
@@ -98,7 +98,7 @@ public class AuthenicationHandler
                 }
             }
             });
-            File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
+            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
             return true;
         }
     }

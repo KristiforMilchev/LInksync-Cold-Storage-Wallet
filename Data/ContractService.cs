@@ -245,10 +245,10 @@ namespace NFTLock.Data
 
             tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
 
-            if (!File.Exists($"{Utilities.GetOsDatFolder()}/LocalTokens.json"))
-                File.WriteAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json", "");
+            if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
+                File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
 
-            var filesContent = File.ReadAllText($"{Utilities.GetOsDatFolder()}/LocalTokens.json");
+            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
 
             var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
 
