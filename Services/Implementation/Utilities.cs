@@ -145,5 +145,20 @@ namespace SYNCWallet.Services.Implementation
             return result;
         }
 
+
+        public static void OpenErrorView(string msg, int attempts)
+        {
+            Application.Current.Dispatcher.Dispatch(() =>
+            {
+                var secondWindow = new Window
+                {
+                    Page = new ErrorView(msg, attempts),
+                    
+                };
+            
+                Application.Current.OpenWindow(secondWindow);
+            });
+
+        }
     }
 }
