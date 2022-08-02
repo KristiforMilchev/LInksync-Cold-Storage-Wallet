@@ -39,7 +39,7 @@
 
 
     .contentCard{
-        height: 600px;
+        height: 650px;
         overflow: hidden;
         overflow-y: auto;
     }
@@ -480,10 +480,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div style="display:@MauiProgram.ShowLoader">
+                        <div style="display: @MauiProgram.ShowLoader;
+                                flex-direction: column;
+                                align-content: space-around;
+                                flex-wrap: wrap;
+                                height: 100%;
+                                justify-content: center;">
                                 <div class="spinner-border text-danger" role="status">
                                     <span class="sr-only">Sending transaction please wait</span>
                                 </div>
+                                @if(@MauiProgram.TxHash != null)
+                                {
+                                     <p>
+                                        Please wait, sending transaction @MauiProgram.TxHash
+                                    </p>
+                                }
                             </div>
 
                         <div style="display:@MauiProgram.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
