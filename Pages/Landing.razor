@@ -37,12 +37,105 @@
         background: #282931;
     }
 
-    .container{
+
+    .contentCard{
+        height: 600px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    .page {
+        height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-content: center;
-        height: 100%;
+    }
+    /* (1280x720) Galaxy Note 2, WXGA */
+    @@media only screen and (width: 1280px) {
+          .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        }
+    }
+
+    /* (1366x768) WXGA Display */
+    @@media  screen and (width: 1366px) {
+         .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        }
+    }
+
+    /* (1280x1024) SXGA Display */
+    @@media  screen and (width: 1280px) {
+         .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        }
+    }
+
+    /* (1440x900) WXGA+ Display */
+    @@media  screen and (width: 1440px) {
+         /* insert styles here */
+          .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        } 
+    }
+
+
+
+    /* (1600x900) HD+ Display */
+    @@media  screen and (max-width: 1600px) {
+        /* insert styles here */
+          .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:60%;
+            max-width:100%;
+        }
+    }
+
+    /* (1920x1080) Full HD Display */
+    @@media  screen and (max-width: 1920px) {
+        /* insert styles here */
+          .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        }
     }
  </style>
  
@@ -85,7 +178,7 @@
     <div class="row" style="display:none;">
         <div class="col-12">
             <div class="card">
-                <div class="row">
+                <div >
                     <div class="col-lg-8">
                         <div class="card-body">
                             <h6 class="card-subtitle mb-0">Balance History @TokenName</h6>
@@ -107,8 +200,8 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
-                        <div class="row">
-                            <div class="col-8">
+                        <div >
+                            <div >
                                 <span class="display-6">
                                     @if(SelectedToken != null)
                                     {
@@ -129,8 +222,8 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
-                        <div class="row">
-                            <div class="col-8">
+                        <div >
+                            <div >
                                 <span class="display-6">
                                     @if (SelectedToken != null)
                                     {
@@ -150,8 +243,8 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
-                        <div class="row">
-                            <div class="col-8">
+                        <div >
+                            <div >
                                 <span class="display-6">
                                     @if(SelectedToken != null)
                                     {
@@ -170,16 +263,11 @@
         <div class="row" style="margin:0;">
             <div class="col-md-12">
                 <div class="card">
-             
-                 
-                        <div class="card-body" style="height: 50vh;overflow: hidden;overflow-y: hidden;">
-
+                        <div class="card-body contentCard">
                             <div class="table-responsive" style="display:@MauiProgram.HideTokenList" id="TokenList">
-
                                 <button class="btn btn-outline-secondary" @onclick="ToggleTokenImport" type="button">
                                     <i class="fas fa-cog"></i>
                                     Import Custom
-
                                 </button>
                                 <table class="table stylish-table v-middle mb-0 no-wrap">
                                     

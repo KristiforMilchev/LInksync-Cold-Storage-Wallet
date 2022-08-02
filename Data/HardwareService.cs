@@ -13,6 +13,7 @@ using RJCP.IO.Ports;
 using ArduinoUploader.Hardware;
 using ArduinoUploader;
 
+ 
 namespace NFTLock.Data
 {
     internal class HardwareService
@@ -116,7 +117,7 @@ namespace NFTLock.Data
         {
             var ecKey = Nethereum.Signer.EthECKey.GenerateKey();
             var recovered = ecKey.GetPrivateKey();
-
+  
             var chunks = Utilities.Split(recovered,5).ToList();
             var account = new Account(recovered, 97);
 
@@ -138,7 +139,7 @@ namespace NFTLock.Data
             List<Word> words = new List<Word>();
             chunks.ToList().ForEach(x =>
             {
-                string yourByteString = Utilities.StringToBinary(x);
+                string yourByteString = x;
  
 
  
