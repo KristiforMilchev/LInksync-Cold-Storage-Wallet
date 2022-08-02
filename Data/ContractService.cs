@@ -450,75 +450,38 @@ namespace NFTLock.Data
         {
 
             var PayerAddress =  account.Address;
-            var trans = new TransferTokenFunction();
- 
+  
 
             var Account = account;
 
             var netowrkEndpoint = endpoint;
             var web3 = new Web3(Account, netowrkEndpoint);
+            web3.TransactionManager.UseLegacyAsDefault = true;
+
             var transferHandler = web3.Eth.GetContractTransactionHandler<TransferTokenFunction>();
 
-            try
+            var transferAmount = default(BigInteger);
+            transferAmount = (BigInteger)Utilities.SetDecimalPoint(amountToSend, token.Decimals);
+
+            var transfer = new TransferTokenFunction()
             {
-                var transferAmount = default(BigInteger);
-                transferAmount = (BigInteger)Utilities.SetDecimalPoint(amountToSend, token.Decimals);
-
-                var transfer = new TransferTokenFunction()
-                {
-                    FromAddress = PayerAddress,
-                    To = receiver,
-                    TokenAmount = transferAmount,
-
-                };
-
-                if (chainId == 97 || chainId == 56)
-                    transfer.GasPrice = Nethereum.Web3.Web3.Convert.ToWei(15, UnitConversion.EthUnit.Gwei);
-
-
-                if (chainId == 137)
-                {
-                    transfer.GasPrice = Nethereum.Web3.Web3.Convert.ToWei(105, UnitConversion.EthUnit.Gwei);
-
-                }
-
-
-                var estimate = await transferHandler.EstimateGasAsync(token.ContractAddress, transfer);
-
-                if (chainId == 137)
-                {
-                    transfer.Gas = estimate.Value + 15000000;
-
-                }
-                else
-                    transfer.Gas = estimate.Value;
-
-
-                trans = transfer;
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Executing payment transaction failed");
-                Console.WriteLine(ex.ToString());
-                return false;
-
-            }
-
-
-
-            trans.Nonce = await Account.NonceService.GetNextNonceAsync();
+                FromAddress = PayerAddress,
+                To = receiver,
+                TokenAmount = transferAmount,
+                Nonce = await Account.NonceService.GetNextNonceAsync()
+            };
+ 
             var transactionReceipt = default(string);
-
             var logged = false;
+            
             try
             {
-                transactionReceipt = await transferHandler.SendRequestAsync(token.ContractAddress, trans);
+                transactionReceipt = await transferHandler.SendRequestAsync(token.ContractAddress, transfer);
             }
             catch (Exception e)
             {
                 logged = true;
-                
+                MauiProgram.TxHash = "-";
             }
 
             if (transactionReceipt != null)
@@ -532,8 +495,6 @@ namespace NFTLock.Data
                 }
             }
             return true;
-
-
         }
 
         public async Task<bool> ExecuteNative(string receiver, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)

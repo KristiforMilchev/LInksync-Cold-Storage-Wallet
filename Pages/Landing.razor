@@ -445,11 +445,8 @@
                             <div style="display:@MauiProgram.ShowPinPanel">
                                 <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
                                     <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
-                                        <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
-                                            <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
-
-                                        </div>
-                                        <div class="row" style="margin-top: 50px;">
+                                 
+                                        <div class="row"  >
                                             <div class="card" style="padding: 0;overflow: hidden;">
                                                 <div class="card-header bg-light">
                                                     <h4 class="mb-0 text-white" style="text-align:center">Login</h4>
@@ -481,21 +478,22 @@
                                 </div>
                             </div>
                         <div style="display: @MauiProgram.ShowLoader;
-                                flex-direction: column;
-                                align-content: space-around;
-                                flex-wrap: wrap;
-                                height: 100%;
-                                justify-content: center;">
-                                <div class="spinner-border text-danger" role="status">
-                                    <span class="sr-only">Sending transaction please wait</span>
-                                </div>
-                                @if(@MauiProgram.TxHash != null)
-                                {
-                                     <p>
-                                        Please wait, sending transaction @MauiProgram.TxHash
-                                    </p>
-                                }
+                                    flex-direction: column;
+                                    align-content: space-around;
+                                    flex-wrap: wrap;
+                                    height: 100%;
+                                    justify-content: center;
+                                    align-items: center;">
+                            <div class="spinner-border text-danger" role="status">
+                                <span class="sr-only">Sending transaction please wait</span>
                             </div>
+                            @if(@MauiProgram.TxHash != null)
+                            {
+                                    <p>
+                                    Please wait, sending transaction @MauiProgram.TxHash
+                                </p>
+                            }
+                        </div>
 
                         <div style="display:@MauiProgram.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
                                 @if(Receipt != null && SelectedToken != null)
@@ -766,23 +764,24 @@
             MauiProgram.TransactionTimer.Stop();
             MauiProgram.TransactionTimer.Dispose();
 
-            await InvokeAsync(() =>
-            {
-                MauiProgram.ShowLoader = "";
-                MauiProgram.HideTokenList = "none";
-                MauiProgram.HideTokenSend = "none";
-                MauiProgram.ShowPinPanel = "none";
-                MauiProgram.Receipt = "none";
+            if(MauiProgram.ShowLoader != "flex")
+                await InvokeAsync(() =>
+                {
+                    MauiProgram.ShowLoader = "flex";
+                    MauiProgram.HideTokenList = "none";
+                    MauiProgram.HideTokenSend = "none";
+                    MauiProgram.ShowPinPanel = "none";
+                    MauiProgram.Receipt = "none";
 
-                StateHasChanged();
+                    StateHasChanged();
 
-            });
+                });
 
             var paymentService = new PaymentService();
             var result = await paymentService.BeginTransaction();
 
             if (result != null)
-            {
+            {  
                 await InvokeAsync(() =>
                 {
                     MauiProgram.ShowLoader = "none";
@@ -793,7 +792,7 @@
                     Receipt = result;
                     StateHasChanged();
 
-                });
+                });   
             }
         }
 
