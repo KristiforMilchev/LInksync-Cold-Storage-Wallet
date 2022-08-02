@@ -15,5 +15,6 @@ namespace SYNCWallet.Models
         public string Logo { get; set; }
         public bool IsChainCoin { get; set; }
         public List<TokenContract> Contracts { get; set; }
+        public List<TokenLink> Links { get; set; }
     }
 }
