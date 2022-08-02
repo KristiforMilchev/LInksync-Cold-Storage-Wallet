@@ -374,21 +374,38 @@
                                     </div>
                                     <div class="flexInnerRow">
                                             <div style="display: flex;flex-direction: row;width: 510px;justify-content: space-evenly;">
-                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
-                                                    <i class="fab fa-telegram"></i>
-                                                </button>
-                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
-                                                    <i class="mdi mdi-web"></i>
-                                                </button>
-                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
-                                                    <i class="mdi mdi-medium"></i>
-                                                </button>
-                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
-                                                    <i class="mdi mdi-discord"></i>
-                                                </button>
-                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" type="button">
-                                                    <i class="mdi mdi-reddit"></i>
-                                                </button>
+                                            @if (SelectedToken.Links != null)
+                                            {
+                                                @foreach (var link in SelectedToken.Links)
+                                                { 
+                                                    <button class="btn btn-linkedin waves-effect btn-circle waves-light" @onclick="(() => OpenLink(link))" type="button">
+                                                        @switch (link.Type)
+                                                        {
+                                                            case LinkTypes.Facebook:
+                                                                <i class="fab fa-facebook"></i>
+                                                                break;
+                                                            case LinkTypes.Telegram:
+                                                                <i class="fab fa-telegram"></i>
+                                                                break;
+                                                            case LinkTypes.Twitter:
+                                                                <i class="fab fa-twitter"></i>
+                                                                break;
+                                                            case LinkTypes.Website:
+                                                                <i class="mdi mdi-web"></i>
+                                                                break;
+                                                            case LinkTypes.Reddit:
+                                                                <i class="mdi mdi-reddit"></i>
+                                                                break;
+                                                            case LinkTypes.Exchange:
+                                                                <i class="fas fa-money-bill-alt"></i>
+                                                                break;
+                                                        }
+                                                        
+                                                    </button>
+                                                }
+                                            }
+                                                
+                                    
                                             </div>
                                         </div>
                                         <div class="flexInnerRow">
@@ -793,5 +810,11 @@
             StateHasChanged();
 
         });
+    }
+
+    private async void OpenLink(TokenLink link)
+    {
+        Uri uri = new Uri(link.Url);
+        await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
     }
 }  
