@@ -24,7 +24,7 @@ namespace SYNCWallet.Data
             MauiProgram.HideTokenList = "none";
             MauiProgram.HideTokenSend = "none";
             MauiProgram.ShowPinPanel = "none";
-            MauiProgram.ShowLoader = "";
+         
 
             var auth = new AuthenicationHandler();
             var wallet = auth.UnlockWallet(MauiProgram.Pass);
@@ -63,8 +63,23 @@ namespace SYNCWallet.Data
 
             var auth = new AuthenicationHandler();
             var account =  auth.UnlockWallet(MauiProgram.Pass);
-   
 
+            if (string.IsNullOrEmpty(txHash))
+                return false;
+
+            if(txHash == "-")
+            {
+                TransactionResult = new TransactionResult
+                {
+                    Amount = 0,
+                    From = "--",
+                    To = "--",
+                    Timestamp = DateTime.UtcNow,
+                    TransactionHash = "Transaction failed, internal error, inssuficient balance or gas!"
+                };
+                MauiProgram.TxHash = String.Empty;
+                return false;
+            }
 
             var web3 = new Web3(account, MauiProgram.ActiveNetwork.Endpoint);
             var transactionReceipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txHash);

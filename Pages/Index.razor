@@ -29,7 +29,7 @@
                 <span id="network" style="text-align:center; width:100%;">@DeviceModel.ToString()</span>
                 
             </a>
-            <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;">
+            <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important; height:150px; overflow-y:scroll;background: #282931;">
                 @if (Devices != null)
                 {
                     @foreach (var device in Devices)
