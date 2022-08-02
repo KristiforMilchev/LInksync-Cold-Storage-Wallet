@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SYNCWallet.Models
 {
-    internal class GithubTokensModel
+    public class GithubTokensModel
     {
         public class Links
         {

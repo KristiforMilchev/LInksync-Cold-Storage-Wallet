@@ -10,12 +10,15 @@ using SYNCWallet.Services.Implementation;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Media;
- 
+using static SYNCWallet.Models.GithubTokensModel;
+
 namespace SYNCWallet;
 
 public static class MauiProgram
 {
     public static ArduinoModel DeviceType { get; set; }
+    public static List<ListedToken> ListedTokens {get; set;}
+
     public static int Os { get; set; }
     public static string DefaultPath { get; set; }
     public static string ContractABI { get; set; }
