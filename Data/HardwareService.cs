@@ -94,12 +94,9 @@ namespace NFTLock.Data
 
             words.ForEach(x =>
             {
-                Pk += Utilities.BinaryToString(x.Name);
+                Pk += x.Name;
                 i++;
             });
-
-        
-
 
             var account = new Account(Pk, 56);
 

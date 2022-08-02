@@ -215,9 +215,8 @@ namespace NFTLock.Data
 
         public static async Task<List<Token>> GetNetworkTokens(int networkId)
         {
-
-
-            var listedTokenData = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+            if(MauiProgram.ListedTokens == null)
+                MauiProgram.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             var tokens = new List<Token>();
 
@@ -243,7 +242,7 @@ namespace NFTLock.Data
                 });
             }
 
-            tokens = await GetListedTokens(listedTokenData, tokens, getNetworkData);
+            tokens = await GetListedTokens(MauiProgram.ListedTokens, tokens, getNetworkData);
 
             if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
                 File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
