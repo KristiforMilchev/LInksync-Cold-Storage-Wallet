@@ -1,7 +1,7 @@
 [
   {
     "IsProduction": false,
-    "Id": 1,
+    "Id": 11,
     "Chainid": 4,
     "Endpoint": "https://rinkeby.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e",
     "WS": "eth",
@@ -37,7 +37,7 @@
   },
   {
     "IsProduction": false,
-    "Id": 2,
+    "Id": 22,
     "Chainid": 97,
     "Endpoint": "https://data-seed-prebsc-1-s1.binance.org:8545",
     "WS": "bsc testnet",
@@ -61,7 +61,7 @@
   },
   {
     "IsProduction": false,
-    "Id": 3,
+    "Id": 33,
     "Chainid": 80001,
     "Endpoint": "https://matic-mumbai.chainstacklabs.com",
     "WS": "mumbai",
