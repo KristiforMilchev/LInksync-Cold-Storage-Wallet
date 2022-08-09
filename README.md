@@ -96,4 +96,4 @@ https://linksync.tech/Products 
 
 If you find my software beneficial, please consider buying me a coffee. Thanks! 
 
-0xD3588f5f95F77eceF3c0e572B4dcfEb867711813 – Crypto
+0x7A310161c2f86d34949a4a136d07A23D23028884 – Crypto
