@@ -3,13 +3,13 @@
 ##   
  
 
-### **What is a SYNC Wallet?**
+### **What is a SYNC Wallet ?**
 
 SYNC Wallet is a cold stored wallet which is compatible with all EVM blockchains. It's easy to integrate and provides security and it’s built for privacy.  Using the SYNC wallet, users can move and trade coins/tokens in a safe environment, retaining access to their private key which are stored on their devices.   
 
 ![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/4c71394546844cb06265f25f4d8ee1d08237f632dd8c215b.png)
 
-### Compatible devices**?**
+### Compatible devices ?
 
 SYNC Wallet can be installed on any chipset and is compatible with atmega328, which can be found on Amazon or your local provider with an easy to install using guides in the repository. By choosing to use your own chipset, you know for certain that the device is not compromised by any kind. 
 
@@ -46,14 +46,14 @@ SYNC Wallet is easy to navigate, you can send and receive transactions and you h
 
 ![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/032ef290afcbb7b9df0d34ee593371bf19cc83aff279c156.png)
 
-### How to send transactions?
+### How to send transactions ?
 
 To send a transaction you just need to select a token from the list of tokens in the wallet. Add the receiver address, choose the amount you want to send, approve the transaction with your Personal PIN code.   
  
 
 ![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/0b56a7a790bb113f706743c5170442cf22c26f33c69c2d7c.png)
 
-How to receive a token?  
+How to receive a token ?  
  
 
 To receive a transaction, you need to click on your wallet address on the top, and you need to send the address to the person that’s sending the tokens. (If you are receiving a custom token that is not on our official list, please make sure you add it to view the value using the import token functionality)    
@@ -67,14 +67,14 @@ To add a custom token, go to the import token, set the contract address, if the 
 
 ###   
   
-How to add EVM compatible network?  
+How to add EVM compatible network ?   
  
 
 Click on to add a new network set the RPC endpoint, Network Name, Chain ID, Symbol and block explorer.
 
 ![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/19bfcdc21e4e375eb2ee7f7df63e407f47d92ec5b8d6f023.png)
 
-### How to compile from source? 
+### How to compile from source ?  
 
 Prerequisites:  
 
