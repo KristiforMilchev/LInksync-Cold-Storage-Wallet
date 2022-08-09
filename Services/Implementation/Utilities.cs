@@ -150,13 +150,7 @@ namespace SYNCWallet.Services.Implementation
         {
             Application.Current.Dispatcher.Dispatch(() =>
             {
-                var secondWindow = new Window
-                {
-                    Page = new ErrorView(msg, attempts),
-                    
-                };
-            
-                Application.Current.OpenWindow(secondWindow);
+                Application.Current.MainPage.DisplayAlert("Authenication Error!", msg, "OK");
             });
 
         }
