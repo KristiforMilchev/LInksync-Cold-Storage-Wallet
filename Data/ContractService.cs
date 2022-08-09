@@ -145,17 +145,26 @@ namespace NFTLock.Data
 
         public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract, string endpoint, int decimals)
         {
- 
-            var balanceOfFunctionMessage = new BalanceOf()
+            try
             {
-                Owner = ownerAddress,
-            };
-            var web3 = new Nethereum.Web3.Web3(endpoint);
+                var balanceOfFunctionMessage = new BalanceOf()
+                {
+                    Owner = ownerAddress,
+                };
+                var web3 = new Nethereum.Web3.Web3(endpoint);
 
-            var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
-            var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
-            var convert = ConvertToDex(balance, decimals);
-            return convert;
+                var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
+                var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
+                var convert = ConvertToDex(balance, decimals);
+                return convert;
+            }
+            catch (Exception e)
+            {
+                var dt = DateTime.UtcNow;
+                Debug.WriteLine($"{dt.ToShortDateString()} {dt.ToShortTimeString()} -> Error checking account balance for   Owner: {ownerAddress} Contract: {contract} Network: {endpoint} ");
+                return 0;
+            }
+         
         }
 
        
