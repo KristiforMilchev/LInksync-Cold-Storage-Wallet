@@ -29,16 +29,15 @@
         padding: 10px;
      }
 
-     .dropdown-menu.show {
+    .dropdown-menu.show {
         display: block;
         position: absolute !important;
         left: 68% !important;
         top: 4% !important;
         background: #282931;
     }
-
-
-    .contentCard{
+     
+    .contentCard {
         height: 650px;
         overflow: hidden;
         overflow-y: auto;
@@ -50,8 +49,9 @@
         flex-direction: column;
         justify-content: center;
     }
+
     /* (1280x720) Galaxy Note 2, WXGA */
-    @@media only screen and (width: 1280px) {
+    @@media only screen and (max-width: 1280px) {
           .container{
             display: flex;
             flex-direction: column;
@@ -62,24 +62,16 @@
             max-width:100%;
 
         }
-    }
 
-    /* (1366x768) WXGA Display */
-    @@media  screen and (width: 1366px) {
-         .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
+        .contentCard {
+            height: 450px;
+            overflow: hidden;
+            overflow-y: auto;
         }
     }
 
     /* (1280x1024) SXGA Display */
-    @@media  screen and (width: 1280px) {
+    @@media  screen and (max-width: 1280px) {
          .container{
             display: flex;
             flex-direction: column;
@@ -90,10 +82,36 @@
             max-width:100%;
 
         }
+
+        .contentCard {
+            height: 450px;
+            overflow: hidden;
+            overflow-y: auto;
+        }
+    }
+
+    /* (1366x768) WXGA Display */
+    @@media  screen and (max-width: 1366px) {
+         .container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width:100%;
+            max-width:100%;
+
+        }
+        
+        .contentCard {
+            height: 450px;
+            overflow: hidden;
+            overflow-y: auto;
+        }
     }
 
     /* (1440x900) WXGA+ Display */
-    @@media  screen and (width: 1440px) {
+    @@media  screen and (max-width: 1440px) {
          /* insert styles here */
           .container{
             display: flex;
@@ -104,10 +122,15 @@
             width:100%;
             max-width:100%;
 
-        } 
+        }
+        
+        .contentCard{
+            height: 450px;
+            overflow: hidden;
+            overflow-y: auto;
+        }
+
     }
-
-
 
     /* (1600x900) HD+ Display */
     @@media  screen and (max-width: 1600px) {
@@ -121,6 +144,8 @@
             width:60%;
             max-width:100%;
         }
+     
+
     }
 
     /* (1920x1080) Full HD Display */
@@ -137,6 +162,8 @@
 
         }
     }
+
+    
  </style>
  
 
@@ -667,6 +694,10 @@
     private void SetMaxAmount()
     {
 
+        InvokeAsync(() =>
+        {
+            TokensToSend = SelectedContract.UserBalance;
+        });
     }
 
     private void CancelSend()
