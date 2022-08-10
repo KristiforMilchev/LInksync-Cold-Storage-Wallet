@@ -84,6 +84,7 @@ public static class MauiProgram
 
     public static bool CheckConfigured()
     {
+  
         try
         {
             StartSerial();
@@ -165,13 +166,22 @@ public static class MauiProgram
                     }
 
                 }
-                else if(a == "#ERL")
+                else if(a == "#ERL" || test == "#ERL")
                 {
                 
                     RemainingAttempts -= 1;
                     if (RemainingAttempts <= 0)
-                        Application.Current.Quit();
+                    {
+                        Application.Current.Dispatcher.Dispatch(() =>
+                        {
+                            Application.Current.Windows.ToList().ForEach(y =>
+                            {
+                                Application.Current.CloseWindow(y);
+                            });
+                        });
+                      
 
+                    }
                     Utilities.OpenErrorView($"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
                 }
                 else

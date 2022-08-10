@@ -23,7 +23,6 @@ namespace SYNCWallet.Services.Implementation
                     whiteListedNetworks.AddRange(convertedNetworkList);
                 return whiteListedNetworks;
             }
-       
         }
 
         public static async Task<T> GetRequest<T>(string url)
@@ -150,13 +149,7 @@ namespace SYNCWallet.Services.Implementation
         {
             Application.Current.Dispatcher.Dispatch(() =>
             {
-                var secondWindow = new Window
-                {
-                    Page = new ErrorView(msg, attempts),
-                    
-                };
-            
-                Application.Current.OpenWindow(secondWindow);
+                Application.Current.MainPage.DisplayAlert("Authenication Error!", msg, "OK");
             });
 
         }

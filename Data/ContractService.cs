@@ -142,7 +142,6 @@ namespace NFTLock.Data
          
         }
 
-
         public static async Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract, string endpoint, int decimals)
         {
             try
@@ -166,7 +165,6 @@ namespace NFTLock.Data
             }
          
         }
-
        
         public static decimal ConvertToDex(BigInteger blockNumber, int decimals)
         {
@@ -174,7 +172,6 @@ namespace NFTLock.Data
             var num =  convert / (decimal) Math.Pow(10, decimals);
             return num;
         }
-
 
         public static decimal ConvertToDexDecimal(decimal number, int decimals)
         {
@@ -216,8 +213,6 @@ namespace NFTLock.Data
             {
                 logged = true;
             }
-
-
 
             return transactionReceipt;
         }

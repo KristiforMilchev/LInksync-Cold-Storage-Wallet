@@ -73,10 +73,5 @@
     <PackageReference Include="Nethereum.RPC.Reactive" Version="4.6.1" />
     <PackageReference Include="Nethereum.Web3" Version="4.6.1" />
   </ItemGroup>
-  <ItemGroup>
-    <MauiXaml Update="ErrorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
 
 </Project>
