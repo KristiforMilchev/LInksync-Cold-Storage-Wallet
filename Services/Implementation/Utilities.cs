@@ -23,7 +23,6 @@ namespace SYNCWallet.Services.Implementation
                     whiteListedNetworks.AddRange(convertedNetworkList);
                 return whiteListedNetworks;
             }
-       
         }
 
         public static async Task<T> GetRequest<T>(string url)
