@@ -131,6 +131,25 @@
         }
 
     }
+    /* (1440x900) WXGA+ Display */
+    @@media screen and (max-height: 908px) {
+        /* insert styles here */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .contentCard {
+            height: 450px;
+            overflow: hidden;
+            overflow-y: auto;
+        }
+    }
 
     /* (1600x900) HD+ Display */
     @@media  screen and (max-width: 1600px) {
