@@ -83,6 +83,27 @@
     }
 
     /* (1440x900) WXGA+ Display */
+    @@media screen and (max-height: 908px) {
+       .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            height: 100%;
+            width: 100%;
+            max-width: 100%;
+        }
+        .logoPos{
+            width: 500px;
+            height: 500px;
+            position: absolute;
+            left: 78%;
+            top: 50%;
+        }
+ 
+    }
+
+    /* (1440x900) WXGA+ Display */
     @@media screen and (max-width: 1440px) {
         /* insert styles here */
         .container {
@@ -173,11 +194,11 @@
     <div class="row"  id="Preview" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;display:none; margin-top:50px;">
         <div class="card" style="padding: 0;overflow: hidden;">
             <div class="card-body">
-                <div class="row" style="    flex-wrap: wrap;
-    flex-direction: row;
-    align-content: center;
-    align-items: flex-start;
-    justify-content: center;">
+                <div class="row" style="flex-wrap: wrap;
+                                        flex-direction: row;
+                                        align-content: center;
+                                        align-items: flex-start;
+                                        justify-content: center;">
                     @if (Words != null)
                     {
                         
@@ -185,10 +206,10 @@
                         {
 
                             <div class="col-md-2" style="text-align: center;
-    border: 1px solid #999999;
-    border-radius: 7px;
-    padding: 0;
-    margin: 5px;">
+                                                        border: 1px solid #999999;
+                                                        border-radius: 7px;
+                                                        padding: 0;
+                                                        margin: 5px;">
                                 <p class="text-muted">
                                     @item.Name
                                 </p>
