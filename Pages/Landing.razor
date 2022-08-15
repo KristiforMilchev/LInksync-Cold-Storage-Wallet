@@ -7,6 +7,8 @@
 @using SYNCWallet.Models
 @using System.Security.Cryptography
 @using System.Text
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
 @using SYNCWallet.Services.Implementation
 @using System.Timers
  
@@ -602,9 +604,9 @@
 
 @code {
 
+
     public string TokenName { get; set; }
     private bool IsChartRendered { get; set; }
-    AuthenicationHandler Authenication { get; set; }
     List<Token> Tokens { get; set; }
     private List<NetworkSettings> Networks { get; set; }
     public string WalletAddress { get; set; }
@@ -623,6 +625,10 @@
     System.Timers.Timer BalanceCheck { get; set; }
     DateTime NextCheck { get; set; }
 
+    IUtilities Utilities { get; set; }
+    IAuthenicationService AuthenicationService { get; set; }
+    IPaymentService PaymentService { get; set; }
+    IHardwareService HardwareService { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -636,8 +642,16 @@
 
         return base.OnAfterRenderAsync(firstRender);
     }
+
     protected override async Task OnInitializedAsync()
     {
+
+
+        Utilities = ServiceHelper.GetService<IUtilities>();
+        AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+        PaymentService = ServiceHelper.GetService<IPaymentService>();
+        HardwareService = ServiceHelper.GetService<IHardwareService>();
+
         NextCheck = NextCheck.AddMinutes(1);
         MauiProgram.HideTokenList = "";
         MauiProgram.HideTokenSend = "none";
@@ -654,7 +668,6 @@
 
 
         TokenName = "SYNC";
-        Authenication = new AuthenicationHandler();
 
         //Load Network Settings
         var utils = new Utilities();
@@ -662,8 +675,8 @@
         Networks = MauiProgram.NetworkSettings.Where(x=> x.IsProduction == MauiProgram.IsDevelopment).ToList();
         SelectedNetwork = Networks.FirstOrDefault();
         MauiProgram.ActiveNetwork = SelectedNetwork;
-        WalletAddress = Authenication.GetDefault();
-        Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+        WalletAddress = AuthenicationService.GetDefault();
+        Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
 
     }
 
@@ -680,15 +693,25 @@
 
     private async void DefaultToToken()
     {
-        await  InvokeAsync( async () =>
+        try
         {
-            if(SelectedNetwork != null)
+            await InvokeAsync(async () =>
             {
-                Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
-                StateHasChanged();
-            }
+                if (SelectedNetwork != null)
+                {
 
-        });
+                    Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+                    StateHasChanged();
+                }
+
+            });
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+       
 
 
     }
@@ -766,7 +789,7 @@
     {
         await InvokeAsync(async () =>
         {
-            Tokens = await Authenication.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+            Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
             StateHasChanged();
         });
     }
@@ -788,8 +811,7 @@
 
     private async void EnterPin()
     {
-        var hardwareService = new HardwareService();
-        var passwrod = hardwareService.Encrypt(Password, "iV1z@$H8");
+        var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
         MauiProgram.KeepPrivateSingle = true;
         MauiProgram.Amount = TokensToSend;
         MauiProgram.ReceiverAddress = ReceiverAddress;
@@ -838,8 +860,7 @@
 
                 });
 
-            var paymentService = new PaymentService();
-            var result = await paymentService.BeginTransaction();
+            var result = await PaymentService.BeginTransaction();
 
             if (result != null)
             {  
@@ -863,8 +884,12 @@
     private void OnBalanceUpdate(object source, ElapsedEventArgs e)
     {
 
-        if(DateTime.UtcNow > NextCheck)
-            DefaultToToken();
+        if (DateTime.UtcNow > NextCheck)
+        {
+            Task.Run(() => DefaultToToken());
+            NextCheck = DateTime.UtcNow.AddMinutes(1);
+        }
+
     }
 
 

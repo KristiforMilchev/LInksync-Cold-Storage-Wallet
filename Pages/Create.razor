@@ -6,6 +6,8 @@
 @using NFTLock.Models
 @using Newtonsoft.Json
 @using SYNCWallet.Models
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -344,19 +346,19 @@
     public int WordNum { get; set; }
     public string Word { get; set; }
     public string PassCode { get; set; }
-
-
+    IHardwareService HardwareService { get; set; }
+    IUtilities Utilities { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var hardwareService = new HardwareService();
+        HardwareService = ServiceHelper.GetService<IHardwareService>();
+        Utilities = ServiceHelper.GetService<IUtilities>();
     }
 
     private void CreateNew()
     {
         Validated = 0;
-        var hardwareService = new HardwareService();
-        Wallet = hardwareService.CreateAccount();
+        Wallet = HardwareService.CreateAccount();
 
         InvokeAsync(() =>
         {
@@ -375,7 +377,6 @@
 
     private async void CheckWallet()
     {
-        var hardwareService = new HardwareService();
         var getWords = await JS.InvokeAsync<List<string>>("GetImportWords");
         var words = new List<Word>();
 
@@ -388,7 +389,7 @@
                 Name = x
             });
         });
-        Wallet = hardwareService.ImportAccount(words);
+        Wallet = HardwareService.ImportAccount(words);
 
         SetPin();
     }
@@ -437,11 +438,10 @@
     private void CreateWallet()
     {
 
-        var hardwareService = new HardwareService();
-        try
+         try
         {
-            var passwrod = hardwareService.Encrypt(PassCode, "iV1z@$H8");
-            var PK = hardwareService.Encrypt(Wallet.PrivateKey, PassCode);
+            var passwrod = HardwareService.Encrypt(PassCode, "iV1z@$H8");
+            var PK = HardwareService.Encrypt(Wallet.PrivateKey, PassCode);
 
             MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
             {

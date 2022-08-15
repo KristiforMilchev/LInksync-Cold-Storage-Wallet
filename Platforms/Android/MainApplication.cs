@@ -12,5 +12,5 @@ public class MainApplication : MauiApplication
     {
     }
 
-    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp().GetAwaiter().GetResult();
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

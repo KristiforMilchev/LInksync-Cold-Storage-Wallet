@@ -23,7 +23,7 @@ public partial class App : MauiWinUIApplication
 	protected override MauiApp CreateMauiApp()
 	{
 
-		var res = MauiProgram.CreateMauiApp().GetAwaiter().GetResult();
+		var res = MauiProgram.CreateMauiApp();
 		return res;
 	}
 }

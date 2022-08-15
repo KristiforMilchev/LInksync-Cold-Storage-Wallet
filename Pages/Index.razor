@@ -6,6 +6,8 @@
 @using NFTLock.Data
 @using System.IO.Ports
 @using System.Diagnostics
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -47,8 +49,8 @@
 </div>
 
 @code {
-    private AuthenicationHandler AuthenicationHandler { get; set; }
-    private HardwareService HardwareService { get; set; }
+    private IAuthenicationService AuthenicationHandler { get; set; }
+    private IHardwareService HardwareService { get; set; }
     private string Address { get; set; }
     private string Port{ get; set; }
 
@@ -56,7 +58,6 @@
     public List<ArduinoModel> Devices { get; set; }
 
     System.Timers.Timer aTimer { get; set; }
-
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,8 +67,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        AuthenicationHandler = new AuthenicationHandler();
-        HardwareService = new HardwareService();
+ 
+        AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
+        HardwareService = ServiceHelper.GetService<IHardwareService>();
+
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
 
@@ -93,14 +96,12 @@
 
     private async Task<bool> CheckDeviceConnected(string port)
     {
- 
-
 
         try
         {
             if (!string.IsNullOrEmpty(port))
             {
-                var firmwareUpdated = await HardwareService.CreateNewDevice(port);
+                var firmwareUpdated = HardwareService.CreateNewDevice(port);
 
                 var configStatus = MauiProgram.CheckConfigured();
 
