@@ -5,6 +5,8 @@
 @using NFTLock.Data
 @using Newtonsoft.Json
 @using SYNCWallet.Models
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -53,11 +55,15 @@
 
     private string Password{ get; set; }
     System.Timers.Timer aTimer { get; set; }
+    IHardwareService HardwareService { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        HardwareService = ServiceHelper.GetService<IHardwareService>();
+
         if (MauiProgram.IsLogged && !string.IsNullOrEmpty(MauiProgram.PublicAddress))
         {
-            NavigationManager.NavigateTo("/Landing");
+            NavigationManager.NavigateTo("Landing");
 
         }
 
@@ -68,6 +74,7 @@
 
 
     }
+ 
 
     // Specify what you want to happen when the Elapsed event is raised.
     private  void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -79,14 +86,13 @@
                 aTimer.Stop();
                 aTimer.Dispose();
             }
-            NavigationManager.NavigateTo("/Landing");
+            NavigationManager.NavigateTo("Landing");
         }
     }
 
     private void LoginPublic()
     {
-        var hardwareService = new HardwareService();
-        var passwrod = hardwareService.Encrypt(Password, "iV1z@$H8");
+        var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
 
         MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
             {
@@ -97,6 +103,4 @@
         MauiProgram.Pass = Password;
          
     }
-
-
 }

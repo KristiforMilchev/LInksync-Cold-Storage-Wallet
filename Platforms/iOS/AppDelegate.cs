@@ -8,6 +8,6 @@ public class AppDelegate : MauiUIApplicationDelegate
 {
 	protected override MauiApp CreateMauiApp()
 	{
-		return  MauiProgram.CreateMauiApp().GetAwaiter().GetResult();
+		return MauiProgram.CreateMauiApp();
 	}
 }

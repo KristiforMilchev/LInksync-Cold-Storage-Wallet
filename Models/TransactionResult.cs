@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SYNCWallet.Models
 {
-    internal class TransactionResult
+    public class TransactionResult
     {
         public string TransactionHash { get; set;
         }

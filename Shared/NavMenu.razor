@@ -1,5 +1,7 @@
 ﻿@using NFTLock.Data
 @using SYNCWallet.Pages
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
 
@@ -146,18 +148,27 @@
 	public string ContractAddress { get; set; }
 	public string Symbol { get; set; }
 	public int Decimals { get; set; }
+	public IUtilities Utilities { get; set; }
+	public IAuthenicationService AuthenicationService { get; set; }
 
 	private void OpenMenu(string location)
 	{
 		NavigationManager.NavigateTo(location);
 	}
 
+	protected override async Task OnInitializedAsync()
+	{
+		Utilities = ServiceHelper.GetService<IUtilities>();
+		AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+	}
+
 
 	private async void ImportNetwork()
 	{
+ 
+
 		await JS.InvokeVoidAsync("ImportNewNetwork");
-		var Authenication = new AuthenicationHandler();
-		var result = Authenication.SetupNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
+		var result = AuthenicationService.SetupNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
 		await NetworkAdded.InvokeAsync();
 	}
 
@@ -166,8 +177,7 @@
 	{
 		await JS.InvokeVoidAsync("ImportTokens");
 
-		var Authenication = new AuthenicationHandler();
-		var result = Authenication.ImportToken(ContractAddress, Symbol, Decimals, MauiProgram.ActiveNetwork.Id);
+		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, MauiProgram.ActiveNetwork.Id);
 		await TokenImported.InvokeAsync();
 
 	}

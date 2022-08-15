@@ -5,6 +5,8 @@ using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using NFTLock.Data;
 using SYNCWallet.Models;
+using SYNCWallet.Services;
+using SYNCWallet.Services.Definitions;
 using SYNCWallet.Services.Implementation;
 using System;
 using System.Collections.Generic;
@@ -15,9 +17,19 @@ using System.Timers;
 
 namespace SYNCWallet.Data
 {
-    internal class PaymentService
+    internal class PaymentService : IPaymentService
     {
         private TransactionResult TransactionResult { get; set; }
+        IContractService ContractService { get; set; }
+        IUtilities Utilities { get; set; }
+        IAuthenicationService AuthenicationService { get; set; }
+        public PaymentService()
+        {
+            ContractService = ServiceHelper.GetService<IContractService>();
+            Utilities = ServiceHelper.GetService<IUtilities>();
+            AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+        }
+
         public async Task<TransactionResult> BeginTransaction()
         {
 
@@ -26,17 +38,15 @@ namespace SYNCWallet.Data
             MauiProgram.ShowPinPanel = "none";
          
 
-            var auth = new AuthenicationHandler();
-            var wallet = auth.UnlockWallet(MauiProgram.Pass);
-            var contractService = new ContractService();
-
+            var wallet = AuthenicationService.UnlockWallet(MauiProgram.Pass);
+           
             if(wallet == null)
                 return null; 
 
             if (string.IsNullOrEmpty(MauiProgram.SelectedContract.ContractAddress))
-                await contractService.ExecuteNative(MauiProgram.ReceiverAddress, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
+                await ContractService.ExecuteNative(MauiProgram.ReceiverAddress, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
             else
-                await contractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
+                await ContractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
 
             //Clear PK, password etc.
 
@@ -61,8 +71,7 @@ namespace SYNCWallet.Data
         public async Task<bool> ValidateTransaction(string txHash)
         {
 
-            var auth = new AuthenicationHandler();
-            var account =  auth.UnlockWallet(MauiProgram.Pass);
+            var account = AuthenicationService.UnlockWallet(MauiProgram.Pass);
 
             if (string.IsNullOrEmpty(txHash))
                 return false;

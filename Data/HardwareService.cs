@@ -12,16 +12,16 @@ using System.Net;
 using RJCP.IO.Ports;
 using ArduinoUploader.Hardware;
 using ArduinoUploader;
+using SYNCWallet.Services.Definitions;
+using SYNCWallet.Services;
 
- 
 namespace NFTLock.Data
 {
-    internal class HardwareService
-{
-
-  
-
-
+    internal class HardwareService : IHardwareService
+    { 
+        IUtilities Utilities = ServiceHelper.GetService<IUtilities>();
+ 
+     
         public string DeviceConnected()
         {
             string[] portNames = SerialPortStream.GetPortNames();
@@ -45,7 +45,7 @@ namespace NFTLock.Data
             return new List<ArduinoModel> { ArduinoModel.Leonardo, ArduinoModel.Mega1284, ArduinoModel.Mega2560, ArduinoModel.Micro, ArduinoModel.NanoR2, ArduinoModel.NanoR3, ArduinoModel.UnoR3 };
         }
 
-        public async Task<bool> CreateNewDevice(string port)
+        public bool CreateNewDevice(string port)
         {
             string userName = Environment.UserName;
             
@@ -72,7 +72,7 @@ namespace NFTLock.Data
 
         }
 
-        private void ConfigureHardware(ArduinoModel device,string path, string port)
+        public void ConfigureHardware(ArduinoModel device,string path, string port)
         {
             var uploader = new ArduinoSketchUploader(
                   new ArduinoSketchUploaderOptions()

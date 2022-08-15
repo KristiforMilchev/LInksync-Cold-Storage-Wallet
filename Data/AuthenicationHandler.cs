@@ -1,20 +1,25 @@
- using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
-using NFTLock.Models;
 using SYNCWallet;
 using SYNCWallet.Models;
-using SYNCWallet.Services.Implementation;
-using System.Diagnostics;
-using System.Text;
-using static SYNCWallet.Models.GithubTokensModel;
+using SYNCWallet.Services;
+using SYNCWallet.Services.Definitions;
 
 namespace NFTLock.Data;
 
-public class AuthenicationHandler
+public class AuthenicationHandler : IAuthenicationService
 {
     ContractService _contractService { get; set; }
-  
+    IUtilities Utilities { get; set; }
+    IContractService ContractService { get; set; }
+    IHardwareService HardwareService { get; set; }
+    public AuthenicationHandler()
+    {
+        Utilities = ServiceHelper.GetService<IUtilities>();
+        ContractService = ServiceHelper.GetService<IContractService>();
+        HardwareService = ServiceHelper.GetService<IHardwareService>();
+    }
+
     public string CreateAccountInitial()
 	{
         //WIP
@@ -104,10 +109,9 @@ public class AuthenicationHandler
     }
 
 
-    internal Account  UnlockWallet(string pass)
+    public Account  UnlockWallet(string pass)
     {
-        var hs = new HardwareService();
-        var privateKey = hs.DecryptAesEncoded(MauiProgram.PK, pass);
+         var privateKey = HardwareService.DecryptAesEncoded(MauiProgram.PK, pass);
 
         if (string.IsNullOrEmpty(privateKey))
             return null;
@@ -129,15 +133,14 @@ public class AuthenicationHandler
         
     }
 
-    private string ToHex(byte[] value, bool prefix = false)
+    string IAuthenicationService.ToHex(byte[] value, bool prefix)
     {
         return System.Text.Encoding.UTF8.GetString(value);
     }
 
-    static byte ConvertBinaryToText(string seq)
+    byte IAuthenicationService.ConvertBinaryToText(string seq)
     {
         return Convert.ToByte(seq, 2);
-
     }
 }   
 

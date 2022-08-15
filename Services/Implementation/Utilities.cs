@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using SYNCWallet.Models;
+using SYNCWallet.Services.Definitions;
 using System.Diagnostics;
+using System.Numerics;
 using System.Text;
 
 namespace SYNCWallet.Services.Implementation
 {
-    internal class Utilities
+    internal class Utilities : IUtilities
     {
 
         public async Task<List<NetworkSettings>> SetupNetworks()
@@ -25,7 +27,7 @@ namespace SYNCWallet.Services.Implementation
             }
         }
 
-        public static async Task<T> GetRequest<T>(string url)
+        public async Task<T> GetRequest<T>(string url)
         {
             try
             {
@@ -53,7 +55,7 @@ namespace SYNCWallet.Services.Implementation
         /// Parameters:
         /// <param name="price">The input amount to be truncated, returns the same value if it's less then 14 characters.</param>
         /// </summary>
-        public static string TruncateDecimals(decimal price)
+        public string TruncateDecimals(decimal price)
         {
             var data = price.ToString();
 
@@ -64,7 +66,7 @@ namespace SYNCWallet.Services.Implementation
             return data.Substring(0, 14); //Truncate to the 14th character
         }
 
-        public static IEnumerable<string> Split(string str, int chunkSize)
+        public IEnumerable<string> Split(string str, int chunkSize)
         {
             for (int index = 0; index < str.Length; index += chunkSize)
             {
@@ -72,7 +74,7 @@ namespace SYNCWallet.Services.Implementation
             }
         }
 
-        public static string BinaryToString(string data)
+        public string BinaryToString(string data)
         {
             List<Byte> byteList = new List<Byte>();
 
@@ -83,7 +85,7 @@ namespace SYNCWallet.Services.Implementation
             return Encoding.ASCII.GetString(byteList.ToArray());
         }
 
-        public static string StringToBinary(string data)
+        public string StringToBinary(string data)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -94,21 +96,33 @@ namespace SYNCWallet.Services.Implementation
             return sb.ToString();
         }
 
-        public static decimal SetDecimalPoint(decimal value, int delimeter)
+        public decimal SetDecimalPoint(decimal value, int delimeter)
         {
 
             var result = value * (decimal)Math.Pow(10, delimeter);
             return result;
         }
 
-        public static decimal ConvertToDex(decimal value, int delimeter)
+        public decimal ConvertToDex(decimal value, int delimeter)
         {
 
             var result = value / (decimal)Math.Pow(10, delimeter);
             return result;
         }
 
-        public static int GetSystemOs()
+        public decimal ConvertToBigIntDex(BigInteger value, int delimeter)
+        {
+            var result = (decimal)value / (decimal)Math.Pow(10, delimeter);
+            return result;
+        }
+
+        public decimal ConvertToDexDecimal(decimal number, int decimals)
+        {
+            var num = number / (decimal)Math.Pow(10, decimals);
+            return num;
+        }
+
+        public int GetSystemOs()
         {
 
             if (SYNCWallet.Models.OperatingSystem.IsWindows())
@@ -121,8 +135,7 @@ namespace SYNCWallet.Services.Implementation
             return 0;
         }
 
-
-        public static string GetOsSavePath()
+        public string GetOsSavePath()
         {
             var result = string.Empty;
             string userName = Environment.UserName;
@@ -145,7 +158,7 @@ namespace SYNCWallet.Services.Implementation
         }
 
 
-        public static void OpenErrorView(string msg, int attempts)
+        public void OpenErrorView(string msg, int attempts)
         {
             Application.Current.Dispatcher.Dispatch(() =>
             {
@@ -153,5 +166,7 @@ namespace SYNCWallet.Services.Implementation
             });
 
         }
+
+     
     }
 }
