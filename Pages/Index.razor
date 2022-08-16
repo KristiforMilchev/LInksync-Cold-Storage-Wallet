@@ -69,11 +69,12 @@
     protected override async Task OnInitializedAsync()
     {
 
-        Communication = ServiceHelper.GetService<ICommunication>(); 
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
+        Communication = ServiceHelper.GetService<ICommunication>();
 
 
+        Communication.Init();
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
 
