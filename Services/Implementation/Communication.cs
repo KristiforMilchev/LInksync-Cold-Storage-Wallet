@@ -48,11 +48,7 @@ namespace SYNCWallet.Services.Implementation
         public string ShowLoader { get; set; }
         public string Receipt { get; set; }
 
-        public Communication()
-        {
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
-        }
+        
 
         public bool CheckConfigured()
         {
@@ -257,6 +253,8 @@ namespace SYNCWallet.Services.Implementation
 
         public void Init()
         {
+            Utilities = ServiceHelper.GetService<IUtilities>();
+            AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
 
             HideTokenList = "none";
             HideTokenSend = "none";

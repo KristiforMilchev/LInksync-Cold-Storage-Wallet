@@ -14,8 +14,7 @@ namespace SYNCWallet;
 
 public static class MauiProgram
 {
-    static ICommunication Communication { get; set; }
-    public static MauiApp MauiApp { get; set; }
+     public static MauiApp MauiApp { get; set; }
 
 
     //TODO Clean all global dependebcuesm create a wraooer for all varibles and extract the hardware reading code to a serivce.
@@ -45,9 +44,6 @@ public static class MauiProgram
        
 
         MauiApp = builder.Build();
-
-        Communication = ServiceHelper.GetService<ICommunication>();
-        Communication.Init();
 
         return MauiApp;
         
