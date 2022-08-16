@@ -148,8 +148,9 @@
 	public string ContractAddress { get; set; }
 	public string Symbol { get; set; }
 	public int Decimals { get; set; }
-	public IUtilities Utilities { get; set; }
-	public IAuthenicationService AuthenicationService { get; set; }
+	IUtilities Utilities { get; set; }
+	IAuthenicationService AuthenicationService { get; set; }
+	ICommunication Communication { get; set; }
 
 	private void OpenMenu(string location)
 	{
@@ -160,6 +161,7 @@
 	{
 		Utilities = ServiceHelper.GetService<IUtilities>();
 		AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+		Communication = ServiceHelper.GetService<ICommunication>();
 	}
 
 
@@ -177,7 +179,7 @@
 	{
 		await JS.InvokeVoidAsync("ImportTokens");
 
-		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, MauiProgram.ActiveNetwork.Id);
+		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, Communication.ActiveNetwork.Id);
 		await TokenImported.InvokeAsync();
 
 	}

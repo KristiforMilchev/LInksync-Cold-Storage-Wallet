@@ -1,0 +1,133 @@
+﻿.logoPos {
+    width: 250px;
+    height: 200px;
+}
+
+
+
+
+/* (1280x720) Galaxy Note 2, WXGA */
+@media only screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .logoPos {
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        left: 78%;
+        top: 50%;
+    }
+}
+
+/* (1280x1024) SXGA Display */
+@media screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .logoPos {
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        left: 78%;
+        top: 50%;
+    }
+}
+
+/* (1366x768) WXGA Display */
+@media screen and (max-width: 1366px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .logoPos {
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        left: 78%;
+        top: 50%;
+    }
+}
+
+/* (1440x900) WXGA+ Display */
+@media screen and (max-height: 908px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .logoPos {
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        left: 78%;
+        top: 50%;
+    }
+}
+
+/* (1440x900) WXGA+ Display */
+@media screen and (max-width: 1440px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* (1600x900) HD+ Display */
+@media screen and (max-width: 1600px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 60%;
+        max-width: 100%;
+    }
+}
+
+/* (1920x1080) Full HD Display */
+@media screen and (max-width: 1920px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+}

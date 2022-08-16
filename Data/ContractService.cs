@@ -17,16 +17,18 @@ namespace NFTLock.Data
     {
        
         IUtilities Utilities { get; set; }
+        ICommunication Communication { get; set; }
         public ContractService()
         {
             Utilities = ServiceHelper.GetService<IUtilities>();
+            Communication = ServiceHelper.GetService<ICommunication>();
         }
 
         public async Task<decimal> GetAccountBalance(string endpoint)
         {
             try
             {
-                var publicKey = MauiProgram.PublicAddress;
+                var publicKey = Communication.PublicAddress;
                 var web3 = new Nethereum.Web3.Web3(endpoint);
                 var balance = await web3.Eth.GetBalance.SendRequestAsync(publicKey);
                 var etherAmount = Web3.Convert.FromWei(balance.Value);
@@ -144,14 +146,14 @@ namespace NFTLock.Data
         public async Task<List<Token>> GetNetworkTokens(int networkId)
         {
             // On startup, it gets thge list of officially supported tokens by running a query against githubs API
-            if(MauiProgram.ListedTokens == null)
-                MauiProgram.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+            if(Communication.ListedTokens == null)
+                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
             //Define a local collection of token.
             var tokens = new List<Token>();
 
             //Check if the selected network exists
-            var getNetworkData = MauiProgram.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == MauiProgram.IsDevelopment);
+            var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
 
             //In case it exists we add the native token to the list and run a query to get the user balance of the token.
             if(getNetworkData != null)
@@ -176,7 +178,7 @@ namespace NFTLock.Data
             }
             
             //Gets the list of officially supported tokens on the selected network, as it binds user balance, market cap, price, and circulating supply for each token.
-            tokens = await GetListedTokens(MauiProgram.ListedTokens, tokens, getNetworkData);
+            tokens = await GetListedTokens(Communication.ListedTokens, tokens, getNetworkData);
 
             //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
             if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
@@ -315,7 +317,7 @@ namespace NFTLock.Data
 
         public async Task<decimal> GetImportedData(NetworkSettings network, TokenContract getContract)
         {
-            return await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+            return await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
         }
 
         public async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
@@ -337,7 +339,7 @@ namespace NFTLock.Data
                 if(getContract != null)
                 {
                     //Check the user balance of the given contract
-                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                    getContract.UserBalance = await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
                     //Get the contract native price
                     var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
 
@@ -418,7 +420,7 @@ namespace NFTLock.Data
             {
                 Console.WriteLine(e);
                 logged = true;
-                MauiProgram.TxHash = "-";
+                Communication.TxHash = "-";
             }
 
             //If transaction hash has been created, start monitoring for a receipt.
@@ -429,7 +431,7 @@ namespace NFTLock.Data
                 {
 
                     txHash = transactionReceipt;
-                    MauiProgram.TxHash = txHash;
+                    Communication.TxHash = txHash;
                 }
             }
             return true;
@@ -451,13 +453,13 @@ namespace NFTLock.Data
             try
             {
                 var trans = transaction.TransferEtherAsync(receiver, amountToSend, null, null, nounceVal).GetAwaiter().GetResult();
-                MauiProgram.TxHash = trans;
+                Communication.TxHash = trans;
                 return true;
 
             }
             catch (Exception e)
             {
-                MauiProgram.TxHash = "-";
+                Communication.TxHash = "-";
                 Console.WriteLine(e);
                 return false;
             }

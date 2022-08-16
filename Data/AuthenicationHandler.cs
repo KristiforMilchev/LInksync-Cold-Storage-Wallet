@@ -13,18 +13,20 @@ public class AuthenicationHandler : IAuthenicationService
     IUtilities Utilities { get; set; }
     IContractService ContractService { get; set; }
     IHardwareService HardwareService { get; set; }
+    ICommunication Communication { get; set; }
     public AuthenicationHandler()
     {
         Utilities = ServiceHelper.GetService<IUtilities>();
         ContractService = ServiceHelper.GetService<IContractService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
+        Communication = ServiceHelper.GetService<ICommunication>();
     }
 
  
     public string GetDefault()
     {
         //WIP
-        return MauiProgram.PublicAddress;
+        return Communication.PublicAddress;
     }
 
     public bool SetupNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
@@ -100,14 +102,14 @@ public class AuthenicationHandler : IAuthenicationService
 
     public Account  UnlockWallet(string pass)
     {
-         var privateKey = HardwareService.DecryptAesEncoded(MauiProgram.PK, pass);
+         var privateKey = HardwareService.DecryptAesEncoded(Communication.PK, pass);
 
         if (string.IsNullOrEmpty(privateKey))
             return null;
 
         var chainId = 97;
-        if (MauiProgram.ActiveNetwork != null)
-            chainId = MauiProgram.ActiveNetwork.Chainid;
+        if (Communication.ActiveNetwork != null)
+            chainId = Communication.ActiveNetwork.Chainid;
         
         
         var wallet = new Account(privateKey, chainId);

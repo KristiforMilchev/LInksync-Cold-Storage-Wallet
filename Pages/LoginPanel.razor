@@ -56,12 +56,15 @@
     private string Password{ get; set; }
     System.Timers.Timer aTimer { get; set; }
     IHardwareService HardwareService { get; set; }
+    ICommunication Communication { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
         HardwareService = ServiceHelper.GetService<IHardwareService>();
+        Communication = ServiceHelper.GetService<ICommunication>();
 
-        if (MauiProgram.IsLogged && !string.IsNullOrEmpty(MauiProgram.PublicAddress))
+        if (Communication.IsLogged && !string.IsNullOrEmpty(Communication.PublicAddress))
         {
             NavigationManager.NavigateTo("Landing");
 
@@ -79,7 +82,7 @@
     // Specify what you want to happen when the Elapsed event is raised.
     private  void OnTimedEvent(object source, ElapsedEventArgs e)
     {
-        if (MauiProgram.IsLogged && !string.IsNullOrEmpty(MauiProgram.PublicAddress))
+        if (Communication.IsLogged && !string.IsNullOrEmpty(Communication.PublicAddress))
         {
             if(aTimer != null)
             {
@@ -94,13 +97,13 @@
     {
         var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
 
-        MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
-            {
-                Cmd = "Login",
-                Password = passwrod,
-                PrivateKey = "3"
-            }));
-        MauiProgram.Pass = Password;
-         
+        Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+        {
+            Cmd = "Login",
+            Password = passwrod,
+            PrivateKey = "3"
+        }));
+
+        Communication.Pass = Password;
     }
 }

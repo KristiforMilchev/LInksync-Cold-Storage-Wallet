@@ -49,6 +49,7 @@
 </div>
 
 @code {
+    private ICommunication Communication { get; set; }
     private IAuthenicationService AuthenicationHandler { get; set; }
     private IHardwareService HardwareService { get; set; }
     private string Address { get; set; }
@@ -67,9 +68,11 @@
 
     protected override async Task OnInitializedAsync()
     {
- 
+
+        Communication = ServiceHelper.GetService<ICommunication>(); 
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
+
 
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
@@ -103,7 +106,7 @@
             {
                 var firmwareUpdated = HardwareService.CreateNewDevice(port);
 
-                var configStatus = MauiProgram.CheckConfigured();
+                var configStatus = Communication.CheckConfigured();
 
                 if (configStatus && firmwareUpdated)
                 {
@@ -144,7 +147,7 @@
         InvokeAsync(async () =>
         {
             DeviceModel = deviceType;
-            MauiProgram.DeviceType = deviceType;
+            Communication.DeviceType = deviceType;
             await CheckDeviceConnected(Port);
             StateHasChanged();
 
