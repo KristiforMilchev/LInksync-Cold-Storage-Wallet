@@ -20,7 +20,7 @@ namespace NFTLock.Data
     internal class HardwareService : IHardwareService
     { 
         IUtilities Utilities = ServiceHelper.GetService<IUtilities>();
- 
+        ICommunication Communication = ServiceHelper.GetService<ICommunication>();
      
         public string DeviceConnected()
         {
@@ -33,7 +33,7 @@ namespace NFTLock.Data
             foreach (string port in portNames)
             {
                 Debug.WriteLine(port);
-                MauiProgram.ComPort = port;
+                Communication.ComPort = port;
                 current = port;
             }
 
@@ -67,7 +67,7 @@ namespace NFTLock.Data
 
 
             //Uploads the firmware to device.
-            ConfigureHardware(MauiProgram.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
+            ConfigureHardware(Communication.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
 
             Debug.WriteLine("Device Updated");
             return true;

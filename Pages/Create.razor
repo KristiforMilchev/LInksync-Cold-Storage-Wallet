@@ -13,145 +13,7 @@
 @inject IJSRuntime JS
 
 
-<style>
-    .logoPos{
-        width: 250px;
-        height: 200px;
-    }
-    
-
-    
-
-    /* (1280x720) Galaxy Note 2, WXGA */
-    @@media only screen and (max-width: 1280px) {
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-        .logoPos{
-               width: 500px;
-               height: 500px;
-               position: absolute;
-               left: 78%;
-               top: 50%;
-           }
-    }
-
-    /* (1280x1024) SXGA Display */
-    @@media screen and (max-width: 1280px) {
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-        .logoPos{
-            width: 500px;
-            height: 500px;
-            position: absolute;
-            left: 78%;
-            top: 50%;
-        }
-         
-    }
-
-    /* (1366x768) WXGA Display */
-    @@media screen and (max-width: 1366px) {
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-        .logoPos{
-            width: 500px;
-            height: 500px;
-            position: absolute;
-            left: 78%;
-            top: 50%;
-        }
- 
-    }
-
-    /* (1440x900) WXGA+ Display */
-    @@media screen and (max-height: 908px) {
-       .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-        .logoPos{
-            width: 500px;
-            height: 500px;
-            position: absolute;
-            left: 78%;
-            top: 50%;
-        }
- 
-    }
-
-    /* (1440x900) WXGA+ Display */
-    @@media screen and (max-width: 1440px) {
-        /* insert styles here */
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
- 
-  
-    }
-
-    /* (1600x900) HD+ Display */
-    @@media screen and (max-width: 1600px) {
-        /* insert styles here */
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 60%;
-            max-width: 100%;
-        }
-          
-    }
-
-    /* (1920x1080) Full HD Display */
-    @@media screen and (max-width: 1920px) {
-        /* insert styles here */
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-      
-    }
-
-</style>
+<link href="/css/create.css" rel="stylesheet">
 
 <div class="container FixCenter"   style="    height: 100vh;
      display: flex;
@@ -348,11 +210,13 @@
     public string PassCode { get; set; }
     IHardwareService HardwareService { get; set; }
     IUtilities Utilities { get; set; }
+    ICommunication Communication { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Utilities = ServiceHelper.GetService<IUtilities>();
+        Communication = ServiceHelper.GetService<ICommunication>();
     }
 
     private void CreateNew()
@@ -443,14 +307,14 @@
             var passwrod = HardwareService.Encrypt(PassCode, "iV1z@$H8");
             var PK = HardwareService.Encrypt(Wallet.PrivateKey, PassCode);
 
-            MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
             {
                 Cmd = "NEW",
                 Password = passwrod,
                 PrivateKey = PK
             }));
-            MauiProgram.IsConfigured = true;
-            MauiProgram.ConfigResponse = true;
+            Communication.IsConfigured = true;
+            Communication.ConfigResponse = true;
             NavigationManager.NavigateTo("/LoginPanel");
         }
         catch (Exception e)

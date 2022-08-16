@@ -15,6 +15,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
+<link href="/css/landing.css" rel="stylesheet">
 
 <img src="/logo.png" class="LogoMainBackground" />
 <p id="submitTrigger" style="display:none" onclick="DataSubmitted">
@@ -23,175 +24,13 @@
 <NavMenu NetworkAdded="ImportNetwork" TokenImported="ImportToken">
 
  </NavMenu>
- <style>
-     .flexInnerRow{
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        padding: 10px;
-     }
-
-    .dropdown-menu.show {
-        display: block;
-        position: absolute !important;
-        left: 68% !important;
-        top: 4% !important;
-        background: #282931;
-    }
-     
-    .contentCard {
-        height: 650px;
-        overflow: hidden;
-        overflow-y: auto;
-    }
-
-    .page {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    /* (1280x720) Galaxy Note 2, WXGA */
-    @@media only screen and (max-width: 1280px) {
-          .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
-        }
-
-        .contentCard {
-            height: 450px;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-    }
-
-    /* (1280x1024) SXGA Display */
-    @@media  screen and (max-width: 1280px) {
-         .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
-        }
-
-        .contentCard {
-            height: 450px;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-    }
-
-    /* (1366x768) WXGA Display */
-    @@media  screen and (max-width: 1366px) {
-         .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
-        }
-        
-        .contentCard {
-            height: 450px;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-    }
-
-    /* (1440x900) WXGA+ Display */
-    @@media  screen and (max-width: 1440px) {
-         /* insert styles here */
-          .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
-        }
-        
-        .contentCard{
-            height: 450px;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-
-    }
-    /* (1440x900) WXGA+ Display */
-    @@media screen and (max-height: 908px) {
-        /* insert styles here */
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .contentCard {
-            height: 450px;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-    }
-
-    /* (1600x900) HD+ Display */
-    @@media  screen and (max-width: 1600px) {
-        /* insert styles here */
-          .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:60%;
-            max-width:100%;
-        }
-     
-
-    }
-
-    /* (1920x1080) Full HD Display */
-    @@media  screen and (max-width: 1920px) {
-        /* insert styles here */
-          .container{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-content: center;
-            height: 100%;
-            width:100%;
-            max-width:100%;
-
-        }
-    }
-
-    
- </style>
+ 
  
 
 <div class="container">
     <div class="flexInnerRow">
         <p style="margin:auto;">
-            @MauiProgram.PublicAddress
+            @Communication.PublicAddress
         </p>
         <div class="NetworkDropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
@@ -312,7 +151,7 @@
             <div class="col-md-12">
                 <div class="card">
                         <div class="card-body contentCard">
-                            <div class="table-responsive" style="display:@MauiProgram.HideTokenList" id="TokenList">
+                            <div class="table-responsive" style="display:@Communication.HideTokenList" id="TokenList">
                                 <button class="btn btn-outline-secondary" @onclick="ToggleTokenImport" type="button">
                                     <i class="fas fa-cog"></i>
                                     Import Custom
@@ -391,7 +230,7 @@
                             </div>
                             @if (SelectedToken != null)
                             {
-                                <div id="SendToken" style="display:@MauiProgram.HideTokenSend">
+                                <div id="SendToken" style="display:@Communication.HideTokenSend">
                                     <div class="row" style="    margin-top: 25px;">
                                     <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
                                     </div>
@@ -490,7 +329,7 @@
                             
                                 </div>
                             }
-                            <div style="display:@MauiProgram.ShowPinPanel;flex-direction: column;
+                            <div style="display:@Communication.ShowPinPanel;flex-direction: column;
                                     align-content: space-around;
                                     flex-wrap: wrap;
                                     height: 100%;
@@ -530,7 +369,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <div style="display: @MauiProgram.ShowLoader;
+                        <div style="display: @Communication.ShowLoader;
                                     flex-direction: column;
                                     align-content: space-around;
                                     flex-wrap: wrap;
@@ -540,15 +379,15 @@
                             <div class="spinner-border text-danger"  role="status">
                                 <span class="sr-only">Sending transaction please wait</span>
                             </div>
-                            @if(@MauiProgram.TxHash != null)
+                            @if(@Communication.TxHash != null)
                             {
                                 <p style="margin-top:10px;">
-                                    Please wait, sending transaction <br/> @MauiProgram.TxHash
+                                    Please wait, sending transaction <br/> @Communication.TxHash
                                 </p>
                             }
                         </div>
 
-                        <div style="display:@MauiProgram.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
+                        <div style="display:@Communication.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
                                 @if(Receipt != null && SelectedToken != null)
                                 {
                                     <div class="row">
@@ -629,6 +468,7 @@
     IAuthenicationService AuthenicationService { get; set; }
     IPaymentService PaymentService { get; set; }
     IHardwareService HardwareService { get; set; }
+    ICommunication Communication { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -651,13 +491,15 @@
         AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
         PaymentService = ServiceHelper.GetService<IPaymentService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
+        Communication = ServiceHelper.GetService<ICommunication>();
+
 
         NextCheck = NextCheck.AddMinutes(1);
-        MauiProgram.HideTokenList = "";
-        MauiProgram.HideTokenSend = "none";
-        MauiProgram.ShowPinPanel = "none";
-        MauiProgram.ShowLoader = "none";
-        MauiProgram.Receipt = "none";
+        Communication.HideTokenList = "";
+        Communication.HideTokenSend = "none";
+        Communication.ShowPinPanel = "none";
+        Communication.ShowLoader = "none";
+        Communication.Receipt = "none";
 
 
         BalanceCheck = new System.Timers.Timer();
@@ -671,10 +513,10 @@
 
         //Load Network Settings
         var utils = new Utilities();
-        MauiProgram.NetworkSettings = await utils.SetupNetworks();
-        Networks = MauiProgram.NetworkSettings.Where(x=> x.IsProduction == MauiProgram.IsDevelopment).ToList();
+        Communication.NetworkSettings = await utils.SetupNetworks();
+        Networks = Communication.NetworkSettings.Where(x=> x.IsProduction == Communication.IsDevelopment).ToList();
         SelectedNetwork = Networks.FirstOrDefault();
-        MauiProgram.ActiveNetwork = SelectedNetwork;
+        Communication.ActiveNetwork = SelectedNetwork;
         WalletAddress = AuthenicationService.GetDefault();
         Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
 
@@ -684,7 +526,7 @@
     {
         InvokeAsync(() =>{
             SelectedNetwork = network;
-            MauiProgram.ActiveNetwork = SelectedNetwork;
+            Communication.ActiveNetwork = SelectedNetwork;
             DefaultToToken();
             StateHasChanged();
         });
@@ -722,12 +564,12 @@
         {
             SelectedToken = token;
             SelectedContract = contract;
-            MauiProgram.SelectedContract = contract;
-            MauiProgram.Receipt = "none";
-            MauiProgram.HideTokenList = "none";
-            MauiProgram.ShowPinPanel = "none";
-            MauiProgram.ShowLoader = "none";
-            MauiProgram.HideTokenSend = "";
+            Communication.SelectedContract = contract;
+            Communication.Receipt = "none";
+            Communication.HideTokenList = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.ShowLoader = "none";
+            Communication.HideTokenSend = "";
 
             StateHasChanged();
         });
@@ -746,11 +588,11 @@
     {
         InvokeAsync(() =>
         {
-            MauiProgram.HideTokenList = "";
-            MauiProgram.HideTokenSend = "none";
-            MauiProgram.ShowPinPanel = "none";
-            MauiProgram.ShowLoader = "none";
-            MauiProgram.Receipt = "none";
+            Communication.HideTokenList = "";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.ShowLoader = "none";
+            Communication.Receipt = "none";
 
 
             StateHasChanged();
@@ -776,8 +618,8 @@
         await InvokeAsync(async () =>
         {
             var utils = new Utilities();
-            MauiProgram.NetworkSettings = await utils.SetupNetworks();
-            Networks = MauiProgram.NetworkSettings.Where(x => x.IsProduction == MauiProgram.IsDevelopment).ToList();
+            Communication.NetworkSettings = await utils.SetupNetworks();
+            Networks = Communication.NetworkSettings.Where(x => x.IsProduction == Communication.IsDevelopment).ToList();
             StateHasChanged();
 
         });
@@ -799,11 +641,11 @@
     {
         InvokeAsync(() =>
         {
-            MauiProgram.Receipt = "none";
-            MauiProgram.HideTokenList = "none";
-            MauiProgram.HideTokenSend = "none";
-            MauiProgram.ShowLoader = "none";
-            MauiProgram.ShowPinPanel = "flex";
+            Communication.Receipt = "none";
+            Communication.HideTokenList = "none";
+            Communication.HideTokenSend = "none";
+            Communication.ShowLoader = "none";
+            Communication.ShowPinPanel = "flex";
             StateHasChanged();
 
         });
@@ -812,24 +654,24 @@
     private async void EnterPin()
     {
         var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
-        MauiProgram.KeepPrivateSingle = true;
-        MauiProgram.Amount = TokensToSend;
-        MauiProgram.ReceiverAddress = ReceiverAddress;
+        Communication.KeepPrivateSingle = true;
+        Communication.Amount = TokensToSend;
+        Communication.ReceiverAddress = ReceiverAddress;
 
-        MauiProgram.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+        Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
         {
             Cmd = "Login",
             Password = passwrod,
             PrivateKey = "+"
         }));
 
-        MauiProgram.Pass = Password;
+        Communication.Pass = Password;
 
 
-        MauiProgram.TransactionTimer = new System.Timers.Timer();
-        MauiProgram.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-        MauiProgram.TransactionTimer.Interval = 5000;
-        MauiProgram.TransactionTimer.Start();
+        Communication.TransactionTimer = new System.Timers.Timer();
+        Communication.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+        Communication.TransactionTimer.Interval = 5000;
+        Communication.TransactionTimer.Start();
 
         InvokeAsync(() =>
         {
@@ -842,19 +684,19 @@
     // Specify what you want to happen when the Elapsed event is raised.
     private async void OnTimedEvent(object source, ElapsedEventArgs e)
     {
-        if (!string.IsNullOrEmpty(MauiProgram.PK))
+        if (!string.IsNullOrEmpty(Communication.PK))
         {
-            MauiProgram.TransactionTimer.Stop();
-            MauiProgram.TransactionTimer.Dispose();
+            Communication.TransactionTimer.Stop();
+            Communication.TransactionTimer.Dispose();
 
-            if(MauiProgram.ShowLoader != "flex")
+            if(Communication.ShowLoader != "flex")
                 await InvokeAsync(() =>
                 {
-                    MauiProgram.ShowLoader = "flex";
-                    MauiProgram.HideTokenList = "none";
-                    MauiProgram.HideTokenSend = "none";
-                    MauiProgram.ShowPinPanel = "none";
-                    MauiProgram.Receipt = "none";
+                    Communication.ShowLoader = "flex";
+                    Communication.HideTokenList = "none";
+                    Communication.HideTokenSend = "none";
+                    Communication.ShowPinPanel = "none";
+                    Communication.Receipt = "none";
 
                     StateHasChanged();
 
@@ -866,11 +708,11 @@
             {  
                 await InvokeAsync(() =>
                 {
-                    MauiProgram.ShowLoader = "none";
-                    MauiProgram.HideTokenList = "none";
-                    MauiProgram.HideTokenSend = "none";
-                    MauiProgram.ShowPinPanel = "none";
-                    MauiProgram.Receipt = "flex";
+                    Communication.ShowLoader = "none";
+                    Communication.HideTokenList = "none";
+                    Communication.HideTokenSend = "none";
+                    Communication.ShowPinPanel = "none";
+                    Communication.Receipt = "flex";
                     Receipt = result;
                     StateHasChanged();
 
@@ -897,11 +739,11 @@
     {
         await InvokeAsync(() =>
         {
-            MauiProgram.ShowLoader = "none";
-            MauiProgram.HideTokenList = "";
-            MauiProgram.HideTokenSend = "none";
-            MauiProgram.ShowPinPanel = "none";
-            MauiProgram.Receipt = "none";
+            Communication.ShowLoader = "none";
+            Communication.HideTokenList = "";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.Receipt = "none";
             SelectedContract.UserBalance -= TokensToSend;
             TokensToSend = 0;
             ReceiverAddress = "";

@@ -4,11 +4,13 @@ using SYNCWallet.Services.Definitions;
 using System.Diagnostics;
 using System.Numerics;
 using System.Text;
-
+ 
 namespace SYNCWallet.Services.Implementation
 {
     internal class Utilities : IUtilities
     {
+
+        ICommunication Communication = ServiceHelper.GetService<ICommunication>();
 
         public async Task<List<NetworkSettings>> SetupNetworks()
         {
@@ -127,7 +129,7 @@ namespace SYNCWallet.Services.Implementation
         {
             var result = string.Empty;
             string userName = Environment.UserName;
-            switch (MauiProgram.Os)
+            switch (Communication.Os)
             {
                 case 1:
                     result = $@"C:\Users\{userName}\Documents";
