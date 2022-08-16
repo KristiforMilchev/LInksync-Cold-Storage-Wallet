@@ -27,6 +27,7 @@ namespace SYNCWallet.Services.Implementation
             }
         }
 
+        
         public async Task<T> GetRequest<T>(string url)
         {
             try
@@ -37,33 +38,16 @@ namespace SYNCWallet.Services.Implementation
 
                 // response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody);
+                var listedTokenData = JsonConvert.DeserializeObject<T>(responseBody); //Convert to T
 
                 return listedTokenData;
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
-                return default(T);
+                Debug.WriteLine(e); //Show error in debug mode.
+                return default(T); //Return the defaukt<T>
             }
            
-        }
-
-        /// <summary>
-        /// Truncates a price to the 14th decimal to make it more user friendly
-        /// Example 0.00000000275465465654 ->  0.0000000027
-        /// Parameters:
-        /// <param name="price">The input amount to be truncated, returns the same value if it's less then 14 characters.</param>
-        /// </summary>
-        public string TruncateDecimals(decimal price)
-        {
-            var data = price.ToString();
-
-            //Return the same value in case it's less than expected.
-            if (data.Length < 14)
-                return data; 
-
-            return data.Substring(0, 14); //Truncate to the 14th character
         }
 
         public IEnumerable<string> Split(string str, int chunkSize)
@@ -85,6 +69,7 @@ namespace SYNCWallet.Services.Implementation
             return Encoding.ASCII.GetString(byteList.ToArray());
         }
 
+
         public string StringToBinary(string data)
         {
             StringBuilder sb = new StringBuilder();
@@ -102,6 +87,8 @@ namespace SYNCWallet.Services.Implementation
             var result = value * (decimal)Math.Pow(10, delimeter);
             return result;
         }
+
+
 
         public decimal ConvertToDex(decimal value, int delimeter)
         {
@@ -121,6 +108,7 @@ namespace SYNCWallet.Services.Implementation
             var num = number / (decimal)Math.Pow(10, decimals);
             return num;
         }
+
 
         public int GetSystemOs()
         {
@@ -158,15 +146,33 @@ namespace SYNCWallet.Services.Implementation
         }
 
 
+
         public void OpenErrorView(string msg, int attempts)
         {
+            //Call the event in a dispatcher, would get stuck and block the main thread otherwise leading to Thread collision exception
             Application.Current.Dispatcher.Dispatch(() =>
             {
+                //TODO extend this method to be general exception handler, as well as the option to handle user input and return callbacks.
                 Application.Current.MainPage.DisplayAlert("Authenication Error!", msg, "OK");
             });
 
         }
 
-     
+
+
+
+        public string TruncateDecimals(decimal price)
+        {
+            var data = price.ToString();
+
+            //Return the same value in case it's less than expected.
+            if (data.Length < 14)
+                return data;
+
+            return data.Substring(0, 14); //Truncate to the 14th character
+        }
+
+
+
     }
 }

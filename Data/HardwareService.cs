@@ -24,19 +24,19 @@ namespace NFTLock.Data
      
         public string DeviceConnected()
         {
+            //Get an array of com ports on the system
             string[] portNames = SerialPortStream.GetPortNames();
 
-         //   string[] ports = SerialPort.GetPortNames();
-
-            Debug.WriteLine("The following serial ports were found:");
             var current = string.Empty;
             // Display each port name to the console.
+            //Always assigns the last com port to the system, doesn't work with two devices.
             foreach (string port in portNames)
             {
                 Debug.WriteLine(port);
                 MauiProgram.ComPort = port;
                 current = port;
             }
+
             return current;
         }
 
@@ -49,27 +49,28 @@ namespace NFTLock.Data
         {
             string userName = Environment.UserName;
             
-           
-            if (!File.Exists(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"))
-            {
-                using (WebClient wc = new WebClient())
-                {
+            //If file exists, delete it, we want the latest version of the file.
+            if (File.Exists(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"))
+                File.Delete(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex");
 
-                        wc.DownloadFile(
-                        // Param1 = Link of file
-                        new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
-                        // Param2 = Path to save
-                        @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"
-                    );
-                }
+
+            //Download the latest version of the file.
+            using (WebClient wc = new WebClient())
+            {
+
+                wc.DownloadFile(
+                // Param1 = Link of file
+                new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
+                // Param2 = Path to save
+                @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex");
             }
 
 
+            //Uploads the firmware to device.
             ConfigureHardware(MauiProgram.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
 
             Debug.WriteLine("Device Updated");
             return true;
-
         }
 
         public void ConfigureHardware(ArduinoModel device,string path, string port)
@@ -92,6 +93,7 @@ namespace NFTLock.Data
             var Pk = string.Empty;
             var i = 0;
 
+            //Loop over the words and reconstruct the key
             words.ForEach(x =>
             {
                 Pk += x.Name;
@@ -136,13 +138,9 @@ namespace NFTLock.Data
             List<Word> words = new List<Word>();
             chunks.ToList().ForEach(x =>
             {
-                string yourByteString = x;
- 
-
- 
                 words.Add(new Word
                 {
-                    Name = yourByteString,
+                    Name = x,
                     Index = i,
                 });
                 i++; 
@@ -150,22 +148,7 @@ namespace NFTLock.Data
             });
             return words;
         }
-
-        public string GeneratePrivateKey(List<string> data)
-        {
-            byte[] bytes = new byte[data.Count+1];
-            var i = 0;
-            data.ForEach(x =>
-            {
-                var cByte = Convert.ToByte(x, 2);
-                bytes[i] = cByte;
-                i++;
-            });
-
-            var pk = bytes.ToHex();
-            return pk;
-        }
-
+ 
         public string Encrypt(string data, string password)
         {
             try

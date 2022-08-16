@@ -23,6 +23,8 @@ namespace SYNCWallet.Data
         IContractService ContractService { get; set; }
         IUtilities Utilities { get; set; }
         IAuthenicationService AuthenicationService { get; set; }
+
+        //Init the constructor and inherit all dependencies.
         public PaymentService()
         {
             ContractService = ServiceHelper.GetService<IContractService>();
@@ -32,30 +34,25 @@ namespace SYNCWallet.Data
 
         public async Task<TransactionResult> BeginTransaction()
         {
-
-            MauiProgram.HideTokenList = "none";
-            MauiProgram.HideTokenSend = "none";
-            MauiProgram.ShowPinPanel = "none";
-         
-
-            var wallet = AuthenicationService.UnlockWallet(MauiProgram.Pass);
+            var wallet = AuthenicationService.UnlockWallet(MauiProgram.Pass); //One of decrypt the PK encoded on the device and open the wallet.
            
+            //If wallet doesn't exist return null
             if(wallet == null)
                 return null; 
 
+            //Check if a contract exists (Native currencies don't have a contract) if false, send native chain token.
             if (string.IsNullOrEmpty(MauiProgram.SelectedContract.ContractAddress))
                 await ContractService.ExecuteNative(MauiProgram.ReceiverAddress, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
             else
                 await ContractService.ExecutePayments(MauiProgram.ReceiverAddress, MauiProgram.SelectedContract, MauiProgram.Amount, wallet, MauiProgram.ActiveNetwork.Endpoint, MauiProgram.ActiveNetwork.Chainid);
 
-            //Clear PK, password etc.
+            //Defer next check, it will be validated after the next block regardless.
+            var dateTime = DateTime.UtcNow.AddSeconds(30); 
 
-          
-
-            var dateTime = DateTime.UtcNow.AddSeconds(30);
-
+            //Loop and wait till the transaction was valid, important no recursion here due to that the transaction hash has already been created we are only checking the status.
             while(TransactionResult == null)
             {
+                //If time is over the check time validate if the transaction is validated
                 if(DateTime.UtcNow > dateTime)
                 {
                     await ValidateTransaction(MauiProgram.TxHash);
@@ -70,12 +67,22 @@ namespace SYNCWallet.Data
     
         public async Task<bool> ValidateTransaction(string txHash)
         {
-
+            //We don't need a real wallet here, Pass is empty however due to how Nethereum operates we need to make the request from the object, so we can inherit the chain
+            //That's why we just instance a object to interact with the chain.
             var account = AuthenicationService.UnlockWallet(MauiProgram.Pass);
 
+            //If Hash is empty return false. Return an empty object to avoid recursion in the loop.
             if (string.IsNullOrEmpty(txHash))
+            {
+                TransactionResult = new TransactionResult
+                {
+                    TransactionHash = "-1"
+                };
+                MauiProgram.TxHash = string.Empty;
                 return false;
-
+            }    
+            
+            //If the transaction failed at creation, and there is no hash we return an error object.
             if(txHash == "-")
             {
                 TransactionResult = new TransactionResult
@@ -84,12 +91,14 @@ namespace SYNCWallet.Data
                     From = "--",
                     To = "--",
                     Timestamp = DateTime.UtcNow,
-                    TransactionHash = "Transaction failed, internal error, inssuficient balance or gas!"
+                    TransactionHash = "Transaction failed, internal error, insuficient balance or gas!"
                 };
-                MauiProgram.TxHash = String.Empty;
+                MauiProgram.TxHash = string.Empty;
                 return false;
             }
 
+            //Create a new web3 instance, using the account object, for the chain data and the current selected network. 
+            //We send a request to the blockchain to check the receipt of the transaction.
             var web3 = new Web3(account, MauiProgram.ActiveNetwork.Endpoint);
             var transactionReceipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txHash);
             if (transactionReceipt == null) //Check if transaction is processed in case it fails sent it to quoue;
@@ -98,6 +107,8 @@ namespace SYNCWallet.Data
                 return false;
             }
            
+            //Decode events in case it's a proxy contract, ETC ETH smart contract
+            //If transferEventOutput is 0, it's a native token transfer.
             var transferEventOutput = transactionReceipt.DecodeAllEvents<TransferEventDTO>();
             if (transferEventOutput.Count == 0)
             {
@@ -111,21 +122,28 @@ namespace SYNCWallet.Data
                         Timestamp = DateTime.UtcNow,
                         TransactionHash = transactionReceipt.TransactionHash
                     };
-                    MauiProgram.TxHash = String.Empty;
+                    MauiProgram.TxHash = string.Empty;
                     return true;
                 }
                 else if (transactionReceipt.Failed())
                 {
-                    
-                    MauiProgram.TxHash = String.Empty;
+                    TransactionResult = new TransactionResult
+                    {
+                        Amount = 0,
+                        From = "--",
+                        To = "--",
+                        Timestamp = DateTime.UtcNow,
+                        TransactionHash = "Transaction failed, internal error, insuficient balance or gas!"
+                    };
+                    MauiProgram.TxHash = string.Empty;
                     return false;
                 }
             }
                 
-
+            //Get the initial main trainsfer event.
             var transferEvent = transferEventOutput.FirstOrDefault().Event;
 
-
+            //We get the ETH contract actual tokens by substracting the decimals that are obsolete
             var actualTransfer = Utilities.ConvertToDex((decimal)transferEvent.Value, MauiProgram.SelectedContract.Decimals);
             if (transferEvent.From.ToUpper() != MauiProgram.PublicAddress.ToUpper() || actualTransfer < 0)
                 return false;
@@ -140,7 +158,7 @@ namespace SYNCWallet.Data
                 Timestamp = DateTime.UtcNow,
                 TransactionHash = transactionReceipt.TransactionHash
             };
-            MauiProgram.TxHash = String.Empty;
+            MauiProgram.TxHash = string.Empty;
 
             return true;
         }

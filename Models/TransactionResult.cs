@@ -8,8 +8,7 @@ namespace SYNCWallet.Models
 {
     public class TransactionResult
     {
-        public string TransactionHash { get; set;
-        }
+        public string TransactionHash { get; set;}
         public string From { get; set; }
         public string To { get; set; }
         public decimal Amount { get; set; }

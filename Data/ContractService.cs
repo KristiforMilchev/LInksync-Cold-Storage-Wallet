@@ -1,4 +1,5 @@
-﻿using Nethereum.Web3;
+﻿using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using NFTLock.Models;
@@ -21,7 +22,7 @@ namespace NFTLock.Data
             Utilities = ServiceHelper.GetService<IUtilities>();
         }
 
-        public async Task<decimal> GetAccountBalance(int network, string endpoint)
+        public async Task<decimal> GetAccountBalance(string endpoint)
         {
             try
             {
@@ -43,23 +44,12 @@ namespace NFTLock.Data
             }
         }
 
-        /// <summary>
-        /// This is a base method for a price converter, it's main purpose is to convert the input amount of tokens from the native token to USD
-        /// In order to perform the conversion it creates the call to the trading router taking the value of 1 of the pair token to USD 
-        /// Then multiply the tokens over the price of 1 Native token to USD
-        /// 
-        /// Example 1 BNB at the time of writing this method 262 USD if we input 0.00000000000032 bnb we will get a conversion rate of 0.00000000008384 USD
-        /// 
-        /// Parameters:
-        /// <param name="tokens">The input amount of tokens that has to be converted, example 0.0000000032 bnb to usd</param>
-        /// <param name="addresses">Array of contract addresses, first is the token that we are converting, second contract is in the currency that we are converting to.</param>
-        /// <param name="endpoint">Blockchain endpoint, https address of the Blockchain network </param>        
-        /// <param name="router">Public contract address of the router where we want to check the price.</param>
-        /// </summary>
+
         public async Task<decimal> ConvertTokenToUsd(decimal tokens, string[] addresses, string endpoint, string router)
         {
             try
             {
+                //Sets up a conversion query for the solidity smart contract
                 var convertRateFunction = new ConvertRate
                 {
                     TokensToSell = 1,
@@ -67,11 +57,12 @@ namespace NFTLock.Data
                 };
 
                 var web3 = new Nethereum.Web3.Web3(endpoint);
-
                 var balanceHandler = web3.Eth.GetContractQueryHandler<ConvertRate>();
                 
+                //Attempts to interact with a solidity smart contract exchange router to convert the base 1 token compared to USD
                 var balance = await balanceHandler.QueryAsync<List<BigInteger>>(router, convertRateFunction);
-                //var convert = ConvertToDex(balance, 18);
+                
+                //Returns the sum of the tokens that we want to convert over the price of the pair of Native/USD to get the smart contract / USD instead of it's pair token.
                 return tokens * (decimal)balance.ElementAt(1);
             }
             catch (Exception e)
@@ -86,12 +77,16 @@ namespace NFTLock.Data
         {
             try
             {
+                //Construct a balanceOf query and assign the current address as the owner
                 var balanceOfFunctionMessage = new BalanceOf()
                 {
                     Owner = ownerAddress,
                 };
+
+                //Initialize web3
                 var web3 = new Nethereum.Web3.Web3(endpoint);
 
+                //Run the qeury against the endpoint and attempt to get the user bgalance for a given contract.
                 var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
                 var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
                 var convert = Utilities.ConvertToBigIntDex(balance, decimals);
@@ -148,13 +143,17 @@ namespace NFTLock.Data
 
         public async Task<List<Token>> GetNetworkTokens(int networkId)
         {
+            // On startup, it gets thge list of officially supported tokens by running a query against githubs API
             if(MauiProgram.ListedTokens == null)
                 MauiProgram.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
 
+            //Define a local collection of token.
             var tokens = new List<Token>();
 
+            //Check if the selected network exists
             var getNetworkData = MauiProgram.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == MauiProgram.IsDevelopment);
 
+            //In case it exists we add the native token to the list and run a query to get the user balance of the token.
             if(getNetworkData != null)
             {
                 tokens.Add(new Token
@@ -168,55 +167,81 @@ namespace NFTLock.Data
                             new TokenContract
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
-                                UserBalance = await GetAccountBalance(networkId, getNetworkData.Endpoint),
+                                UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
+                                //V1 doesn't support native token prices. TODO V2
                                // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
                         }
                 });
             }
-
+            
+            //Gets the list of officially supported tokens on the selected network, as it binds user balance, market cap, price, and circulating supply for each token.
             tokens = await GetListedTokens(MauiProgram.ListedTokens, tokens, getNetworkData);
 
+            //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
             if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
                 File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
 
+            //Reads the content of the file.
             var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
 
+            //Converts the imported tokens to List<Token> 
             var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
 
+            //Checks if the tokens exist, in case the file is blank the collection is null
             if(tokenList != null)
             {
                 //Filter only by selected network
                 tokenList = tokenList.Where(x => x.Contracts.Any(y => y.Network == networkId)).ToList();
 
+                //Loop over the token list
                 foreach (var currentToken in tokenList)
                 {
-                    var current = currentToken;
+                    //Current token in the quoue 
+                    var current = currentToken; 
+                    //Get the contract of the token (Contracts with the same name are grouped over different blockchains, some projects have multiple contracts) We only get the contract for the current network
                     var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
+
+                    //Attempt to update the user balance of the contract, but calling CheckUserBalanceForContract internally on the selected contract
                     current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
+                    //Save reference to local varible with the contract address..
                     var contract = current.Contracts.FirstOrDefault(x => x.Network == networkId).ContractAddress;
 
-
+                    //Check if the network tha the contract belongs to has a defined factory adddress of a defi exchange
                     if(!string.IsNullOrEmpty(getNetworkData.Factory))
                     {
+                        //Attempt to get the router of a contract using the contract address of the listed token,
+                        //the native currency of the netowrk, the network endpoint and running the data as query agains the factory of the network
                         var pairExists = await CheckExchangelisting(contract, getNetworkData.CurrencyAddress, getNetworkData.Endpoint, getNetworkData.Factory);
-                        var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
-                        var pairs = new string[2];
+                        // If Router exists and is found attempt to get price market cap, circulating supply of a given address.
+                        if(!string.IsNullOrEmpty(pairExists))
+                        {
+                            //Run a query against the router of the token to get the price in the native token,
+                            var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+                            var pairs = new string[2];
+                            //Construct an array in order to convert the native price of the token to USD
+                            pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
+                            pairs[1] = getNetworkData.PairCurrency;
+                            //Runs a query to conver the native token price to usd
+                            getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, pairExists); 
+                            //Sets the current price, as the main price in USD rather then the native token
+                            current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
+                            //Naming convention is wrong here should be Worth or BalanceValue, but basically
+                            //it takes the users token balance and multiplies the by the price in usd to estimate the portfolio balance at this time
+                            current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
 
-                        pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
-                        pairs[1] = getNetworkData.PairCurrency;
-                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, "0x10ED43C718714eb63d5aA57B78B54704E256024E"); //Convert to USDT
-                        current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
-                        current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
+                            //Gets the total supply of the token by running a query against the solidity smart contract.
+                            var totalSupply = await this.CheckExistingSupply(getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                            getContract.Supply = totalSupply;
 
-                        var totalSupply = await this.CheckExistingSupply(getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
-                        getContract.Supply = totalSupply;
-
-                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
-                        current.Contracts.FirstOrDefault(x => x.Network == networkId).MarketCap = tokenMarketData.mCap;
-                        current.Contracts.FirstOrDefault(x => x.Network == networkId).CirculatingSupply = tokenMarketData.circulating;
+                            //Calculates the market capital and the ciruclating supply of the token. then assigns both varibles.
+                            (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                            current.Contracts.FirstOrDefault(x => x.Network == networkId).MarketCap = tokenMarketData.mCap;
+                            current.Contracts.FirstOrDefault(x => x.Network == networkId).CirculatingSupply = tokenMarketData.circulating;
+                        }
+                      
                     }
-
+                    //We add the token to the UI list, regardless if internal information about the tokens has been found.
                     tokens.Add(current);
                 }
             }
@@ -235,100 +260,41 @@ namespace NFTLock.Data
             return pairOverToken; 
         }
 
-        public async Task<bool> ExecutePayments(string receiver, TokenContract token, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
-        {
-
-            var PayerAddress = account.Address;
-
-
-            var Account = account;
-
-            var netowrkEndpoint = endpoint;
-            var web3 = new Web3(Account, netowrkEndpoint);
-            web3.TransactionManager.UseLegacyAsDefault = true;
-
-            var transferHandler = web3.Eth.GetContractTransactionHandler<TransferTokenFunction>();
-
-            var transferAmount = default(BigInteger);
-            transferAmount = (BigInteger)Utilities.SetDecimalPoint(amountToSend, token.Decimals);
-
-            var transfer = new TransferTokenFunction()
-            {
-                FromAddress = PayerAddress,
-                To = receiver,
-                TokenAmount = transferAmount,
-                Nonce = await Account.NonceService.GetNextNonceAsync()
-            };
-
-            var transactionReceipt = default(string);
-            var logged = false;
-
-            try
-            {
-                transactionReceipt = await transferHandler.SendRequestAsync(token.ContractAddress, transfer);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                logged = true;
-                MauiProgram.TxHash = "-";
-            }
-
-            if (transactionReceipt != null)
-            {
-                var txHash = string.Empty;
-                if (!logged)
-                {
-
-                    txHash = transactionReceipt;
-                    MauiProgram.TxHash = txHash;
-                }
-            }
-            return true;
-        }
-
-        public async Task<bool> ExecuteNative(string receiver, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
-        {
-            var web3 = new Web3(account, endpoint);
-
-            var transaction = web3.Eth.GetEtherTransferService();
-            var nounceVal = await account.NonceService.GetNextNonceAsync();
- 
-            web3.TransactionManager.UseLegacyAsDefault = true;
-            var trans = transaction.TransferEtherAsync(receiver, amountToSend, null, null, nounceVal).GetAwaiter().GetResult();
-
-
-            MauiProgram.TxHash = trans;
-
-            return true;
-        }
-
+     
         public async Task<(decimal, decimal)> GetContractMarketCap(decimal supply, decimal getTokenPrice, string contractAddress, string endpoint, int decimals)
         {
+            //Check most common dead addresses used for token burning for any burned tokens out of the total supply.
             var getBurned1 = await CheckUserBalanceForContract("0x000000000000000000000000000000000000dead", contractAddress, endpoint, decimals);
             var getBurned2 = await CheckUserBalanceForContract("0x0000000000000000000000000000000000000001", contractAddress, endpoint, decimals);
 
+            //Calculate the circulating supply by substracting the total supply from the net sum of both burned addresses.
             var circulatingSupply = supply - (getBurned1 + getBurned2);
 
+            //Multiply the circulating supply over the current token price to calculate the market cap of an asset.
             var mCap = circulatingSupply * getTokenPrice;
 
-
+            //We return a tuple, as it's more conviniant, no need to runt he query against for both cases.
             return (circulatingSupply, mCap);
         }
 
         public async Task<string> CheckExchangelisting(string contractAddress,string pairToken, string endpoint, string factory)
         {
+            //Construct a function that calls solidity getPair in order to check if there is a listed token with that pair on the factory
             var balanceOfFunctionMessage = new GetPairFunctionBase()
             {
                 TokenA = contractAddress,
                 TokenB = pairToken
 
             };
+
+            //Construct a web3 handler
             var web3 = new Nethereum.Web3.Web3(endpoint);
 
+            //Run the qeury
             var routerResolver = web3.Eth.GetContractQueryHandler<GetPairFunctionBase>();
             var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
 
+            //Return the router of the pair in case it exists
             return router;
         }
 
@@ -354,56 +320,149 @@ namespace NFTLock.Data
 
         public async Task<List<Token>> GetListedTokens(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
         {
+            //Check if there are no listed tokens
             if (listedTokenData == null)
                 return tokens;
 
+            //In case tokens exist loop over the tokens and convert them to a system token
             foreach (var token in listedTokenData)
             {
                 var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
                 var contracts = new List<TokenContract>();
-                var includeInList = false;
-                foreach (var getContract in currentToken.Contracts)
+ 
+
+                //Get the current contract on the network
+                var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == network.Id);
+                
+                if(getContract != null)
                 {
-                    if (getContract.Network == network.Id)
+                    //Check the user balance of the given contract
+                    getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                    //Get the contract native price
+                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
+
+                    //Construct a query to conver the price to USD
+                    var pairs = new string[2];
+                    pairs[0] = getContract.PairTokenAddress;
+                    pairs[1] = network.PairCurrency;
+                    //Convert the price to USD
+                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
+
+                    //Bind the price values
+                    if (getContract.UserBalance > 0)
                     {
-                        includeInList = true;
-                        getContract.UserBalance = await CheckUserBalanceForContract(MauiProgram.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                        var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
-                        var pairs = new string[2];
-                        pairs[0] = getContract.PairTokenAddress;
-                        pairs[1] = network.PairCurrency;
-                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
-
-                        if (getContract.UserBalance > 0)
-                        {
-                            getContract.Price = getContract.UserBalance * getTokenPrice;
-                            getContract.CurrentPrice = getTokenPrice;
-                        }
-                        else
-                        {
-                            getContract.Price = 0;
-                            getContract.CurrentPrice = getTokenPrice;
-                        }
-
-                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                        getContract.MarketCap = tokenMarketData.mCap;
-                        getContract.CirculatingSupply = tokenMarketData.circulating;
-
-                        contracts.Add(getContract);
+                        getContract.Price = getContract.UserBalance * getTokenPrice;
+                        getContract.CurrentPrice = getTokenPrice;
+                    }
+                    else
+                    {
+                        getContract.Price = 0;
+                        getContract.CurrentPrice = getTokenPrice;
                     }
 
-                }
+                    //Get contract market cap, and circulating supply
+                    (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                    getContract.MarketCap = tokenMarketData.mCap;
+                    getContract.CirculatingSupply = tokenMarketData.circulating;
 
-                //Important only add to the list of contracts in case contract exists on the selected network.
-                if (includeInList)
-                {
+                    contracts.Add(getContract);
+
                     currentToken.Contracts = contracts;
                     tokens.Add(currentToken);
+
                 }
 
             }
 
             return tokens;
+        }
+
+        public async Task<bool> ExecutePayments(string receiver, TokenContract token, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
+        {
+            //assign the wallet address as the payer
+            var PayerAddress = account.Address;
+
+            //copy the account
+            var Account = account;
+            //assign the network endpont and instatiate web3 
+            var netowrkEndpoint = endpoint;
+            var web3 = new Web3(Account, netowrkEndpoint);
+            web3.TransactionManager.UseLegacyAsDefault = true; //Important otherwise lots of gas issues problems 
+
+            //Define a query for a transfer event
+            var transferHandler = web3.Eth.GetContractTransactionHandler<TransferTokenFunction>();
+
+            //Default to 0 tokens to transfer then attempt to set the tokens to transfer by multiplying by the power of the contract decimals
+            var transferAmount = default(BigInteger);
+            transferAmount = (BigInteger)Utilities.SetDecimalPoint(amountToSend, token.Decimals);
+
+            //Assign all varibles to the transfer event.
+            var transfer = new TransferTokenFunction()
+            {
+                FromAddress = PayerAddress,
+                To = receiver,
+                TokenAmount = transferAmount,
+                Nonce = await Account.NonceService.GetNextNonceAsync()
+            };
+
+            //Define a receipt string
+            var transactionReceipt = default(string);
+            var logged = false;
+
+            //Attempt to generate a tranasction hash
+            try
+            {
+                transactionReceipt = await transferHandler.SendRequestAsync(token.ContractAddress, transfer);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                logged = true;
+                MauiProgram.TxHash = "-";
+            }
+
+            //If transaction hash has been created, start monitoring for a receipt.
+            if (transactionReceipt != null)
+            {
+                var txHash = string.Empty;
+                if (!logged)
+                {
+
+                    txHash = transactionReceipt;
+                    MauiProgram.TxHash = txHash;
+                }
+            }
+            return true;
+        }
+
+        public async Task<bool> ExecuteNative(string receiver, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
+        {
+            //Instantiate web3 and generate a transfer event.
+            var web3 = new Web3(account, endpoint);
+
+            var transaction = web3.Eth.GetEtherTransferService();
+            //Get a nounce for the transaction
+            var nounceVal = await account.NonceService.GetNextNonceAsync();
+
+            //Set to use the legacy gas price model to ensure it wont fail.
+            web3.TransactionManager.UseLegacyAsDefault = true;
+            //Attempt to transfer the native token and await for the result.
+
+            try
+            {
+                var trans = transaction.TransferEtherAsync(receiver, amountToSend, null, null, nounceVal).GetAwaiter().GetResult();
+                MauiProgram.TxHash = trans;
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                MauiProgram.TxHash = "-";
+                Console.WriteLine(e);
+                return false;
+            }
+           
+
         }
 
 

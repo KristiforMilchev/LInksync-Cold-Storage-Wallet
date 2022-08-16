@@ -20,18 +20,7 @@ public class AuthenicationHandler : IAuthenicationService
         HardwareService = ServiceHelper.GetService<IHardwareService>();
     }
 
-    public string CreateAccountInitial()
-	{
-        //WIP
-        return string.Empty;
-    }
-
-    public async Task<string> DeployContract()
-    {
-        //WIP
-        return string.Empty;
-    }
-
+ 
     public string GetDefault()
     {
         //WIP
@@ -131,16 +120,6 @@ public class AuthenicationHandler : IAuthenicationService
     {
          return await ContractService.GetNetworkTokens(networkId);
         
-    }
-
-    string IAuthenicationService.ToHex(byte[] value, bool prefix)
-    {
-        return System.Text.Encoding.UTF8.GetString(value);
-    }
-
-    byte IAuthenicationService.ConvertBinaryToText(string seq)
-    {
-        return Convert.ToByte(seq, 2);
     }
 }   
 
