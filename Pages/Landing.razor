@@ -524,7 +524,7 @@
 
 
 
-    void Callback()
+    async void Callback(bool status)
     {
         InvokeAsync(() =>
         {
@@ -537,6 +537,24 @@
             StateHasChanged();
 
         });
+
+
+        var result = await PaymentService.BeginTransaction();
+
+        if (result != null)
+        {
+            await InvokeAsync(() =>
+            {
+                Communication.ShowLoader = "none";
+                Communication.HideTokenList = "none";
+                Communication.HideTokenSend = "none";
+                Communication.ShowPinPanel = "none";
+                Communication.Receipt = "flex";
+                Receipt = result;
+                StateHasChanged();
+
+            });
+        }
 
     }
 
@@ -698,13 +716,7 @@
         }));
 
         Communication.Pass = Password;
-
-
-        Communication.TransactionTimer = new System.Timers.Timer();
-        Communication.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-        Communication.TransactionTimer.Interval = 5000;
-        Communication.TransactionTimer.Start();
-
+ 
         InvokeAsync(() =>
         {
             Password = "";
@@ -713,47 +725,7 @@
 
     }
 
-    // Specify what you want to happen when the Elapsed event is raised.
-    private async void OnTimedEvent(object source, ElapsedEventArgs e)
-    {
-        if (!string.IsNullOrEmpty(Communication.PK))
-        {
-            Communication.TransactionTimer.Stop();
-            Communication.TransactionTimer.Dispose();
-
-            if(Communication.ShowLoader != "flex")
-                await InvokeAsync(() =>
-                {
-                    Communication.ShowLoader = "flex";
-                    Communication.HideTokenList = "none";
-                    Communication.HideTokenSend = "none";
-                    Communication.ShowPinPanel = "none";
-                    Communication.Receipt = "none";
-
-                    StateHasChanged();
-
-                });
-
-            var result = await PaymentService.BeginTransaction();
-
-            if (result != null)
-            {  
-                await InvokeAsync(() =>
-                {
-                    Communication.ShowLoader = "none";
-                    Communication.HideTokenList = "none";
-                    Communication.HideTokenSend = "none";
-                    Communication.ShowPinPanel = "none";
-                    Communication.Receipt = "flex";
-                    Receipt = result;
-                    StateHasChanged();
-
-                });   
-            }
-        }
-
-
-    }
+   
 
     private void OnBalanceUpdate(object source, ElapsedEventArgs e)
     {

@@ -69,15 +69,9 @@
             NavigationManager.NavigateTo("Landing");
 
         }
-
-        aTimer = new System.Timers.Timer();
-        aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-        aTimer.Interval = 5000;
-        aTimer.Start();
-
-
     }
-    void Callback()
+
+    void Callback(bool status)
     {
         InvokeAsync(() =>
         {
@@ -91,22 +85,14 @@
 
         });
 
-    }
-
-
-    // Specify what you want to happen when the Elapsed event is raised.
-    private  void OnTimedEvent(object source, ElapsedEventArgs e)
-    {
         if (Communication.IsLogged && !string.IsNullOrEmpty(Communication.PublicAddress))
         {
-            if(aTimer != null)
-            {
-                aTimer.Stop();
-                aTimer.Dispose();
-            }
             NavigationManager.NavigateTo("Landing");
         }
+
     }
+
+     
 
     private void LoginPublic()
     {

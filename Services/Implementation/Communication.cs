@@ -38,7 +38,6 @@ namespace SYNCWallet.Services.Implementation
         public bool KeepPrivateSingle { get; set; }
         public string ReceiverAddress { get; set; }
         public decimal Amount { get; set; }
-        public System.Timers.Timer TransactionTimer { get; set; }
         public TokenContract SelectedContract { get; set; }
         public string TxHash { get; set; }
         public SerialPort _serialPort { get; set; }
@@ -154,7 +153,7 @@ namespace SYNCWallet.Services.Implementation
                     else if (a == "#ERL" || test == "#ERL")
                     {
                         //"Authenication Handler",null
-                        LoginAttempt?.Invoke();
+                        LoginAttempt?.Invoke(false);
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
@@ -226,6 +225,7 @@ namespace SYNCWallet.Services.Implementation
                     IsLogged = false;
                 }
                 Debug.WriteLine(PublicAddress);
+                LoginAttempt?.Invoke(true);
 
                 RemainingAttempts = 3;
                 if (!KeepPrivateSingle)

@@ -36,7 +36,6 @@ namespace SYNCWallet.Services.Definitions
         public bool KeepPrivateSingle { get; set; }
         public string ReceiverAddress { get; set; }
         public decimal Amount { get; set; }
-        public System.Timers.Timer TransactionTimer { get; set; }
         public TokenContract SelectedContract { get; set; }
         public string TxHash { get; set; }
         public string HideTokenList { get; set; }
