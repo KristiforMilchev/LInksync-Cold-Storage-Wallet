@@ -63,7 +63,7 @@
     {
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
+        Communication.LoginAttempt = Callback;
         if (Communication.IsLogged && !string.IsNullOrEmpty(Communication.PublicAddress))
         {
             NavigationManager.NavigateTo("Landing");
@@ -77,7 +77,22 @@
 
 
     }
- 
+    void Callback()
+    {
+        InvokeAsync(() =>
+        {
+            Communication.ShowLoader = "none";
+            Communication.HideTokenList = "";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.Receipt = "none";
+
+            StateHasChanged();
+
+        });
+
+    }
+
 
     // Specify what you want to happen when the Elapsed event is raised.
     private  void OnTimedEvent(object source, ElapsedEventArgs e)

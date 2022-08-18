@@ -492,7 +492,7 @@
         PaymentService = ServiceHelper.GetService<IPaymentService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
+        Communication.LoginAttempt = Callback;
 
         NextCheck = NextCheck.AddMinutes(1);
         Communication.HideTokenList = "";
@@ -519,6 +519,24 @@
         Communication.ActiveNetwork = SelectedNetwork;
         WalletAddress = AuthenicationService.GetDefault();
         Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+
+    }
+
+
+
+    void Callback()
+    {
+        InvokeAsync(() =>
+        {
+            Communication.ShowLoader = "none";
+            Communication.HideTokenList = "";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.Receipt = "none";
+
+            StateHasChanged();
+
+        });
 
     }
 
@@ -651,8 +669,22 @@
         });
     }
 
+
+
     private async void EnterPin()
     {
+        await InvokeAsync(() =>
+        {
+            Communication.ShowLoader = "flex";
+            Communication.HideTokenList = "none";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.Receipt = "none";
+
+            StateHasChanged();
+
+        });
+
         var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
         Communication.KeepPrivateSingle = true;
         Communication.Amount = TokensToSend;

@@ -1,4 +1,5 @@
 ﻿using ArduinoUploader.Hardware;
+using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using NFTLock.Data;
 using SYNCWallet.Models;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static SYNCWallet.Models.GithubTokensModel;
+using static SYNCWallet.Pages.Landing;
 
 namespace SYNCWallet.Services.Implementation
 {
@@ -47,8 +49,9 @@ namespace SYNCWallet.Services.Implementation
         public string ShowPinPanel { get; set; }
         public string ShowLoader { get; set; }
         public string Receipt { get; set; }
+        public LoginCallback LoginAttempt { get; set; }
 
-        
+
 
         public bool CheckConfigured()
         {
@@ -150,7 +153,8 @@ namespace SYNCWallet.Services.Implementation
                     }
                     else if (a == "#ERL" || test == "#ERL")
                     {
-
+                        //"Authenication Handler",null
+                        LoginAttempt?.Invoke();
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
@@ -222,7 +226,7 @@ namespace SYNCWallet.Services.Implementation
                     IsLogged = false;
                 }
                 Debug.WriteLine(PublicAddress);
-
+                LoginAttempt = 3;
                 if (!KeepPrivateSingle)
                     PK = string.Empty;
 
