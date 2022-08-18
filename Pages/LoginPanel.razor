@@ -1,6 +1,5 @@
 ﻿@page "/LoginPanel"
 @using System.Net
-@using System.Timers
 @using System.Numerics
 @using NFTLock.Data
 @using Newtonsoft.Json
@@ -54,7 +53,6 @@
 @code {
 
     private string Password{ get; set; }
-    System.Timers.Timer aTimer { get; set; }
     IHardwareService HardwareService { get; set; }
     ICommunication Communication { get; set; }
 

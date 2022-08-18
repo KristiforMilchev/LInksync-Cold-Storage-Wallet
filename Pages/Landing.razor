@@ -526,35 +526,37 @@
 
     async void Callback(bool status)
     {
-        InvokeAsync(() =>
+        if(status)
         {
-            Communication.ShowLoader = "none";
-            Communication.HideTokenList = "";
-            Communication.HideTokenSend = "none";
-            Communication.ShowPinPanel = "none";
-            Communication.Receipt = "none";
+            var result = await PaymentService.BeginTransaction();
 
-            StateHasChanged();
+            if (result != null)
+            {
+                await InvokeAsync(() =>
+                {
+                    Communication.ShowLoader = "none";
+                    Communication.HideTokenList = "none";
+                    Communication.HideTokenSend = "none";
+                    Communication.ShowPinPanel = "none";
+                    Communication.Receipt = "flex";
+                    Receipt = result;
+                    StateHasChanged();
 
-        });
-
-
-        var result = await PaymentService.BeginTransaction();
-
-        if (result != null)
-        {
-            await InvokeAsync(() =>
+                });
+            }
+        }
+        else
+            InvokeAsync(() =>
             {
                 Communication.ShowLoader = "none";
-                Communication.HideTokenList = "none";
+                Communication.HideTokenList = "";
                 Communication.HideTokenSend = "none";
                 Communication.ShowPinPanel = "none";
-                Communication.Receipt = "flex";
-                Receipt = result;
+                Communication.Receipt = "none";
+
                 StateHasChanged();
 
             });
-        }
 
     }
 
