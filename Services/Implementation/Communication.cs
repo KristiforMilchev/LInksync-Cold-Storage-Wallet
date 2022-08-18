@@ -226,7 +226,8 @@ namespace SYNCWallet.Services.Implementation
                     IsLogged = false;
                 }
                 Debug.WriteLine(PublicAddress);
-                LoginAttempt = 3;
+
+                RemainingAttempts = 3;
                 if (!KeepPrivateSingle)
                     PK = string.Empty;
 
