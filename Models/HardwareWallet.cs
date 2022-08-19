@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SYNCWallet.Models
 {
-    internal class HardwareWallet
+    public class HardwareWallet
     {
         public string Cmd { get; set; }
         public string PrivateKey { get; set; }

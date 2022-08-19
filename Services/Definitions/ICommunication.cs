@@ -1,4 +1,6 @@
 ﻿using ArduinoUploader.Hardware;
+using Microsoft.AspNetCore.Components;
+using Nethereum.Web3.Accounts;
 using NFTLock.Data;
 using SYNCWallet.Models;
 using System;
@@ -7,7 +9,9 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
+using static SYNCWallet.Pages.Landing;
 
 namespace SYNCWallet.Services.Definitions
 {
@@ -34,7 +38,6 @@ namespace SYNCWallet.Services.Definitions
         public bool KeepPrivateSingle { get; set; }
         public string ReceiverAddress { get; set; }
         public decimal Amount { get; set; }
-        public System.Timers.Timer TransactionTimer { get; set; }
         public TokenContract SelectedContract { get; set; }
         public string TxHash { get; set; }
         public string HideTokenList { get; set; }
@@ -42,16 +45,21 @@ namespace SYNCWallet.Services.Definitions
         public string ShowPinPanel { get; set; }
         public string ShowLoader { get; set; }
         public string Receipt { get; set; }
+        public LoginCallback LoginAttempt { get; set; }
+        public ConfigMode SoftwareType { get; set; }
+
+
         public void Init();
         public void StartSerial();
-        public bool CheckConfigured();
+        public bool CheckConfigured(ConfigMode configMode);
         public void ReadSerial();
         public void ProcessData();
         void SetPublic();
         void ExecuteCmd(string currentCMD);
         public void WriteState(string value);
         public void ClearCredentials();
-
+        public void WriteInternalStorage(HardwareWallet hardwareWallet);
+        public void ReadInternalStorage(string password);
 
     }
 }

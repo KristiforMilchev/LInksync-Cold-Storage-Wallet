@@ -1,15 +1,13 @@
-﻿using ArduinoUploader.Hardware;
+﻿
+using ArduinoUploader.Hardware;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NFTLock.Data;
+using NFTLock.Models;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Definitions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
 
 namespace SYNCWallet.Services.Implementation
@@ -36,7 +34,6 @@ namespace SYNCWallet.Services.Implementation
         public bool KeepPrivateSingle { get; set; }
         public string ReceiverAddress { get; set; }
         public decimal Amount { get; set; }
-        public System.Timers.Timer TransactionTimer { get; set; }
         public TokenContract SelectedContract { get; set; }
         public string TxHash { get; set; }
         public SerialPort _serialPort { get; set; }
@@ -47,10 +44,110 @@ namespace SYNCWallet.Services.Implementation
         public string ShowPinPanel { get; set; }
         public string ShowLoader { get; set; }
         public string Receipt { get; set; }
+        public LoginCallback LoginAttempt { get; set; }
+        public ConfigMode SoftwareType { get; set; }
 
-        
+        public bool CheckConfigured(ConfigMode configMode)
+        {
+            if (configMode == ConfigMode.ColdWallet)
+                return CheckHardware();
 
-        public bool CheckConfigured()
+            return CheckSoftware();
+        }
+
+        bool CheckSoftware()
+        {
+            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            if (File.Exists(file))
+            {
+                var wallet = JsonConvert.DeserializeObject<CryptoWallet>(File.ReadAllText(file));
+                if (wallet != null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void WriteInternalStorage(HardwareWallet hardwareWallet)
+        {
+            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            if (!File.Exists(file))
+            {
+                File.WriteAllText(file,JsonConvert.SerializeObject(hardwareWallet));
+            }
+        }
+
+        public void ReadInternalStorage(string password)
+        {
+            
+            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            if (File.Exists(file))
+            {
+                var readAll = File.ReadAllText(file);
+                var convert = JsonConvert.DeserializeObject<HardwareWallet>(readAll);
+                if (password != convert.Password)
+                {
+                    LoginAttempt?.Invoke(false);
+                    RemainingAttempts -= 1;
+                    if (RemainingAttempts <= 0)
+                    {
+                        //Since we don't have a hardware to handle file deletion we delete the file from the software.
+                        //Only if the password is wrong 3 times in a row.
+                        File.Delete(file);
+
+                        Application.Current.Dispatcher.Dispatch(() =>
+                        {
+                            Application.Current.Windows.ToList().ForEach(y =>
+                            {
+                                Application.Current.CloseWindow(y);
+                            });
+                        });
+                    }
+                    Utilities.OpenErrorView($"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+
+                    return;
+                }
+
+                if (convert == null)
+                {
+                    //Todo
+                    LoginAttempt?.Invoke(false);
+                    return;
+                 }
+
+                PK = convert.PrivateKey;
+                var wallet = AuthenicationService.UnlockWallet(Pass);
+
+                PublicAddress = wallet.Address;
+
+                if (PublicAddress == null)
+                {
+
+                    WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                    {
+                        Cmd = "Login",
+                        Password = Pass,
+                        PrivateKey = "3"
+                    }));
+                    IsLogged = false;
+                    LoginAttempt?.Invoke(false);
+
+                }
+                else
+                {
+                    Debug.WriteLine(PublicAddress);
+                    IsLogged = true;
+                    LoginAttempt?.Invoke(true);
+
+                    RemainingAttempts = 3;
+                    if (!KeepPrivateSingle)
+                        PK = string.Empty;
+
+                }
+            }
+        }
+
+        bool CheckHardware()
         {
             try
             {
@@ -88,6 +185,7 @@ namespace SYNCWallet.Services.Implementation
                 return false;
             }
         }
+
 
         public void ClearCredentials()
         {
@@ -150,7 +248,8 @@ namespace SYNCWallet.Services.Implementation
                     }
                     else if (a == "#ERL" || test == "#ERL")
                     {
-
+                        //"Authenication Handler",null
+                        LoginAttempt?.Invoke(false);
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
@@ -220,11 +319,19 @@ namespace SYNCWallet.Services.Implementation
                         PrivateKey = "3"
                     }));
                     IsLogged = false;
-                }
-                Debug.WriteLine(PublicAddress);
+                    LoginAttempt?.Invoke(false);
 
-                if (!KeepPrivateSingle)
-                    PK = string.Empty;
+                }
+                else
+                {
+                    Debug.WriteLine(PublicAddress);
+                    LoginAttempt?.Invoke(true);
+
+                    RemainingAttempts = 3;
+                    if (!KeepPrivateSingle)
+                        PK = string.Empty;
+
+                }
 
             }
             catch (Exception e)

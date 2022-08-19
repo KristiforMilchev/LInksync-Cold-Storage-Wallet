@@ -244,7 +244,7 @@
         var getWords = await JS.InvokeAsync<List<string>>("GetImportWords");
         var words = new List<Word>();
 
-  
+
 
         getWords.ForEach(x =>
         {
@@ -302,20 +302,37 @@
     private void CreateWallet()
     {
 
-         try
+        try
         {
             var passwrod = HardwareService.Encrypt(PassCode, "iV1z@$H8");
             var PK = HardwareService.Encrypt(Wallet.PrivateKey, PassCode);
 
-            Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            switch (Communication.SoftwareType)
             {
-                Cmd = "NEW",
-                Password = passwrod,
-                PrivateKey = PK
-            }));
+                case Enums.ConfigMode.ColdWallet:
+                    Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                        {
+                            Cmd = "NEW",
+                            Password = passwrod,
+                            PrivateKey = PK
+                        }));
+
+                    break;
+                case Enums.ConfigMode.HotWallet:
+
+                    Communication.WriteInternalStorage(new HardwareWallet
+                        {
+                            Cmd = "NEW",
+                            Password = passwrod,
+                            PrivateKey = PK
+                        });
+                    break;
+            }
+
             Communication.IsConfigured = true;
             Communication.ConfigResponse = true;
             NavigationManager.NavigateTo("/LoginPanel");
+        
         }
         catch (Exception e)
         {

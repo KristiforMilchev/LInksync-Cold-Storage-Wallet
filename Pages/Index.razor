@@ -8,58 +8,65 @@
 @using System.Diagnostics
 @using SYNCWallet.Services
 @using SYNCWallet.Services.Definitions
+@using static SYNCWallet.Models.Enums
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+
+<link href="/css/create.css" rel="stylesheet">
+
  
-
-
-<div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
-    <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
-        <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
-            <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
-                <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
-
-            </div>
+<div class="container FixCenter" id="LoginPanel" style="   height: 100vh;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;">
+    <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+        <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
+    </div>
+    <div class="row" id="Options" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+        <div class="col-md-5 " style="margin:10px;">
             <div class="row" style="margin-top: 50px;">
-                <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
-                    Connect and select ATmega328 compatable device.
-                </h2>
+                <div class="card" style="padding: 0;overflow: hidden;">
+                    <div class="card-body">
+                        <i class="icon-wallet" style="    font-size: 140px;
+                        display: flex;
+                        justify-content: center;
+                        margin: 10px;"></i>
+                        <button @onclick="LoadHotWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                            Hot Wallet
+                        </button>
+                    </div>
+                </div>
             </div>
-            <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400; text-align:center;">
-                <i class="me-2 mdi mdi-access-point-network"></i>
-                <span id="network" style="text-align:center; width:100%;">@DeviceModel.ToString()</span>
-                
-            </a>
-            <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important; height:150px; overflow-y:scroll;background: #282931;">
-                @if (Devices != null)
-                {
-                    @foreach (var device in Devices)
-                    {
-                        <a class="dropdown-item" @onclick="(() => DeviceChanged(device))">
-                            <i class="me-2 mdi mdi-access-point-network"></i>
-                            @device.ToString()
-                        </a>
-                    }
+        </div>
 
-                }
+        <div class="col-md-5 " style="margin:10px;">
+            <div class="row" style="margin-top: 50px;">
+                <div class="card" style="padding: 0;overflow: hidden;">
+                    <div class="card-body">
+                        <i class="icon-wallet" style="    font-size: 140px;
+                        display: flex;
+                        justify-content: center;
+                        margin: 10px;"></i>
+                        <button @onclick="LoadColdWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                            Cold Storage Wallet
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+          
+  </div>
 
 @code {
     private ICommunication Communication { get; set; }
     private IAuthenicationService AuthenicationHandler { get; set; }
     private IHardwareService HardwareService { get; set; }
-    private string Address { get; set; }
     private string Port{ get; set; }
 
-    public ArduinoModel DeviceModel { get; set; }
-    public List<ArduinoModel> Devices { get; set; }
-
-    System.Timers.Timer aTimer { get; set; }
-
+  
+ 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
 
@@ -72,89 +79,29 @@
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
-
         Communication.Init();
-        //Get Supported Devices
-        Devices = HardwareService.GetSupportedDevices();
-
         Port = HardwareService.DeviceConnected();
-        aTimer = new System.Timers.Timer();
-        aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-        aTimer.Interval = 5000;
-        aTimer.Start();
+
 
     }
+ 
+ 
 
-    // Specify what you want to happen when the Elapsed event is raised.
-    private void OnTimedEvent(object source, ElapsedEventArgs e)
+    private void LoadHotWallet()
     {
+        var configStatus = Communication.CheckConfigured(ConfigMode.HotWallet);
+        if(configStatus)
+            NavigationManager.NavigateTo("LoginPanel");
 
-        Port = HardwareService.DeviceConnected();
-        if(!string.IsNullOrEmpty(Port))
-        {
-            aTimer.Stop();
-            aTimer.Dispose();
-        }
+        else
+            NavigationManager.NavigateTo("Create");
+
     }
 
-    private async Task<bool> CheckDeviceConnected(string port)
+    private void LoadColdWallet()
     {
-
-        try
-        {
-            if (!string.IsNullOrEmpty(port))
-            {
-                var firmwareUpdated = HardwareService.CreateNewDevice(port);
-
-                var configStatus = Communication.CheckConfigured();
-
-                if (configStatus && firmwareUpdated)
-                {
-
-                    KillTimer();
-                    NavigationManager.NavigateTo("LoginPanel");
-                }
-                else
-                {
-                    KillTimer();
-                    NavigationManager.NavigateTo("Create");
-
-                }
-            }
-           
-        }
-        catch (Exception e)
-        {
-
-            throw;
-        }
-     
-        return true;
-    }
-
-
-    private void KillTimer()
-    {
-        if (aTimer != null)
-        {
-            aTimer.Stop();
-            aTimer.Dispose();
-        }
-    }
-
-    private void DeviceChanged(ArduinoModel deviceType)
-    {
-        InvokeAsync(async () =>
-        {
-            DeviceModel = deviceType;
-            Communication.DeviceType = deviceType;
-            await CheckDeviceConnected(Port);
-            StateHasChanged();
-
-        });
-
-        
+        NavigationManager.NavigateTo("HardwareSelect");
 
     }
+
 }

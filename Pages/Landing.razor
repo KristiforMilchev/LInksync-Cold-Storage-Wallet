@@ -329,6 +329,7 @@
                             
                                 </div>
                             }
+                            @*TODO: Extract this as component*@
                             <div style="display:@Communication.ShowPinPanel;flex-direction: column;
                                     align-content: space-around;
                                     flex-wrap: wrap;
@@ -346,7 +347,7 @@
                                                 <div class="card-body">
                  
                                                     <div class="form-floating distanceTop">
-                                                        <input id="LPassword" @bind-value="Password" type="password" class="form-control inputStyle" placeholder="Test Password"  >
+                                                        <input id="LPassword" @bind-value="Password" minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
                                                         <label>
                                                             <i class="me-2 mdi mdi-lock"></i>
                                                             <span class="border-start border-danger ps-3 ">Password</span>
@@ -492,7 +493,7 @@
         PaymentService = ServiceHelper.GetService<IPaymentService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
+        Communication.LoginAttempt = Callback;
 
         NextCheck = NextCheck.AddMinutes(1);
         Communication.HideTokenList = "";
@@ -519,6 +520,44 @@
         Communication.ActiveNetwork = SelectedNetwork;
         WalletAddress = AuthenicationService.GetDefault();
         Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+
+    }
+
+
+
+    async void Callback(bool status)
+    {
+        if(status)
+        {
+            var result = await PaymentService.BeginTransaction();
+
+            if (result != null)
+            {
+                await InvokeAsync(() =>
+                {
+                    Communication.ShowLoader = "none";
+                    Communication.HideTokenList = "none";
+                    Communication.HideTokenSend = "none";
+                    Communication.ShowPinPanel = "none";
+                    Communication.Receipt = "flex";
+                    Receipt = result;
+                    StateHasChanged();
+
+                });
+            }
+        }
+        else
+            InvokeAsync(() =>
+            {
+                Communication.ShowLoader = "none";
+                Communication.HideTokenList = "";
+                Communication.HideTokenSend = "none";
+                Communication.ShowPinPanel = "none";
+                Communication.Receipt = "none";
+
+                StateHasChanged();
+
+            });
 
     }
 
@@ -550,10 +589,10 @@
         }
         catch (Exception)
         {
-            
+
             throw;
         }
-       
+
 
 
     }
@@ -651,8 +690,25 @@
         });
     }
 
+
+
     private async void EnterPin()
     {
+        if (Password.Length < 8)
+            return;
+
+        await InvokeAsync(() =>
+        {
+            Communication.ShowLoader = "flex";
+            Communication.HideTokenList = "none";
+            Communication.HideTokenSend = "none";
+            Communication.ShowPinPanel = "none";
+            Communication.Receipt = "none";
+
+            StateHasChanged();
+
+        });
+
         var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
         Communication.KeepPrivateSingle = true;
         Communication.Amount = TokensToSend;
@@ -666,13 +722,7 @@
         }));
 
         Communication.Pass = Password;
-
-
-        Communication.TransactionTimer = new System.Timers.Timer();
-        Communication.TransactionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-        Communication.TransactionTimer.Interval = 5000;
-        Communication.TransactionTimer.Start();
-
+ 
         InvokeAsync(() =>
         {
             Password = "";
@@ -681,47 +731,7 @@
 
     }
 
-    // Specify what you want to happen when the Elapsed event is raised.
-    private async void OnTimedEvent(object source, ElapsedEventArgs e)
-    {
-        if (!string.IsNullOrEmpty(Communication.PK))
-        {
-            Communication.TransactionTimer.Stop();
-            Communication.TransactionTimer.Dispose();
-
-            if(Communication.ShowLoader != "flex")
-                await InvokeAsync(() =>
-                {
-                    Communication.ShowLoader = "flex";
-                    Communication.HideTokenList = "none";
-                    Communication.HideTokenSend = "none";
-                    Communication.ShowPinPanel = "none";
-                    Communication.Receipt = "none";
-
-                    StateHasChanged();
-
-                });
-
-            var result = await PaymentService.BeginTransaction();
-
-            if (result != null)
-            {  
-                await InvokeAsync(() =>
-                {
-                    Communication.ShowLoader = "none";
-                    Communication.HideTokenList = "none";
-                    Communication.HideTokenSend = "none";
-                    Communication.ShowPinPanel = "none";
-                    Communication.Receipt = "flex";
-                    Receipt = result;
-                    StateHasChanged();
-
-                });   
-            }
-        }
-
-
-    }
+   
 
     private void OnBalanceUpdate(object source, ElapsedEventArgs e)
     {
