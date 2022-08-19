@@ -504,7 +504,8 @@
         Communication.ActiveNetwork = SelectedNetwork;
         WalletAddress = AuthenicationService.GetDefault();
         Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
-
+        Task.Run(() => DefaultToToken());
+        NextCheck = DateTime.UtcNow.AddSeconds(20);
     }
 
 
@@ -548,10 +549,10 @@
 
     private void NetworkChanged(NetworkSettings network)
     {
-        InvokeAsync(() =>{
+        InvokeAsync(async () =>{
             SelectedNetwork = network;
             Communication.ActiveNetwork = SelectedNetwork;
-            DefaultToToken();
+            Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id);
             StateHasChanged();
         });
     }
@@ -565,8 +566,14 @@
             {
                 if (SelectedNetwork != null)
                 {
+                    var updateTokens =  await AuthenicationService.GetTokenDetails(SelectedNetwork.Id); //Get All tokens and their balance
+                    var getNetwork = updateTokens.FirstOrDefault().Contracts.FirstOrDefault().Network;
+                    //We don't want  updates in case we have already switched network since last request.
+                    if (getNetwork == SelectedNetwork.Id)
+                        Tokens = updateTokens;
 
-                    Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+                    
+                    NextCheck = DateTime.UtcNow.AddSeconds(20);
                     StateHasChanged();
                 }
 
@@ -725,7 +732,7 @@
         if (DateTime.UtcNow > NextCheck)
         {
             Task.Run(() => DefaultToToken());
-            NextCheck = DateTime.UtcNow.AddMinutes(1);
+            NextCheck = DateTime.UtcNow.AddSeconds(20);
         }
 
     }

@@ -18,6 +18,7 @@ namespace NFTLock.Data
        
         IUtilities Utilities { get; set; }
         ICommunication Communication { get; set; }
+
         public ContractService()
         {
             Utilities = ServiceHelper.GetService<IUtilities>();
@@ -143,6 +144,98 @@ namespace NFTLock.Data
         //    return transactionReceipt;
         //}
 
+
+        public async Task<List<Token>> GetNetworkTokensIntial(int networkId)
+        {
+            // On startup, it gets thge list of officially supported tokens by running a query against githubs API
+            if (Communication.ListedTokens == null)
+                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+
+            //Define a local collection of token.
+            var tokens = new List<Token>();
+
+            //Check if the selected network exists
+            var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
+
+            //In case it exists we add the native token to the list and run a query to get the user balance of the token.
+            if (getNetworkData != null)
+            {
+                tokens.Add(new Token
+                {
+                    Symbol = getNetworkData.TokenSylmbol,
+                    Name = getNetworkData.Name,
+                    Logo = "/images/tokenLogos/bsc.png",
+                    IsChainCoin = true,
+                    Contracts = new List<TokenContract>
+                        {
+                            new TokenContract
+                            {
+                                ContractAddress = getNetworkData.CurrencyAddress,
+                                UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
+                                Network = networkId
+                                //V1 doesn't support native token prices. TODO V2
+                               // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
+                            }
+                        }
+                });
+            }
+
+            //Gets the list of officially supported tokens on the selected network.
+            tokens = await GetListedTokensInitial(Communication.ListedTokens, tokens, getNetworkData);
+
+            //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
+            if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
+                File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
+
+            //Reads the content of the file.
+            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
+
+
+
+            //Converts the imported tokens to List<Token> 
+            var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
+
+            //Checks if the tokens exist, in case the file is blank the collection is null
+            if (tokenList != null)
+            {
+                //Filter only by selected network
+                tokenList = tokenList.Where(x => x.Contracts.Any(y => y.Network == networkId)).ToList();
+
+                //Loop over the token list
+                foreach (var currentToken in tokenList)
+                {
+                    tokens.Add(currentToken);
+                }
+            }
+
+
+            return tokens;
+        }
+
+        public async Task<List<Token>> GetListedTokensInitial(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network)
+        {
+            //Check if there are no listed tokens
+            if (listedTokenData == null)
+                return tokens;
+
+            //In case tokens exist loop over the tokens and convert them to a system token
+            foreach (var token in listedTokenData)
+            {
+                var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                var contracts = new List<TokenContract>();
+
+                //Get the current contract on the network
+                var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == network.Id);
+                if (getContract != null)
+                {
+                    tokens.Add(currentToken);
+                }
+
+            }
+
+            return tokens;
+        }
+
         public async Task<List<Token>> GetNetworkTokens(int networkId)
         {
             // On startup, it gets thge list of officially supported tokens by running a query against githubs API
@@ -170,6 +263,8 @@ namespace NFTLock.Data
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
+                                Network = networkId
+
                                 //V1 doesn't support native token prices. TODO V2
                                // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
