@@ -304,7 +304,7 @@
 
         try
         {
-            var passwrod = HardwareService.Encrypt(PassCode, "iV1z@$H8");
+            var passwrod = HardwareService.Encrypt("iV1z@$H8",PassCode);
             var PK = HardwareService.Encrypt(Wallet.PrivateKey, PassCode);
 
             switch (Communication.SoftwareType)

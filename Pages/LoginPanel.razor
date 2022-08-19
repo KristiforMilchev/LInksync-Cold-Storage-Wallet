@@ -100,7 +100,7 @@
             return;
         }
 
-        var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
+        var passwrod = HardwareService.Encrypt("iV1z@$H8",Password);
         Communication.Pass = Password;
 
         switch(Communication.SoftwareType)

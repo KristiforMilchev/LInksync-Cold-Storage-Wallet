@@ -65,8 +65,8 @@
     private IHardwareService HardwareService { get; set; }
     private string Port{ get; set; }
 
-  
- 
+
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
 
@@ -84,8 +84,8 @@
 
 
     }
- 
- 
+
+
 
     private void LoadHotWallet()
     {
@@ -100,8 +100,8 @@
 
     private void LoadColdWallet()
     {
+        Communication.SoftwareType = ConfigMode.ColdWallet;
         NavigationManager.NavigateTo("HardwareSelect");
-
     }
 
 }
