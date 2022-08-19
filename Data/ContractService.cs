@@ -18,11 +18,20 @@ namespace NFTLock.Data
        
         IUtilities Utilities { get; set; }
         ICommunication Communication { get; set; }
+        List<TokenContract> CachedTokenContracts { get; set; }
 
         public ContractService()
         {
             Utilities = ServiceHelper.GetService<IUtilities>();
             Communication = ServiceHelper.GetService<ICommunication>();
+            if(CachedTokenContracts == null)
+            {
+                //Checks if the price cache exist, delete and recreate it.
+                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
+                    CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(File.ReadAllText($"{Utilities.GetOsSavePath()}/CachePrices.json"));
+                else
+                    CachedTokenContracts = new List<TokenContract>();
+            }
         }
 
         public async Task<decimal> GetAccountBalance(string endpoint)
@@ -303,46 +312,68 @@ namespace NFTLock.Data
                     current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance = await GetImportedData(getNetworkData, currentToken.Contracts.FirstOrDefault(x => x.Network == networkId));
                     //Save reference to local varible with the contract address..
                     var contract = current.Contracts.FirstOrDefault(x => x.Network == networkId).ContractAddress;
-
-                    //Check if the network tha the contract belongs to has a defined factory adddress of a defi exchange
-                    if(!string.IsNullOrEmpty(getNetworkData.Factory))
+                    Task.Run(async () =>
                     {
-                        //Attempt to get the router of a contract using the contract address of the listed token,
-                        //the native currency of the netowrk, the network endpoint and running the data as query agains the factory of the network
-                        var pairExists = await CheckExchangelisting(contract, getNetworkData.CurrencyAddress, getNetworkData.Endpoint, getNetworkData.Factory);
-                        // If Router exists and is found attempt to get price market cap, circulating supply of a given address.
-                        if(!string.IsNullOrEmpty(pairExists))
+                        //Check if the network tha the contract belongs to has a defined factory adddress of a defi exchange
+                        if (!string.IsNullOrEmpty(getNetworkData.Factory))
                         {
-                            //Run a query against the router of the token to get the price in the native token,
-                            var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
-                            var pairs = new string[2];
-                            //Construct an array in order to convert the native price of the token to USD
-                            pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
-                            pairs[1] = getNetworkData.PairCurrency;
-                            //Runs a query to conver the native token price to usd
-                            getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, pairExists); 
-                            //Sets the current price, as the main price in USD rather then the native token
-                            current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
-                            //Naming convention is wrong here should be Worth or BalanceValue, but basically
-                            //it takes the users token balance and multiplies the by the price in usd to estimate the portfolio balance at this time
-                            current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
+                            //Attempt to get the router of a contract using the contract address of the listed token,
+                            //the native currency of the netowrk, the network endpoint and running the data as query agains the factory of the network
+                            var pairExists = await CheckExchangelisting(contract, getNetworkData.CurrencyAddress, getNetworkData.Endpoint, getNetworkData.Factory);
+                            // If Router exists and is found attempt to get price market cap, circulating supply of a given address.
+                            if (!string.IsNullOrEmpty(pairExists))
+                            {
+                                //Run a query against the router of the token to get the price in the native token,
+                                var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+                                var pairs = new string[2];
+                                //Construct an array in order to convert the native price of the token to USD
+                                pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
+                                pairs[1] = getNetworkData.PairCurrency;
+                                //Runs a query to conver the native token price to usd
+                                getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, pairExists);
+                                //Sets the current price, as the main price in USD rather then the native token
+                                current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
+                                //Naming convention is wrong here should be Worth or BalanceValue, but basically
+                                //it takes the users token balance and multiplies the by the price in usd to estimate the portfolio balance at this time
+                                current.Contracts.FirstOrDefault(x => x.Network == networkId).Price = current.Contracts.FirstOrDefault(x => x.Network == networkId).UserBalance * getTokenPrice;
 
-                            //Gets the total supply of the token by running a query against the solidity smart contract.
-                            var totalSupply = await this.CheckExistingSupply(getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
-                            getContract.Supply = totalSupply;
+                                //Gets the total supply of the token by running a query against the solidity smart contract.
+                                var totalSupply = await this.CheckExistingSupply(getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                                getContract.Supply = totalSupply;
 
-                            //Calculates the market capital and the ciruclating supply of the token. then assigns both varibles.
-                            (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
-                            current.Contracts.FirstOrDefault(x => x.Network == networkId).MarketCap = tokenMarketData.mCap;
-                            current.Contracts.FirstOrDefault(x => x.Network == networkId).CirculatingSupply = tokenMarketData.circulating;
+                                //Calculates the market capital and the ciruclating supply of the token. then assigns both varibles.
+                                (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, getNetworkData.Endpoint, getContract.Decimals);
+                          
+
+                                
+                                current.Contracts.FirstOrDefault(x => x.Network == networkId).MarketCap = tokenMarketData.mCap;
+                                current.Contracts.FirstOrDefault(x => x.Network == networkId).CirculatingSupply = tokenMarketData.circulating;
+
+                                if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == contract) != null)
+                                {
+                                    CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == contract));
+                                }
+                                CachedTokenContracts.Add(current.Contracts.FirstOrDefault(x => x.Network == networkId));
+                            }
+
                         }
-                      
-                    }
+                    });
+                    current.Contracts = new List<TokenContract>
+                    {
+                        CachedTokenContracts.FirstOrDefault(x=>   x.ContractAddress == current.Contracts.FirstOrDefault(y => y.Network == networkId).ContractAddress)
+                    };
                     //We add the token to the UI list, regardless if internal information about the tokens has been found.
                     tokens.Add(current);
                 }
+
+
+                //Checks if the price cache exist, delete and recreate it.
+                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
+                    File.Delete($"{Utilities.GetOsSavePath()}/CachePrices.json");
+                
+                File.WriteAllText($"{Utilities.GetOsSavePath()}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
             }
-         
+
 
             return tokens;
         }
@@ -426,50 +457,64 @@ namespace NFTLock.Data
             {
                 var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
                 var contracts = new List<TokenContract>();
- 
-
                 //Get the current contract on the network
                 var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == network.Id);
-                
-                if(getContract != null)
+
+                Task.Run(async () =>
                 {
-                    //Check the user balance of the given contract
-                    getContract.UserBalance = await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    //Get the contract native price
-                    var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
+           
 
-                    //Construct a query to conver the price to USD
-                    var pairs = new string[2];
-                    pairs[0] = getContract.PairTokenAddress;
-                    pairs[1] = network.PairCurrency;
-                    //Convert the price to USD
-                    getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
-
-                    //Bind the price values
-                    if (getContract.UserBalance > 0)
+                    if (getContract != null)
                     {
-                        getContract.Price = getContract.UserBalance * getTokenPrice;
-                        getContract.CurrentPrice = getTokenPrice;
+                        //Check the user balance of the given contract
+                        getContract.UserBalance = await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                        //Get the contract native price
+                        var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
+
+                        //Construct a query to conver the price to USD
+                        var pairs = new string[2];
+                        pairs[0] = getContract.PairTokenAddress;
+                        pairs[1] = network.PairCurrency;
+                        //Convert the price to USD
+                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
+
+                        //Bind the price values
+                        if (getContract.UserBalance > 0)
+                        {
+                            getContract.Price = getContract.UserBalance * getTokenPrice;
+                            getContract.CurrentPrice = getTokenPrice;
+                        }
+                        else
+                        {
+                            getContract.Price = 0;
+                            getContract.CurrentPrice = getTokenPrice;
+                        }
+
+                        //Get contract market cap, and circulating supply
+                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                        getContract.MarketCap = tokenMarketData.mCap;
+                        getContract.CirculatingSupply = tokenMarketData.circulating;
+
+                        if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress) != null)
+                            CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
+                        CachedTokenContracts.Add(getContract);
                     }
-                    else
-                    {
-                        getContract.Price = 0;
-                        getContract.CurrentPrice = getTokenPrice;
-                    }
-
-                    //Get contract market cap, and circulating supply
-                    (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                    getContract.MarketCap = tokenMarketData.mCap;
-                    getContract.CirculatingSupply = tokenMarketData.circulating;
-
-                    contracts.Add(getContract);
-
-                    currentToken.Contracts = contracts;
-                    tokens.Add(currentToken);
-
-                }
+                });
+              
+                var contractData = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+                currentToken.Contracts = new List<TokenContract>
+                {
+                    contractData
+                };
+                tokens.Add(currentToken);
 
             }
+
+            //Checks if the price cache exist, delete and recreate it.
+            if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
+                File.Delete($"{Utilities.GetOsSavePath()}/CachePrices.json");
+
+            File.WriteAllText($"{Utilities.GetOsSavePath()}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
 
             return tokens;
         }
