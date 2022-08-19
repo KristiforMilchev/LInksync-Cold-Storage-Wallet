@@ -370,24 +370,8 @@
                                     </div>
                                 </div>
                             </div>
-                        <div style="display: @Communication.ShowLoader;
-                                    flex-direction: column;
-                                    align-content: space-around;
-                                    flex-wrap: wrap;
-                                    height: 100%;
-                                    justify-content: center;
-                                    align-items: center;">
-                            <div class="spinner-border text-danger"  role="status">
-                                <span class="sr-only">Sending transaction please wait</span>
-                            </div>
-                            @if(@Communication.TxHash != null)
-                            {
-                                <p style="margin-top:10px;">
-                                    Please wait, sending transaction <br/> @Communication.TxHash
-                                </p>
-                            }
-                        </div>
-
+                        
+                        <Loader BindingData="@Communication.TxHash"></Loader>
                         <div style="display:@Communication.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
                                 @if(Receipt != null && SelectedToken != null)
                                 {
@@ -527,6 +511,7 @@
 
     async void Callback(bool status)
     {
+        Communication.TriggerLoader.Invoke("none");
         if(status)
         {
             var result = await PaymentService.BeginTransaction();
@@ -697,6 +682,7 @@
         if (Password.Length < 8)
             return;
 
+        Communication.TriggerLoader.Invoke("flex");
         await InvokeAsync(() =>
         {
             Communication.ShowLoader = "flex";
