@@ -329,6 +329,7 @@
                             
                                 </div>
                             }
+                            @*TODO: Extract this as component*@
                             <div style="display:@Communication.ShowPinPanel;flex-direction: column;
                                     align-content: space-around;
                                     flex-wrap: wrap;
@@ -346,7 +347,7 @@
                                                 <div class="card-body">
                  
                                                     <div class="form-floating distanceTop">
-                                                        <input id="LPassword" @bind-value="Password" type="password" class="form-control inputStyle" placeholder="Test Password"  >
+                                                        <input id="LPassword" @bind-value="Password" minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
                                                         <label>
                                                             <i class="me-2 mdi mdi-lock"></i>
                                                             <span class="border-start border-danger ps-3 ">Password</span>
@@ -588,10 +589,10 @@
         }
         catch (Exception)
         {
-            
+
             throw;
         }
-       
+
 
 
     }
@@ -693,6 +694,9 @@
 
     private async void EnterPin()
     {
+        if (Password.Length < 8)
+            return;
+
         await InvokeAsync(() =>
         {
             Communication.ShowLoader = "flex";
