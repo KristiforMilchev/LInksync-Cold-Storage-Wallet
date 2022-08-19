@@ -24,14 +24,7 @@ namespace NFTLock.Data
         {
             Utilities = ServiceHelper.GetService<IUtilities>();
             Communication = ServiceHelper.GetService<ICommunication>();
-            if(CachedTokenContracts == null)
-            {
-                //Checks if the price cache exist, delete and recreate it.
-                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
-                    CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(File.ReadAllText($"{Utilities.GetOsSavePath()}/CachePrices.json"));
-                else
-                    CachedTokenContracts = new List<TokenContract>();
-            }
+
         }
 
         public async Task<decimal> GetAccountBalance(string endpoint)
@@ -156,6 +149,19 @@ namespace NFTLock.Data
 
         public async Task<List<Token>> GetNetworkTokensIntial(int networkId)
         {
+            if (CachedTokenContracts == null)
+            {
+                //Checks if the price cache exist, delete and recreate it.
+                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
+                {
+                    var content = File.ReadAllText($"{Utilities.GetOsSavePath()}/CachePrices.json");
+                    CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(content);
+                    CachedTokenContracts = CachedTokenContracts == null ? new List<TokenContract>() : CachedTokenContracts;
+                }
+                else
+                    CachedTokenContracts = new List<TokenContract>();
+            }
+
             // On startup, it gets thge list of officially supported tokens by running a query against githubs API
             if (Communication.ListedTokens == null)
                 Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
@@ -213,6 +219,13 @@ namespace NFTLock.Data
                 //Loop over the token list
                 foreach (var currentToken in tokenList)
                 {
+                    var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
+
+                    var exists = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+                    if (exists != null)
+                        currentToken.Contracts = new List<TokenContract>{
+                            exists
+                        };
                     tokens.Add(currentToken);
                 }
             }
@@ -237,6 +250,11 @@ namespace NFTLock.Data
                 var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == network.Id);
                 if (getContract != null)
                 {
+                    var exists = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+                    if (exists != null)
+                        currentToken.Contracts = new List<TokenContract>{
+                            exists
+                        };
                     tokens.Add(currentToken);
                 }
 
@@ -358,10 +376,17 @@ namespace NFTLock.Data
 
                         }
                     });
-                    current.Contracts = new List<TokenContract>
+
+                    if (current.Contracts.FirstOrDefault(y => y.Network == networkId) != null)
                     {
-                        CachedTokenContracts.FirstOrDefault(x=>   x.ContractAddress == current.Contracts.FirstOrDefault(y => y.Network == networkId).ContractAddress)
-                    };
+                        var contractData = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == current.Contracts.FirstOrDefault(y => y.Network == networkId).ContractAddress);
+                        if(contractData != null)
+                            current.Contracts = new List<TokenContract>
+                            {
+                                contractData
+                            };
+                    }
+                   
                     //We add the token to the UI list, regardless if internal information about the tokens has been found.
                     tokens.Add(current);
                 }
@@ -501,13 +526,19 @@ namespace NFTLock.Data
                     }
                 });
               
-                var contractData = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
-                currentToken.Contracts = new List<TokenContract>
+                if(getContract != null && CachedTokenContracts != null)
                 {
-                    contractData
-                };
-                tokens.Add(currentToken);
+                    var contractData = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+                    if (contractData != null)
+                    {
+                        currentToken.Contracts = new List<TokenContract>
+                        {
+                            contractData
+                        };
+                            tokens.Add(currentToken);
+                    }
 
+                }
             }
 
             //Checks if the price cache exist, delete and recreate it.
