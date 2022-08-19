@@ -1,6 +1,5 @@
 ﻿
 using ArduinoUploader.Hardware;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet.Models;
