@@ -120,9 +120,16 @@ public class AuthenicationHandler : IAuthenicationService
 
     public async Task<List<Token>> GetSupportedTokens(int networkId)
     {
-         return await ContractService.GetNetworkTokens(networkId);
+         return await ContractService.GetNetworkTokensIntial(networkId);
         
     }
+
+    public async Task<List<Token>> GetTokenDetails(int networkId)
+    {
+        return await ContractService.GetNetworkTokens(networkId);
+
+    }
+    
 }   
 
 

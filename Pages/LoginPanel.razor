@@ -10,7 +10,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-
+<Loader BindingData="Please wait."></Loader>
 <div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
     <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
         <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
@@ -56,7 +56,6 @@
     IHardwareService HardwareService { get; set; }
     ICommunication Communication { get; set; }
 
-
     protected override async Task OnInitializedAsync()
     {
         HardwareService = ServiceHelper.GetService<IHardwareService>();
@@ -71,6 +70,8 @@
 
     void Callback(bool status)
     {
+        Communication.TriggerLoader.Invoke("none");
+
         InvokeAsync(() =>
         {
             Communication.ShowLoader = "none";
@@ -102,6 +103,7 @@
 
         var passwrod = HardwareService.Encrypt("iV1z@$H8",Password);
         Communication.Pass = Password;
+        Communication.TriggerLoader.Invoke("flex");
 
         switch(Communication.SoftwareType)
         {
@@ -112,10 +114,11 @@
                         Password = passwrod,
                         PrivateKey = "3"
                     }));
-                break;
+                 break;
             case Enums.ConfigMode.HotWallet:
                 Communication.ReadInternalStorage(passwrod);
                 break;
         }
+
     }
 }

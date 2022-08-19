@@ -6,6 +6,7 @@
 @using NFTLock.Data
 @using System.IO.Ports
 @using System.Diagnostics
+@using SYNCWallet.Models
 @using SYNCWallet.Services
 @using SYNCWallet.Services.Definitions
 @using static SYNCWallet.Models.Enums
@@ -13,9 +14,9 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
  
-
-
-<div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
+  
+<Loader BindingData="Updating firmware please wait..." ></Loader>
+<div class="container FixCenter" id="LoginPanel" style="height:100vh; display:@ShowPicker;">
     <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
         <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
             <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
@@ -55,9 +56,12 @@
     private IHardwareService HardwareService { get; set; }
     private string Address { get; set; }
     private string Port{ get; set; }
+    private string ShowPicker { get; set; }
 
     public ArduinoModel DeviceModel { get; set; }
     public List<ArduinoModel> Devices { get; set; }
+    TriggerLoader CurrentLoader { get; set; }
+
 
     System.Timers.Timer aTimer { get; set; }
 
@@ -110,6 +114,7 @@
 
                 var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet);
 
+                Communication.TriggerLoader.Invoke("none");
                 if (configStatus && firmwareUpdated)
                 {
 
@@ -123,14 +128,14 @@
 
                 }
             }
-           
+
         }
         catch (Exception e)
         {
 
             throw;
         }
-     
+
         return true;
     }
 
@@ -144,13 +149,24 @@
         }
     }
 
-    private void DeviceChanged(ArduinoModel deviceType)
+    private async void DeviceChanged(ArduinoModel deviceType)
     {
+
+        await InvokeAsync(() =>
+        {   
+            ShowPicker = "none";
+            Communication.TriggerLoader.Invoke("flex");
+            StateHasChanged();
+
+        });
+
+
         InvokeAsync(async () =>
         {
+
             DeviceModel = deviceType;
             Communication.DeviceType = deviceType;
-            await CheckDeviceConnected(Port);
+            Task.Run(() => CheckDeviceConnected(Port));
             StateHasChanged();
 
         });

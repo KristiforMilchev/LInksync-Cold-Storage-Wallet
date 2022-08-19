@@ -46,6 +46,13 @@ namespace SYNCWallet.Services.Definitions
         //TODO implement in V2
         //public Task<string> MintToken(); 
 
+
+        /// <summary>
+        /// Gets the user imported and officially listed tokens for a given network
+        /// Parameters:
+        /// <param name="networkId">Internal ID of the selected network </param>        
+        /// </summary>
+        public Task<List<Token>> GetNetworkTokensIntial(int networkId);
         /// <summary>
         /// Gets the user imported and officially listed tokens for a given network
         /// Parameters:
@@ -104,7 +111,14 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         public Task<decimal> GetImportedData(NetworkSettings network, TokenContract getContract);
 
-
+        /// <summary>
+        /// Returns a list of tokens from the official repository main branch.
+        /// Parameters:
+        /// <param name="network">Selected network object</param>
+        /// <param name="listedTokenData">Already listed assets collection</param>
+        /// <param name="tokens">The local collection of imported tokens</param>
+        /// </summary>
+        public Task<List<Token>> GetListedTokensInitial(List<ListedToken> listedTokenData, List<Token> tokens, NetworkSettings network);
         /// <summary>
         /// Returns a list of tokens from the official repository main branch.
         /// Parameters:

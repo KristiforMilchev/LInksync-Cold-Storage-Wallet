@@ -40,10 +40,16 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         public Account UnlockWallet(string pass);
         /// <summary>
-        /// Gets a list of supported tokens filtered by network id
+        /// Gets a list of supported tokens filtered by network id. Doesn't include market cap, price or supply
         /// Parameters:
         /// <param name="networkId">Blockchain endpoint, RPC address of the Blockchain network </param>        
         /// </summary>
         public Task<List<Token>> GetSupportedTokens(int networkId);
+        /// <summary>
+        /// Gets a list of supported tokens filtered by network id. Includes market cap price and supply.
+        /// Parameters:
+        /// <param name="networkId">Blockchain endpoint, RPC address of the Blockchain network </param>        
+        /// </summary>
+        public Task<List<Token>> GetTokenDetails(int networkId);
     }
 }

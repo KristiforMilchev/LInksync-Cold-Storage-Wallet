@@ -370,24 +370,8 @@
                                     </div>
                                 </div>
                             </div>
-                        <div style="display: @Communication.ShowLoader;
-                                    flex-direction: column;
-                                    align-content: space-around;
-                                    flex-wrap: wrap;
-                                    height: 100%;
-                                    justify-content: center;
-                                    align-items: center;">
-                            <div class="spinner-border text-danger"  role="status">
-                                <span class="sr-only">Sending transaction please wait</span>
-                            </div>
-                            @if(@Communication.TxHash != null)
-                            {
-                                <p style="margin-top:10px;">
-                                    Please wait, sending transaction <br/> @Communication.TxHash
-                                </p>
-                            }
-                        </div>
-
+                        
+                        <Loader BindingData="@Communication.TxHash"></Loader>
                         <div style="display:@Communication.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
                                 @if(Receipt != null && SelectedToken != null)
                                 {
@@ -520,13 +504,15 @@
         Communication.ActiveNetwork = SelectedNetwork;
         WalletAddress = AuthenicationService.GetDefault();
         Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
-
+        Task.Run(() => DefaultToToken());
+        NextCheck = DateTime.UtcNow.AddSeconds(20);
     }
 
 
 
     async void Callback(bool status)
     {
+        Communication.TriggerLoader.Invoke("none");
         if(status)
         {
             var result = await PaymentService.BeginTransaction();
@@ -563,10 +549,10 @@
 
     private void NetworkChanged(NetworkSettings network)
     {
-        InvokeAsync(() =>{
+        InvokeAsync(async () =>{
             SelectedNetwork = network;
             Communication.ActiveNetwork = SelectedNetwork;
-            DefaultToToken();
+            Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id);
             StateHasChanged();
         });
     }
@@ -580,8 +566,14 @@
             {
                 if (SelectedNetwork != null)
                 {
+                    var updateTokens =  await AuthenicationService.GetTokenDetails(SelectedNetwork.Id); //Get All tokens and their balance
+                    var getNetwork = updateTokens.FirstOrDefault().Contracts.FirstOrDefault().Network;
+                    //We don't want  updates in case we have already switched network since last request.
+                    if (getNetwork == SelectedNetwork.Id)
+                        Tokens = updateTokens;
 
-                    Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+                    
+                    NextCheck = DateTime.UtcNow.AddSeconds(20);
                     StateHasChanged();
                 }
 
@@ -697,6 +689,7 @@
         if (Password.Length < 8)
             return;
 
+        Communication.TriggerLoader.Invoke("flex");
         await InvokeAsync(() =>
         {
             Communication.ShowLoader = "flex";
@@ -739,7 +732,7 @@
         if (DateTime.UtcNow > NextCheck)
         {
             Task.Run(() => DefaultToToken());
-            NextCheck = DateTime.UtcNow.AddMinutes(1);
+            NextCheck = DateTime.UtcNow.AddSeconds(20);
         }
 
     }

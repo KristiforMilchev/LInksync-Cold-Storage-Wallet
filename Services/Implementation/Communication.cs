@@ -44,6 +44,7 @@ namespace SYNCWallet.Services.Implementation
         public string ShowLoader { get; set; }
         public string Receipt { get; set; }
         public LoginCallback LoginAttempt { get; set; }
+        public TriggerLoader TriggerLoader { get; set; }
         public ConfigMode SoftwareType { get; set; }
 
         public bool CheckConfigured(ConfigMode configMode)
