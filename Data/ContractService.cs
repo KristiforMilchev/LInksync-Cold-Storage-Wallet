@@ -1,4 +1,5 @@
-﻿using Nethereum.RPC.Eth.DTOs;
+﻿using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace NFTLock.Data
         IUtilities Utilities { get; set; }
         ICommunication Communication { get; set; }
         List<TokenContract> CachedTokenContracts { get; set; }
-
+        decimal USDPrice { get; set; }
         public ContractService()
         {
             Utilities = ServiceHelper.GetService<IUtilities>();
@@ -62,6 +63,7 @@ namespace NFTLock.Data
                 };
 
                 var web3 = new Nethereum.Web3.Web3(endpoint);
+                
                 var balanceHandler = web3.Eth.GetContractQueryHandler<ConvertRate>();
                 
                 //Attempts to interact with a solidity smart contract exchange router to convert the base 1 token compared to USD
@@ -73,6 +75,8 @@ namespace NFTLock.Data
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                
+
                 return 0;
             }
          
@@ -278,6 +282,9 @@ namespace NFTLock.Data
             //In case it exists we add the native token to the list and run a query to get the user balance of the token.
             if(getNetworkData != null)
             {
+                var pairExists = await CheckExchangelisting(getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.Factory);
+                var tokenPrice = await CheckContractPrice(pairExists, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, 18, 18, getNetworkData.Endpoint);
+                USDPrice = tokenPrice;
                 tokens.Add(new Token
                 {
                     Symbol = getNetworkData.TokenSylmbol,
@@ -290,8 +297,8 @@ namespace NFTLock.Data
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
-                                Network = networkId
-
+                                Network = networkId,
+                                CurrentPrice = tokenPrice
                                 //V1 doesn't support native token prices. TODO V2
                                // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
@@ -342,13 +349,25 @@ namespace NFTLock.Data
                             if (!string.IsNullOrEmpty(pairExists))
                             {
                                 //Run a query against the router of the token to get the price in the native token,
-                                var getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+                                var getTokenPrice = default(decimal);
+
+                                getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+
+                                //If Native token pair doesn't exist, try most common pair
+                                if(getTokenPrice == 0)
+                                    getTokenPrice = await CheckContractPrice(pairExists, getContract.ContractAddress, getNetworkData.CurrencyAddress, getContract.Decimals, 18, getNetworkData.Endpoint);
+
                                 var pairs = new string[2];
                                 //Construct an array in order to convert the native price of the token to USD
                                 pairs[0] = getContract.PairTokenAddress == null ? getNetworkData.CurrencyAddress : getContract.PairTokenAddress;
                                 pairs[1] = getNetworkData.PairCurrency;
                                 //Runs a query to conver the native token price to usd
-                                getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, pairExists);
+
+                                //var tryParseToUsd = await ConvertTokenToUsd(getTokenPrice, pairs, getNetworkData.Endpoint, pairExists);
+                                //if(tryParseToUsd > 0)
+                                //    getTokenPrice = tryParseToUsd;
+
+                                getTokenPrice = getTokenPrice * USDPrice;
                                 //Sets the current price, as the main price in USD rather then the native token
                                 current.Contracts.FirstOrDefault(x => x.Network == networkId).CurrentPrice = getTokenPrice;
                                 //Naming convention is wrong here should be Worth or BalanceValue, but basically

@@ -8,6 +8,7 @@ using SYNCWallet.Services.Definitions;
 using SYNCWallet.Services.Implementation;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Numerics;
 using static SYNCWallet.Models.GithubTokensModel;
 
 namespace SYNCWallet;
@@ -38,6 +39,7 @@ public static class MauiProgram
         builder.Services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
         builder.Services.AddScoped(typeof(ICommunication), typeof(Communication));
 
+    
         #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         #endif
