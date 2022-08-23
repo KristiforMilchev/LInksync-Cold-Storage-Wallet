@@ -29,8 +29,21 @@
 
 <div class="container">
     <div class="flexInnerRow">
-        <p style="margin:auto;">
-            @Communication.PublicAddress
+        <p style="    margin: auto;
+    display: flex;
+    width: 67%;
+    justify-content: space-around;">
+             @if(SelectedNetwork != null)
+                {
+                  <span>
+                    Factory: @SelectedNetwork.WS
+                  </span>                
+                }
+          
+            <span>
+                 @Communication.PublicAddress
+            </span>
+           
         </p>
         <div class="NetworkDropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
