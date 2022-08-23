@@ -428,6 +428,11 @@ namespace NFTLock.Data
         {
             var x = await CheckUserBalanceForContract(contractAddress, token, endpoint, tokenDecimals); // Main token 
             var y = await CheckUserBalanceForContract(contractAddress, pair, endpoint, pairDecimals); //Pair Token
+
+            //We cannot devide by zero.
+            if (x == 0 || y == 0)
+                return 0;
+
             var pairOverToken = (y / x); // We devide the pair over the main token to get the current token price in the native token pair.
             return pairOverToken; 
         }
@@ -451,23 +456,32 @@ namespace NFTLock.Data
 
         public async Task<string> CheckExchangelisting(string contractAddress,string pairToken, string endpoint, string factory)
         {
-            //Construct a function that calls solidity getPair in order to check if there is a listed token with that pair on the factory
-            var balanceOfFunctionMessage = new GetPairFunctionBase()
+            try
             {
-                TokenA = contractAddress,
-                TokenB = pairToken
+                //Construct a function that calls solidity getPair in order to check if there is a listed token with that pair on the factory
+                var balanceOfFunctionMessage = new GetPairFunctionBase()
+                {
+                    TokenA = contractAddress,
+                    TokenB = pairToken
 
-            };
+                };
 
-            //Construct a web3 handler
-            var web3 = new Nethereum.Web3.Web3(endpoint);
+                //Construct a web3 handler
+                var web3 = new Nethereum.Web3.Web3(endpoint);
 
-            //Run the qeury
-            var routerResolver = web3.Eth.GetContractQueryHandler<GetPairFunctionBase>();
-            var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
+                //Run the qeury
+                var routerResolver = web3.Eth.GetContractQueryHandler<GetPairFunctionBase>();
+                var router = await routerResolver.QueryAsync<string>(factory, balanceOfFunctionMessage);
 
-            //Return the router of the pair in case it exists
-            return router;
+                //Return the router of the pair in case it exists
+                return router;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return String.Empty;
+            }
+           
         }
 
         public async Task<decimal> CheckExistingSupply(string contractAddress, string endpoint, int tokenDecimals)
