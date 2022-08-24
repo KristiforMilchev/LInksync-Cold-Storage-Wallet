@@ -1,10 +1,10 @@
-![](https://ckeditor.com/apps/ckfinder/userfiles/files/logo.png)
+![](https://linksync.tech/wallet/0.png)
 
 ### **What is a SYNC Wallet ?**
 
 SYNC Wallet is a cold stored wallet which is compatible with all EVM blockchains. It's easy to integrate and provides security and it’s built for privacy.  Using the SYNC wallet, users can move and trade coins/tokens in a safe environment, retaining access to their private key which are stored on their devices.   
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/4c71394546844cb06265f25f4d8ee1d08237f632dd8c215b.png)
+![](https://linksync.tech/wallet/1.png)
 
 ### Compatible devices ?
 
@@ -34,13 +34,13 @@ You can install the device as the following steps:   
 
 SYNC Wallet is easy to navigate, you can send and receive transactions and you have the option to add custom tokens to a cold storage wallet.
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/032ef290afcbb7b9df0d34ee593371bf19cc83aff279c156.png)
+![](https://linksync.tech/wallet/3.png)
 
 ### How to send transactions ?
 
 To send a transaction you just need to select a token from the list of tokens in the wallet. Add the receiver address, choose the amount you want to send, approve the transaction with your Personal PIN code.   
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/0b56a7a790bb113f706743c5170442cf22c26f33c69c2d7c.png)
+![](https://linksync.tech/wallet/6.png)
 
 How to receive a token ?  
 
@@ -50,13 +50,13 @@ To receive a transaction, you need to click on your wallet address on the top, a
 
 To add a custom token, go to the import token, set the contract address, if the symbol and decimals do not load automatically. You will need to add them manually. 
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/60c4325b5eb5cd3a5a3a05eb68bbe8307ff85c32e5f25e3c.png)
+![](https://linksync.tech/wallet/4.png)
 
 How to add EVM compatible network ?  
 
 Click on to add a new network set the RPC endpoint, Network Name, Chain ID, Symbol and block explorer.
 
-![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/19bfcdc21e4e375eb2ee7f7df63e407f47d92ec5b8d6f023.png)
+![](https://linksync.tech/wallet/5.png)
 
 ### How to compile from source ?
 
