@@ -62,7 +62,7 @@ public class AuthenicationHandler : IAuthenicationService
         return false;
     }
 
-    public bool ImportToken(string contractAddress, string symbol, int delimiter, int network)
+    public bool ImportToken(string contractAddress, string symbol, int delimiter, decimal supply, int network)
     {
         if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
             File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
@@ -85,14 +85,15 @@ public class AuthenicationHandler : IAuthenicationService
                 Name = symbol,
                 IsChainCoin = false,
                 Contracts = new List<TokenContract>
-            {
-                new TokenContract
                 {
-                    Decimals = delimiter,
-                    ContractAddress = contractAddress,
-                    Network = network
+                    new TokenContract
+                    {
+                        Decimals = delimiter,
+                        ContractAddress = contractAddress,
+                        Network = network,
+                        Supply = supply,
+                    }
                 }
-            }
             });
             File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
             return true;

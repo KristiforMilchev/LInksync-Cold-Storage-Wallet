@@ -79,7 +79,7 @@
 		<div id="ImportTokenSettings" style="display:none;">
 			<div class="flexInnerRow">
 				<div class="form-floating distanceTop" style="    width: 100%;">
-					<input id="TokensToSend" type="text" @bind-value="ContractAddress" class="form-control inputStyle" placeholder="test">
+					<input id="TokensToSend" type="text" @onchange="@((ChangeEventArgs __e)  => ContractUpdated(__e?.Value?.ToString()))" class="form-control inputStyle" placeholder="test">
 					<label>
 						<i class="me-2 icon-wallet"></i>
 						<span class="border-start border-danger ps-3 ">Contract Address</span>
@@ -148,9 +148,12 @@
 	public string ContractAddress { get; set; }
 	public string Symbol { get; set; }
 	public int Decimals { get; set; }
+	public decimal TotalSupply{ get; set; }
+
 	IUtilities Utilities { get; set; }
 	IAuthenicationService AuthenicationService { get; set; }
 	ICommunication Communication { get; set; }
+	IContractService ContractService { get; set; }
 
 	private void OpenMenu(string location)
 	{
@@ -162,12 +165,13 @@
 		Utilities = ServiceHelper.GetService<IUtilities>();
 		AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
 		Communication = ServiceHelper.GetService<ICommunication>();
+		ContractService = ServiceHelper.GetService<IContractService>();
 	}
 
 
 	private async void ImportNetwork()
 	{
- 
+
 
 		await JS.InvokeVoidAsync("ImportNewNetwork");
 		var result = AuthenicationService.SetupNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
@@ -179,9 +183,22 @@
 	{
 		await JS.InvokeVoidAsync("ImportTokens");
 
-		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, Communication.ActiveNetwork.Id);
+		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, TotalSupply, Communication.ActiveNetwork.Id);
 		await TokenImported.InvokeAsync();
 
+	}
+
+	private void ContractUpdated(string value)
+	{
+		ContractAddress = value;
+		InvokeAsync(async () =>
+		{
+			var tokenData = await ContractService.CheckTokenDetails(value, Communication.ActiveNetwork.Endpoint);
+			Symbol = tokenData.Symbol;
+			Decimals = tokenData.Decimals;
+			TotalSupply = tokenData.Supply;
+			StateHasChanged();
+		});
 	}
 
 }

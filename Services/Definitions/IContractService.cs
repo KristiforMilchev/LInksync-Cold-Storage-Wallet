@@ -43,9 +43,41 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         public Task<decimal> CheckUserBalanceForContract(string ownerAddress, string contract, string endpoint, int decimals);
 
+        /// <summary>
+        /// Interacts with a solidity smart contract to get the base details of a token
+        /// Parameters:
+        /// <param name="contract">The contract address that we want to run the check against.</param>
+        /// <param name="endpoint">Blockchain endpoint, RPC address of the Blockchain network </param>       
+        /// </summary>
+        public Task<TokenBaseDetails> CheckTokenDetails(string contract, string endpoint);
+
+        /// <summary>
+        /// Interacts with a solidity smart contract to get the total supply of a token
+        /// Parameters:
+        /// <param name="contract">The contract address that we want to run the check against.</param>
+        /// <param name="endpoint">Blockchain endpoint, RPC address of the Blockchain network </param> 
+        /// <param name="delimiter">unit used for display to users (in any UI, from wallets to exchanges or any Dapp). This is comparable to Ether, which uses 18 decimals for display. When showing 1080250000000000000000 for an 18 decimals token, it is much more user-friendly to display it as 1'080.25 instead.</param>       
+        /// </summary>
+        Task<decimal> GetTotalSupply(string contract, string endpoint, int delimiter);
+       
+        /// <summary>
+        /// Interacts with a solidity smart contract to get the symbol of a token
+        /// Parameters:
+        /// <param name="contract">The contract address that we want to run the check against.</param>
+        /// <param name="endpoint">Blockchain endpoint, RPC address of the Blockchain network </param>       
+        /// </summary>
+       
+        Task<string> GetTokenSymbol(string contract, string endpoint);
+        /// <summary>
+        /// Interacts with a solidity smart contract to get the token Decimals 
+        /// Parameters:
+        /// <param name="contract">The contract address that we want to run the check against.</param>
+        /// <param name="endpoint">Blockchain endpoint, RPC address of the Blockchain network </param>       
+        /// </summary>
+        Task<int> GetDelimiter(string contract, string endpoint);
+    
         //TODO implement in V2
         //public Task<string> MintToken(); 
-
 
         /// <summary>
         /// Gets the user imported and officially listed tokens for a given network
