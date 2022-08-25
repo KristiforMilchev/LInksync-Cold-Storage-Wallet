@@ -8,8 +8,10 @@ using SYNCWallet;
 using SYNCWallet.Models;
 using SYNCWallet.Services;
 using SYNCWallet.Services.Definitions;
+using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using static SYNCWallet.Models.GithubTokensModel;
 
 namespace NFTLock.Data
@@ -110,7 +112,106 @@ namespace NFTLock.Data
             }
          
         }
-    
+
+        public async Task<TokenBaseDetails> CheckTokenDetails(string contract, string endpoint)
+        {
+            var delimiter = await GetDelimiter(contract, endpoint);
+            var symbol = await GetTokenSymbol(contract, endpoint);
+            var supply = await GetTotalSupply(contract, endpoint, delimiter);
+
+            return new TokenBaseDetails
+            {
+                Decimals = delimiter,
+                Address = contract,
+                Symbol = symbol,
+                Supply = supply
+
+            };
+        }
+
+        public async Task<decimal> GetTotalSupply(string contract, string endpoint, int delimiter)
+        {
+            try
+            {
+
+                //Construct a balanceOf query and assign the current address as the owner
+                var supplyFunction = new GetSupply()
+                {
+
+                };
+                //Initialize web3
+                var web3 = new Nethereum.Web3.Web3(endpoint);
+
+                var supplyHandler = web3.Eth.GetContractQueryHandler<GetSupply>();
+                var supply = await supplyHandler.QueryAsync<BigInteger>(contract, supplyFunction);
+                return Utilities.ConvertToBigIntDex(supply, delimiter);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return 0;
+            }
+        }
+
+        public async Task<string> GetTokenSymbol(string contract, string endpoint)
+        {
+            try
+            {
+
+                //Construct a balanceOf query and assign the current address as the owner
+
+
+                var symbolFunction = new GetSymbol()
+                {
+                };
+
+                 
+                //Initialize web3
+                var web3 = new Nethereum.Web3.Web3(endpoint);
+
+
+
+                var symbolHander = web3.Eth.GetContractQueryHandler<GetSymbol>();
+                return await symbolHander.QueryAsync<string>(contract, symbolFunction);
+ 
+
+ 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> GetDelimiter(string contract, string endpoint)
+        {
+            try
+            {
+
+                //Construct a balanceOf query and assign the current address as the owner
+                var decimalsFunction = new GetDecimals()
+                {
+                };
+
+                
+                //Initialize web3
+                var web3 = new Nethereum.Web3.Web3(endpoint);
+ 
+
+                var decimalHandler = web3.Eth.GetContractQueryHandler<GetDecimals>();
+                return await decimalHandler.QueryAsync<int>(contract, decimalsFunction);
+
+ 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return 18;
+            }
+
+        }
 
         //public async Task<string> MintToken()
         //{
@@ -121,7 +222,7 @@ namespace NFTLock.Data
 
         //    //var transfer = new TransferFunction()
         //    //{
-                
+
         //    //    AmountToSend = new BigInteger( 0.1  * Math.Pow(10,18)),
         //    //    _mintAmount = new HexBigInteger(1)
         //    //};
@@ -136,7 +237,7 @@ namespace NFTLock.Data
         //    //    Console.WriteLine(e);
         //    //}
 
-      
+
 
         //    // try
         //    //{

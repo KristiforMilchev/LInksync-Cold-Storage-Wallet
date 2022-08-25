@@ -30,9 +30,10 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="contractAddress">Address of the contract that we import </param>        
         /// <param name="symbol">Token Symbol</param>        
         /// <param name="delimiter">Decimal count of the token</param>        
+        /// <param name="supply">Total supply for tokens that have no minting</param>        
         /// <param name="network">Internal network id of the network under which we import the token</param>        
         /// </summary>
-        public bool ImportToken(string contractAddress, string symbol, int delimiter, int network);
+        public bool ImportToken(string contractAddress, string symbol, int delimiter, decimal supply, int network);
         /// <summary>
         /// Attepmts to decrypt and unlock a web3 wallet using a password
         /// Parameters:
