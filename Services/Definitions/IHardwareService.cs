@@ -36,7 +36,7 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="path">Path to the latest firmware</param>
         /// <param name="port">COM port of the connected Arduino</param>
         /// </summary>
-        public void ConfigureHardware(ArduinoModel device, string path, string port);
+        public bool ConfigureHardware(ArduinoModel device, string path, string port);
 
         /// <summary>
         /// Imports an account using the private key of the device split in 12 unique chunks.

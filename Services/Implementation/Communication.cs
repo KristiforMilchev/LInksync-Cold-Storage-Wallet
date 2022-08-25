@@ -103,7 +103,7 @@ namespace SYNCWallet.Services.Implementation
                             });
                         });
                     }
-                    Utilities.OpenErrorView($"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+                    Utilities.OpenErrorView("Authenication Error!", $"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
 
                     return;
                 }
@@ -263,7 +263,7 @@ namespace SYNCWallet.Services.Implementation
 
 
                         }
-                        Utilities.OpenErrorView($"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+                        Utilities.OpenErrorView("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
                     }
                     else
                     {
