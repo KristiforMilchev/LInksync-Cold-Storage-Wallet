@@ -111,7 +111,7 @@ namespace SYNCWallet.Services.Definitions
         /// <paramref name="attempts"/>
         /// <param name="attempts">Obsolete not being utilized, part of an old API, to be removed next V</param>
         /// </summary>
-        public void OpenErrorView(string msg, int attempts);
+        public void OpenErrorView(string title, string msg, int attempts);
 
         /// <summary>
         /// Truncates a price to the 14th decimal to make it more user friendly

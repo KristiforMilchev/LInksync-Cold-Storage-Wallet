@@ -149,13 +149,13 @@ namespace SYNCWallet.Services.Implementation
 
 
 
-        public void OpenErrorView(string msg, int attempts)
+        public void OpenErrorView(string title, string msg, int attempts)
         {
             //Call the event in a dispatcher, would get stuck and block the main thread otherwise leading to Thread collision exception
             Application.Current.Dispatcher.Dispatch(() =>
             {
                 //TODO extend this method to be general exception handler, as well as the option to handle user input and return callbacks.
-                Application.Current.MainPage.DisplayAlert("Authenication Error!", msg, "OK");
+                Application.Current.MainPage.DisplayAlert(title, msg, "OK");
             });
 
         }

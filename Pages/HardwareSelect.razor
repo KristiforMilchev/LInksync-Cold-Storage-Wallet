@@ -112,6 +112,19 @@
             {
                 var firmwareUpdated = HardwareService.CreateNewDevice(port);
 
+                if (!firmwareUpdated)
+                {
+
+                    await InvokeAsync(() =>
+                    {
+                        ShowPicker = "flex";
+                        Communication.TriggerLoader.Invoke("none");
+                        StateHasChanged();
+
+                    });
+                    return false;
+                }
+
                 var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet);
 
                 Communication.TriggerLoader.Invoke("none");

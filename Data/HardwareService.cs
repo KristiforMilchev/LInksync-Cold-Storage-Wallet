@@ -67,24 +67,52 @@ namespace NFTLock.Data
 
 
             //Uploads the firmware to device.
-            ConfigureHardware(Communication.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
+            var result = false;
+
+            //Run the update on a seprate thread
+            Task.Run(() =>
+            {
+                result = ConfigureHardware(Communication.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
+            });
+
+            var timeout = DateTime.UtcNow.AddSeconds(30);
+
+            //Adding a timeout, in case a user selects a device that's not plugged in.
+            while(!result)
+            {
+                if(DateTime.UtcNow > timeout)
+                {
+                    Utilities.OpenErrorView("Connection timeout",$"Device not connected, please make sure you have connected device of type {Communication.DeviceType}",0);
+                    return false;
+
+                }
+            }
 
             Debug.WriteLine("Device Updated");
-            return true;
+            return result;
         }
 
-        public void ConfigureHardware(ArduinoModel device,string path, string port)
+        public bool ConfigureHardware(ArduinoModel device,string path, string port)
         {
-            var uploader = new ArduinoSketchUploader(
-                  new ArduinoSketchUploaderOptions()
-                  {
-                      FileName = path,
-                      PortName = port,
-                      ArduinoModel = device
-                  });
+            try
+            {
+                var uploader = new ArduinoSketchUploader(
+                 new ArduinoSketchUploaderOptions()
+                 {
+                     FileName = path,
+                     PortName = port,
+                     ArduinoModel = device
+                 });
 
-            uploader.UploadSketch();
+                uploader.UploadSketch();
+                return true;
+            }
+            catch (Exception e)
+            {
 
+                return false;
+            }
+           
         }
    
 
