@@ -73,9 +73,42 @@ Compiling: 
 *   Mac => dotnet build -f:net6.0-maccatalyst -c:Release 
 *   Android Device => dotnet publish -f:net6.0-android -c:Release
 
-You can download latest version from the repository LincSync products page for free: 
 
-https://linksync.tech/Products 
+### How to install from binary ?
+
+You can download latest version from the repository LincSync latest release: 
+
+https://github.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/releases/tag/1.0.0.1
+
+### Important, first time install would require the user to install the certificate to prove the authenticity of the binary to ensure it matches with the latest source code and there are no changes made!
+
+
+To install the app, it must be signed with a certificate that you already trust. If it isn't, Windows won't let you install the app. You'll be presented with a dialog similar to the following, with the Install button disabled:
+
+![](https://docs.microsoft.com/en-us/dotnet/maui/windows/deployment/media/overview/install-untrusted.png)
+
+
+Notice that in the previous image, the Publisher was "unknown."
+
+To trust the certificate of app package, perform the following steps:
+
+*	Right-click on the .msix file and choose Properties.
+*	Select the Digital Signatures tab.
+*	Choose the certificate then press Details.
+
+![](https://docs.microsoft.com/en-us/dotnet/maui/windows/deployment/media/overview/properties-digital-signatures.png)
+
+*	Select View Certificate.
+*	Select Install Certificate...
+*	Choose Local Machine then select Next.
+*	If you're prompted by User Account Control to Do you want to allow this app to make changes to your device?, select Yes
+*	In the Certificate Import Wizard window, select Place all certificates in the following store.
+*	Select Browse... and then choose the Trusted People store. Select OK to close the dialog.
+*	Select Next and then Finish. You should see a dialog that says: The import was successful.
+
+Now, try opening the package file again to install the app. You should see a dialog similar to the following, with the Publisher correctly displayed:
+
+![](https://docs.microsoft.com/en-us/dotnet/maui/windows/deployment/media/overview/install-trusted.png)
 
 If you find my software beneficial, please consider buying me a coffee. Thanks! 
 
