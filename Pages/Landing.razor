@@ -771,6 +771,6 @@
     private async void OpenLink(TokenLink link)
     {
         Uri uri = new Uri(link.Url);
-        await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+        @* await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred); *@
     }
 }  

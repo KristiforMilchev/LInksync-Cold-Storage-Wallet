@@ -41,7 +41,6 @@ namespace NFTLock.Data
 
                 Console.WriteLine(web3);
                 Console.WriteLine("Get txCount " + etherAmount);
-                Console.ReadLine();
 
                 return etherAmount;
             }

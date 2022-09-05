@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LInksync_Cold_Storage_Wallet;
 
 namespace SYNCWallet.Services
 {
@@ -16,9 +17,9 @@ namespace SYNCWallet.Services
         /// <param name="TService">The type of service to retrive</param>
         /// </summary>
         public static TService GetService<TService>()
-            => Current.GetService<TService>();
+            => Current.GetRequiredService<TService>();
 
-        public static IServiceProvider Current => MauiProgram.MauiApp.Services;
+        public static IServiceProvider Current => Initializer.Wallet;
       
     }
 }

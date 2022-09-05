@@ -95,13 +95,13 @@ namespace SYNCWallet.Services.Implementation
                         //Only if the password is wrong 3 times in a row.
                         File.Delete(file);
 
-                        Application.Current.Dispatcher.Dispatch(() =>
-                        {
-                            Application.Current.Windows.ToList().ForEach(y =>
-                            {
-                                Application.Current.CloseWindow(y);
-                            });
-                        });
+                        // Application.Current.Dispatcher.Dispatch(() =>
+                        // {
+                        //     Application.Current.Windows.ToList().ForEach(y =>
+                        //     {
+                        //         Application.Current.CloseWindow(y);
+                        //     });
+                        // });
                     }
                     Utilities.OpenErrorView("Authenication Error!", $"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
 
@@ -253,13 +253,13 @@ namespace SYNCWallet.Services.Implementation
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
-                            Application.Current.Dispatcher.Dispatch(() =>
-                            {
-                                Application.Current.Windows.ToList().ForEach(y =>
-                                {
-                                    Application.Current.CloseWindow(y);
-                                });
-                            });
+                            // Application.Current.Dispatcher.Dispatch(() =>
+                            // {
+                            //     Application.Current.Windows.ToList().ForEach(y =>
+                            //     {
+                            //         Application.Current.CloseWindow(y);
+                            //     });
+                            // });
 
 
                         }

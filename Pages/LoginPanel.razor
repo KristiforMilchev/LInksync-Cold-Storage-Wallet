@@ -103,7 +103,8 @@
 
         var passwrod = HardwareService.Encrypt("iV1z@$H8",Password);
         Communication.Pass = Password;
-        Communication.TriggerLoader.Invoke("flex");
+        if(Communication.TriggerLoader != null)
+          Communication.TriggerLoader.Invoke("flex");
 
         switch(Communication.SoftwareType)
         {

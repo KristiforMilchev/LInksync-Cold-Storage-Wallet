@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
-using static SYNCWallet.Pages.Landing;
+
 
 namespace SYNCWallet.Services.Definitions
 {

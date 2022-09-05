@@ -266,7 +266,7 @@
         if(Selected == null)
         {
             var random = new Random();
-            WordNum = random.Next(5, Words.Count - 5);
+            WordNum = random.Next(0, Words.Count -1);
             Selected = Words.ElementAt(WordNum);
 
         }
@@ -282,7 +282,7 @@
             }
 
             var random = new Random();
-            WordNum = random.Next(5, Words.Count - 5);
+            WordNum = random.Next(0, Words.Count -1);
             Selected = Words.ElementAt(WordNum);
 
 
