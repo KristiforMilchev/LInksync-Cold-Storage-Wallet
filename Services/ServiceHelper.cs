@@ -19,7 +19,7 @@ namespace SYNCWallet.Services
         public static TService GetService<TService>()
             => Current.GetRequiredService<TService>();
 
-        public static IServiceProvider Current => Initializer.Wallet;
+        public static IServiceProvider Current => Initializer.Provider;
       
     }
 }
