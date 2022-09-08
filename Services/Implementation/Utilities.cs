@@ -159,7 +159,7 @@ namespace SYNCWallet.Services.Implementation
             //     //TODO extend this method to be general exception handler, as well as the option to handle user input and return callbacks.
             //     Application.Current.MainPage.DisplayAlert(title, msg, "OK");
             // });
-
+            
         }
 
 

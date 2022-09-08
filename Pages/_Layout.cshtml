@@ -194,6 +194,7 @@
 	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 	<script src="/monster/src/assets/libs/sweetalert2/dist/sweetalert2.all.min.js" aria-hidden="true"></script>
 	<script src="/monster/src/assets/extra-libs/sweetalert2/sweet-alert.init.js" aria-hidden="true"></script>
+	<Popup></Popup>
     @RenderBody()
 
    
@@ -571,6 +572,11 @@
 			}
 			return words;
         }
+
+		function RiseError(title, message)
+		{
+			Swal.fire(title,message);
+		}
 	</script>
 
 	<script src="/monster/src/assets/extra-libs/prism/prism.js"></script>

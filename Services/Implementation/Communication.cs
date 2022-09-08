@@ -45,6 +45,7 @@ namespace SYNCWallet.Services.Implementation
         public string Receipt { get; set; }
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
+        public ErrorCallback ErrorCallback {get; set;}
         public ConfigMode SoftwareType { get; set; }
 
         public bool CheckConfigured(ConfigMode configMode)
@@ -53,6 +54,11 @@ namespace SYNCWallet.Services.Implementation
                 return CheckHardware();
 
             return CheckSoftware();
+        }
+
+        public void PublishError(string title, string message)
+        {
+            ErrorCallback?.Invoke(title, message);
         }
 
         bool CheckSoftware()
@@ -103,8 +109,9 @@ namespace SYNCWallet.Services.Implementation
                         //     });
                         // });
                     }
-                    Utilities.OpenErrorView("Authenication Error!", $"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+                    ErrorCallback?.Invoke("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
 
+ 
                     return;
                 }
 
@@ -260,10 +267,11 @@ namespace SYNCWallet.Services.Implementation
                             //         Application.Current.CloseWindow(y);
                             //     });
                             // });
-
+                            
 
                         }
-                        Utilities.OpenErrorView("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+
+                        ErrorCallback?.Invoke("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
                     }
                     else
                     {
