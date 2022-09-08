@@ -108,6 +108,24 @@ To trust the certificate of app package, perform the following steps:
 
 Now, try opening the package file again to install the app. You should see a dialog similar to the following, with the Publisher correctly displayed:
 
+Installation on Linux:
+
+Extract the Linux_1.0.0.1 contents into a folder
+
+Add all dependencies -> sudo apt install npm  (Or your choice of a package manager)
+
+chmod +x wallet.sh
+
+./wallet.sh
+
+Installation OSX:
+
+Extract the content of osx_x64
+
+chmod +x LInksync-Cold-Storage-Wallet
+
+./LInksync-Cold-Storage-Wallet
+
 ![](https://docs.microsoft.com/en-us/dotnet/maui/windows/deployment/media/overview/install-trusted.png)
 
 If you find my software beneficial, please consider buying me a coffee. Thanks! 
