@@ -70,8 +70,8 @@ If you don’t want to hassle with installing the CLI version yourself, you can 
 Compiling: 
 
 *   Windows => dotnet publish -f net6.0-windows10.0.19041.0 -c Release 
-*   Mac => dotnet build -f:net6.0-maccatalyst -c:Release 
-*   Android Device => dotnet publish -f:net6.0-android -c:Release
+*   Mac => (switch to the branch Migration_Electron)  dotnet build -f:net6.0-maccatalyst -c:Release  
+*   Linux => (switch to the branch Migration_Electron) dotnet publish -f:net6.0-android -c:Release
 
 
 ### How to install from binary ?
