@@ -134,4 +134,4 @@ chmod +x LInksync-Cold-Storage-Wallet
 
 If you find my software beneficial, please consider buying me a coffee. Thanks! 
 
-0x7A310161c2f86d34949a4a136d07A23D23028884 – Crypto
+0x09b26ff91DfB5b959908fd7f6cEe73e19FA75817 – Crypto
