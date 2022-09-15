@@ -14,7 +14,8 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
  
-  
+ 
+<Popup></Popup>
 <Loader BindingData="Updating firmware please wait..." ></Loader>
 <div class="container FixCenter" id="LoginPanel" style="height:100vh; display:@ShowPicker;">
     <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
@@ -62,7 +63,7 @@
     public List<ArduinoModel> Devices { get; set; }
     TriggerLoader CurrentLoader { get; set; }
 
-
+    int Attempts { get; set; }
     System.Timers.Timer aTimer { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -77,30 +78,48 @@
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
+        Attempts = 0;
 
         Communication.Init();
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
-
         Port = HardwareService.DeviceConnected();
+
+        InitTimer();
+    }
+
+
+    void InitTimer()
+    {
         aTimer = new System.Timers.Timer();
         aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         aTimer.Interval = 5000;
         aTimer.Start();
-
     }
-
     // Specify what you want to happen when the Elapsed event is raised.
-    private void OnTimedEvent(object source, ElapsedEventArgs e)
+    private async void OnTimedEvent(object source, ElapsedEventArgs e)
     {
 
         Port = HardwareService.DeviceConnected();
-        if(!string.IsNullOrEmpty(Port))
+        Attempts += 1;
+
+        if(Attempts == 2 && string.IsNullOrEmpty(Port))
         {
-            aTimer.Stop();
-            aTimer.Dispose();
+
+            await InvokeAsync(() =>
+            {
+                ShowPicker = "flex";
+                Communication.TriggerLoader.Invoke("none");
+                StateHasChanged();
+
+            });
+
+            Communication.PublishError("Port not found", "Please connect atmega328 compatible device <a href='' >click here for supported devices.</a>");
+            KillTimer();
         }
+
+        if (!string.IsNullOrEmpty(Port))
+            KillTimer();
     }
 
     private async Task<bool> CheckDeviceConnected(string port)
@@ -160,10 +179,14 @@
             aTimer.Stop();
             aTimer.Dispose();
         }
+        Attempts = 0;
     }
 
     private async void DeviceChanged(ArduinoModel deviceType)
     {
+
+        KillTimer(); //Disposes the old timer and resets the parity flag
+        InitTimer(); //Initializes a new timer to check if the port has connected.
 
         await InvokeAsync(() =>
         {   

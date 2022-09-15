@@ -45,6 +45,7 @@ namespace SYNCWallet.Services.Implementation
         public string Receipt { get; set; }
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
+        public ErrorCallback ErrorCallback {get; set;}
         public ConfigMode SoftwareType { get; set; }
 
         public bool CheckConfigured(ConfigMode configMode)
@@ -53,6 +54,11 @@ namespace SYNCWallet.Services.Implementation
                 return CheckHardware();
 
             return CheckSoftware();
+        }
+
+        public void PublishError(string title, string message)
+        {
+            ErrorCallback?.Invoke(title, message);
         }
 
         bool CheckSoftware()
@@ -95,16 +101,17 @@ namespace SYNCWallet.Services.Implementation
                         //Only if the password is wrong 3 times in a row.
                         File.Delete(file);
 
-                        Application.Current.Dispatcher.Dispatch(() =>
-                        {
-                            Application.Current.Windows.ToList().ForEach(y =>
-                            {
-                                Application.Current.CloseWindow(y);
-                            });
-                        });
+                        // Application.Current.Dispatcher.Dispatch(() =>
+                        // {
+                        //     Application.Current.Windows.ToList().ForEach(y =>
+                        //     {
+                        //         Application.Current.CloseWindow(y);
+                        //     });
+                        // });
                     }
-                    Utilities.OpenErrorView("Authenication Error!", $"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+                    ErrorCallback?.Invoke("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
 
+ 
                     return;
                 }
 
@@ -253,17 +260,18 @@ namespace SYNCWallet.Services.Implementation
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
-                            Application.Current.Dispatcher.Dispatch(() =>
-                            {
-                                Application.Current.Windows.ToList().ForEach(y =>
-                                {
-                                    Application.Current.CloseWindow(y);
-                                });
-                            });
-
+                            // Application.Current.Dispatcher.Dispatch(() =>
+                            // {
+                            //     Application.Current.Windows.ToList().ForEach(y =>
+                            //     {
+                            //         Application.Current.CloseWindow(y);
+                            //     });
+                            // });
+                            
 
                         }
-                        Utilities.OpenErrorView("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining", RemainingAttempts);
+
+                        ErrorCallback?.Invoke("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
                     }
                     else
                     {
@@ -350,12 +358,14 @@ namespace SYNCWallet.Services.Implementation
 
         public void WriteState(string value)
         {
-            #pragma warning disable CA1416 // Validate platform compatibility
-            _serialPort.WriteLine(value);
-            _serialPort.DiscardOutBuffer();
-            _serialPort.DiscardInBuffer();
-            #pragma warning restore CA1416 // Validate platform compatibility
-
+            if(_serialPort != null)
+            {
+                #pragma warning disable CA1416 // Validate platform compatibility
+                _serialPort.WriteLine(value);
+                _serialPort.DiscardOutBuffer();
+                _serialPort.DiscardInBuffer();
+                #pragma warning restore CA1416 // Validate platform compatibility
+            }
         }
 
         public void Init()

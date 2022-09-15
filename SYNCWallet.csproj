@@ -25,7 +25,7 @@
     <ApplicationVersion>1</ApplicationVersion>
     <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
     <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>DE4A573483180042B5BA9D308A190ECAB074E109</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>E02B8EB367AA75FA3036B6158275EFBCD98B0A5F</PackageCertificateThumbprint>
     
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>

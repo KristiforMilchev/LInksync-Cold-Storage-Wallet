@@ -19,6 +19,6 @@ namespace SYNCWallet.Services
             => Current.GetService<TService>();
 
         public static IServiceProvider Current => MauiProgram.MauiApp.Services;
-      
+
     }
 }

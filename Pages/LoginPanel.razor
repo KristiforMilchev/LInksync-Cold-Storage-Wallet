@@ -10,6 +10,9 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
+<Popup>
+
+</Popup>
 <Loader BindingData="Please wait."></Loader>
 <div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
     <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
@@ -98,12 +101,14 @@
         if (Password.Length < 8)
         {
             //TODO send error message.
+            Communication.PublishError("Requirements not met", "Password cannot be less then 8 characters");
             return;
         }
 
         var passwrod = HardwareService.Encrypt("iV1z@$H8",Password);
         Communication.Pass = Password;
-        Communication.TriggerLoader.Invoke("flex");
+        if(Communication.TriggerLoader != null)
+          Communication.TriggerLoader.Invoke("flex");
 
         switch(Communication.SoftwareType)
         {

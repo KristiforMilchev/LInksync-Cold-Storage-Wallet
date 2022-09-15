@@ -14,7 +14,7 @@
 @inject IJSRuntime JS
 
 <link href="/css/create.css" rel="stylesheet">
-
+<Popup></Popup>
  
 <div class="container FixCenter" id="LoginPanel" style="   height: 100vh;
      display: flex;
@@ -63,6 +63,7 @@
     private ICommunication Communication { get; set; }
     private IAuthenicationService AuthenicationHandler { get; set; }
     private IHardwareService HardwareService { get; set; }
+    private IUtilities Utilities {get; set;}
     private string Port{ get; set; }
 
 
@@ -79,13 +80,12 @@
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
+        Utilities =  ServiceHelper.GetService<IUtilities>();
         Communication.Init();
-        Port = HardwareService.DeviceConnected();
-
-
+       
+        if(Communication.Os == 1)
+            Port = HardwareService.DeviceConnected();
     }
-
-
 
     private void LoadHotWallet()
     {
@@ -100,8 +100,14 @@
 
     private void LoadColdWallet()
     {
-        Communication.SoftwareType = ConfigMode.ColdWallet;
-        NavigationManager.NavigateTo("HardwareSelect");
+        if(Communication.Os == 1)
+        {
+            Communication.SoftwareType = ConfigMode.ColdWallet;
+            NavigationManager.NavigateTo("HardwareSelect");
+        }
+        else
+        {
+            Communication.PublishError("Not supported",$"This feature is not supported under Linux and Mac due to kernal compatabilities.");
+        }
     }
-
 }

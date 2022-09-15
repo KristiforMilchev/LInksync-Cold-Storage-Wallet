@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
-using static SYNCWallet.Pages.Landing;
+
 
 namespace SYNCWallet.Services.Definitions
 {
@@ -47,6 +47,8 @@ namespace SYNCWallet.Services.Definitions
         public string Receipt { get; set; }
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
+        public ErrorCallback ErrorCallback {get; set;}
+
         public ConfigMode SoftwareType { get; set; }
 
 
@@ -61,6 +63,7 @@ namespace SYNCWallet.Services.Definitions
         public void ClearCredentials();
         public void WriteInternalStorage(HardwareWallet hardwareWallet);
         public void ReadInternalStorage(string password);
+        public void PublishError(string title, string message);
 
     }
 }

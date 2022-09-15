@@ -21,9 +21,11 @@
 <p id="submitTrigger" style="display:none" onclick="DataSubmitted">
 
 </p>
+
+<Popup></Popup>
 <NavMenu NetworkAdded="ImportNetwork" TokenImported="ImportToken">
 
- </NavMenu>
+</NavMenu>
  
  
 
@@ -700,7 +702,11 @@
     private async void EnterPin()
     {
         if (Password.Length < 8)
+        {
+            Communication.PublishError("Requirements not met", "Password cannot be less then 8 characters");
             return;
+        }
+            
 
         Communication.TriggerLoader.Invoke("flex");
         await InvokeAsync(() =>
@@ -771,6 +777,6 @@
     private async void OpenLink(TokenLink link)
     {
         Uri uri = new Uri(link.Url);
-        await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+        @* await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred); *@
     }
 }  
