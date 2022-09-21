@@ -5,8 +5,13 @@ using NFTLock.Data;
 using SYNCWallet.Data;
 using LInksync_Cold_Storage_Wallet;
 using ElectronNET.API;
+using ElectronNET.API.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseElectron(args);
+
+Electron.ReadAuth();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -19,9 +24,7 @@ builder.Services.AddScoped(typeof(IContractService), typeof(ContractService));
 builder.Services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
 builder.Services.AddScoped(typeof(ICommunication), typeof(Communication));
 
-
- builder.WebHost.ConfigureKestrel(o => {
-});
+ 
  
 
 var app = builder.Build();
@@ -44,7 +47,36 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-// Open the Electron-Window here
-System.Console.WriteLine("Starting Main window");
- 
+
+//Add the Electron 
+if (HybridSupport.IsElectronActive)
+{
+    CreateWindow();
+}
+
+async void CreateWindow()
+{
+    BrowserWindowOptions bo = new BrowserWindowOptions();
+
+    var window = await Electron.WindowManager.CreateWindowAsync(bo);
+        window.OnClosed += () => {
+        Electron.App.Quit();
+    };
+}
+
+void Window_OncClosed()
+{
+    Electron.App.Exit();
+}//end  Window_OncClosed
+
+void Window_OnMaximize()
+{
+    Electron.Dialog.ShowErrorBox("Info Box", "Hi, you Just maimixed you Electron App");
+}//end  Window_OncClosed
+
+void Window_OnMinimize()
+{
+    Electron.Dialog.ShowMessageBoxAsync("Application minimized");
+}//end  Window_OncClosed
+
 app.Run();
