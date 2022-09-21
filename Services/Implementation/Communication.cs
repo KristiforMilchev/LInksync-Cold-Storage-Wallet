@@ -1,15 +1,16 @@
-﻿
+﻿using System.Diagnostics;
+using System.IO.Ports;
 using ArduinoUploader.Hardware;
 using Newtonsoft.Json;
 using NFTLock.Models;
 using SYNCWallet.Models;
+using SYNCWallet.Services;
 using SYNCWallet.Services.Definitions;
-using System.Diagnostics;
-using System.IO.Ports;
+using SYNCWallet.Services.Implementation;
 using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
 
-namespace SYNCWallet.Services.Implementation
+namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 {
     public class Communication : ICommunication
     {
@@ -312,9 +313,7 @@ namespace SYNCWallet.Services.Implementation
             {
                 var wallet = AuthenicationService.UnlockWallet(Pass);
 
-                if (wallet == null)
-                    return;
-
+             
                 PublicAddress = wallet.Address;
 
                 if (PublicAddress == null)
@@ -350,7 +349,7 @@ namespace SYNCWallet.Services.Implementation
 
         public void StartSerial()
         {
-            if (_serialPort != null && _serialPort.IsOpen)
+            if (_serialPort.IsOpen)
                 _serialPort.Close();
 
             ReadSerial();
