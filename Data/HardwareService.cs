@@ -9,7 +9,8 @@ using System.Security.Cryptography;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
 using System.Net;
-using ArduinoUploader.Hardware;
+ 
+ using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using SYNCWallet.Services.Definitions;
 using SYNCWallet.Services;
@@ -25,12 +26,9 @@ namespace NFTLock.Data
         ICommunication Communication = ServiceHelper.GetService<ICommunication>();
      
         public string DeviceConnected()
-        {
- 
-            
-            //Get an array of com ports on the system
+        {            
             string[] portNames = SerialPort.GetPortNames();
-
+  
             var current = string.Empty;
             // Display each port name to the console.
             //Always assigns the last com port to the system, doesn't work with two devices.

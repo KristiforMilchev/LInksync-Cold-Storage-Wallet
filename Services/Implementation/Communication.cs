@@ -348,7 +348,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         }
 
         public void StartSerial()
-        {
+        { 
             if (_serialPort != null && _serialPort.IsOpen)
                 _serialPort.Close();
 
@@ -359,6 +359,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         {
             if(_serialPort == null)
                 StartSerial();
+                
             #pragma warning disable CA1416 // Validate platform compatibility
             _serialPort.WriteLine(value);
             _serialPort.DiscardOutBuffer();
