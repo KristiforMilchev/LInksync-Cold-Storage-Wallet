@@ -136,11 +136,11 @@ namespace SYNCWallet.Services.Implementation
                     break;
 
                 case 2:
-                    result = $@"/home/{userName}";
+                    result = $@"/home/{userName}/Downloads";
                     break;
 
                 case 3:
-                    result = $@"/home/{userName}";
+                    result = $@"/home/{userName}/Downloads";
                     break;
             }
 

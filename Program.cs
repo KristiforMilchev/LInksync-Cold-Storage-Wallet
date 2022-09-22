@@ -6,6 +6,7 @@ using SYNCWallet.Data;
 using LInksync_Cold_Storage_Wallet;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
+using LInksync_Cold_Storage_Wallet.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
