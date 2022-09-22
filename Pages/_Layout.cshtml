@@ -159,10 +159,19 @@
 
  
 	</style>
-<!-- ============================================================== -->
-	<!-- All Jquery -->
 	<!-- ============================================================== -->
+		<!-- All Jquery -->
+	<!-- ============================================================== -->
+
+	<!-- Insert this line above script imports  -->
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+	<!-- normal script imports etc  -->
 	<script src="/monster/src/assets/libs/jquery/dist/jquery.min.js"></script>
+
+
+	<!-- Insert this line after script imports -->
+	<script>if (window.module) module = window.module;</script>
 	<script src="/monster/src/assets/extra-libs/taskboard/js/jquery.ui.touch-punch-improved.js"></script>
 	<script src="/monster/src/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
 	<!-- Bootstrap tether Core JavaScript -->

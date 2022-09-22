@@ -9,11 +9,13 @@ using System.Security.Cryptography;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
 using System.Net;
-using RJCP.IO.Ports;
 using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using SYNCWallet.Services.Definitions;
 using SYNCWallet.Services;
+using System.IO.Ports;
+using ArduinoUploader.Config;
+using Newtonsoft.Json;
 
 namespace NFTLock.Data
 {
@@ -24,8 +26,10 @@ namespace NFTLock.Data
      
         public string DeviceConnected()
         {
+ 
+            
             //Get an array of com ports on the system
-            string[] portNames = SerialPortStream.GetPortNames();
+            string[] portNames = SerialPort.GetPortNames();
 
             var current = string.Empty;
             // Display each port name to the console.

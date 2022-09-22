@@ -6,11 +6,12 @@
     <RootNamespace>LInksync_Cold_Storage_Wallet</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ArduinoUploader" Version="3.2.0" />
+<!--    <PackageReference Include="ArduinoUploader" Version="3.2.0" />-->
     <PackageReference Include="IntelHexFormatReader" Version="2.2.3" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="NBitcoin" Version="7.0.10" />
     <PackageReference Include="Nethereum.Contracts" Version="4.6.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.IO.Ports" Version="6.0.0" />
     <PackageReference Include="System.Windows.Extensions" Version="6.0.0" />
     <PackageReference Include="ZXingBlazor" Version="0.2.3" />
@@ -28,5 +29,11 @@
     <Content Update="electron.manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="ArduinoUploader">
+      <HintPath>..\UploaderCore\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
