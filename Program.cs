@@ -58,7 +58,7 @@ if (HybridSupport.IsElectronActive)
 async void CreateWindow()
 {
     BrowserWindowOptions bo = new BrowserWindowOptions();
-
+    bo.AutoHideMenuBar = true;
     var window = await Electron.WindowManager.CreateWindowAsync(bo);
         window.OnClosed += () => {
         Electron.App.Quit();
