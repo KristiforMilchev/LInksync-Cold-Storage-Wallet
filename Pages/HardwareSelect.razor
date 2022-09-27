@@ -9,6 +9,7 @@
 @using SYNCWallet.Models
 @using SYNCWallet.Services
 @using SYNCWallet.Services.Definitions
+@using SYNCWallet.Services.Implementation
 @using static SYNCWallet.Models.Enums
 
 @inject NavigationManager NavigationManager
@@ -17,7 +18,7 @@
   
 <Loader BindingData="Updating firmware please wait..." ></Loader>
 <div class="container FixCenter" id="LoginPanel" style="height:100vh; display:@ShowPicker;">
-    <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+    <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0; height: 100vh;">
         <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
             <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
                 <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
@@ -27,6 +28,8 @@
                 <h2 style="color:#EA7080; text-align:center; font-size:25pt;padding: 50px;">
                     Connect and select ATmega328 compatable device.
                 </h2>
+               
+                
             </div>
             <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400; text-align:center;">
                 <i class="me-2 mdi mdi-access-point-network"></i>
@@ -46,6 +49,33 @@
 
                 }
             </div>
+             @if (Utilities.GetSystemOs() == 2)
+            {
+                <p>
+                    Important, if you have troubles connecting your board or you find that the system cannot recodnize it follow these steps.
+                </p>
+                <p>
+                    Make sure you add your user  to dialout 
+                </p>
+                <p>
+                    <span  class="popTextWarning">sudo usermod -a -G dialout username</span>
+                </p>
+                <p>
+                    To show all devices:  <span class="popTextWarning">sudo dmesg | tail -f</span>   
+                </p>
+                <p>
+                    Find the connected arduino port and enable write permissions.
+                </p>
+                <p>
+                    <span class="popTextWarning">sudo chmod a+rw /dev/ttyUSB0</span>
+                </p>
+                <p>
+                    Known issue with Debian/Ubuntu based systems  (nb plug and replug the arduino afterwards) it keeps pinging the rx/tx preventing the board from conencting
+                </p>
+                <p>
+                    <span class="popTextWarning">sudo apt remove brltty</span>
+                </p>
+            }
         </div>
     </div>
 </div>
@@ -54,13 +84,16 @@
     private ICommunication Communication { get; set; }
     private IAuthenicationService AuthenicationHandler { get; set; }
     private IHardwareService HardwareService { get; set; }
+    private IUtilities Utilities { get; set; }
     private string Address { get; set; }
     private string Port{ get; set; }
     private string ShowPicker { get; set; }
+    int Attempts { get; set; }
 
     public ArduinoModel DeviceModel { get; set; }
     public List<ArduinoModel> Devices { get; set; }
     TriggerLoader CurrentLoader { get; set; }
+    public  int OperatingSystem { get; set; }
 
 
     System.Timers.Timer aTimer { get; set; }
@@ -77,30 +110,52 @@
         AuthenicationHandler = ServiceHelper.GetService<IAuthenicationService>();
         HardwareService = ServiceHelper.GetService<IHardwareService>();
         Communication = ServiceHelper.GetService<ICommunication>();
-
+        Utilities = ServiceHelper.GetService<IUtilities>();
+        Attempts = 0;
+    
 
         Communication.Init();
         //Get Supported Devices
         Devices = HardwareService.GetSupportedDevices();
         Port = HardwareService.DeviceConnected();
+ 
+        InitTimer();
+    }
+
+   
+    void InitTimer()
+    {
         aTimer = new System.Timers.Timer();
         aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         aTimer.Interval = 5000;
         aTimer.Start();
-
     }
-
-   
-
     // Specify what you want to happen when the Elapsed event is raised.
-    private void OnTimedEvent(object source, ElapsedEventArgs e)
+    private async void OnTimedEvent(object source, ElapsedEventArgs e)
     {
 
         Port = HardwareService.DeviceConnected();
+        
+        Attempts += 1;
+
+        if(Attempts == 2 && string.IsNullOrEmpty(Port))
+        {
+
+            await InvokeAsync(() =>
+            {
+                ShowPicker = "flex";
+                Communication.TriggerLoader.Invoke("none");
+                StateHasChanged();
+
+            });
+
+            Communication.PublishError("Port not found", "Please connect atmega328 compatible device <a href='' >click here for supported devices.</a>");
+            KillTimer();
+        }
+        
         if(!string.IsNullOrEmpty(Port))
         {
-            aTimer.Stop();
-            aTimer.Dispose();
+            KillTimer();
         }
     }
 
@@ -156,11 +211,8 @@
 
     private void KillTimer()
     {
-        if (aTimer != null)
-        {
-            aTimer.Stop();
-            aTimer.Dispose();
-        }
+        aTimer.Stop();
+        aTimer.Dispose();
     }
 
     private async void DeviceChanged(ArduinoModel deviceType)

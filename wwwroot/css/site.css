@@ -890,3 +890,7 @@
 html body .display-6 {
     font-size: 1.5rem;
 }
+
+.popTextWarning{
+    color: white;
+}
