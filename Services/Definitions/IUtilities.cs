@@ -121,5 +121,13 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="price">The input amount to be truncated, returns the same value if it's less then 14 characters.</param>
         /// </summary>
         public string TruncateDecimals(decimal price);
+        
+        /// <summary>
+        /// Opens a web browser
+        /// Parameters:
+        /// <paramref name="url"/>
+        /// <param name="url">The website URL</param>
+        /// </summary>
+        void OpenBrowser(string url);
     }
 }
