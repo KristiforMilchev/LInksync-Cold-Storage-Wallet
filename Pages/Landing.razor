@@ -232,8 +232,12 @@
                             @if (SelectedToken != null)
                             {
                                 <div id="SendToken" style="display:@Communication.HideTokenSend">
-                                    <div class="row" style="    margin-top: 25px;">
-                                    <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
+                                    <div style="  width: 100%;  margin-top: 25px; display: flex;">
+                                        <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
+                                        <button style="width: 300px; float: revert;" @onclick="OpenTracker" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                            <i class="icon-wallet"></i>
+                                            Traker
+                                        </button>
                                     </div>
                                     <div class="row" style="margin-top: 30px;margin-top: 30px;
                                                                             display: flex;
@@ -298,7 +302,7 @@
                                         </div>
                                         <div class="flexInnerRow">
                                             <div class="form-floating distanceTop" style="    width: 600px;">
-                                        <input @bind-value="ReceiverAddress" class="form-control inputStyle">
+                                                <input @bind-value="ReceiverAddress" class="form-control inputStyle">
                                                 <label>
                                                     <i class="me-2 icon-wallet"></i>
                                                     <span class="border-start border-danger ps-3 ">Wallet Address</span>

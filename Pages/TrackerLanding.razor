@@ -1,0 +1,498 @@
+
+@page "/Tracker"
+
+
+<style>
+ .socialInactive{
+     margin:auto;
+    width: 30px;
+    height: 25px;
+     opacity:0.5;
+ }
+
+  .socialInactive:hover{
+     margin:auto;
+    width: 30px;
+    height: 25px;
+     opacity:1;
+ }
+
+  .socialActive{
+     margin:auto;
+    width: 30px;
+    height: 25px;
+     opacity:1;
+ }
+
+ .TokenNews{
+    opacity: 0.5;
+    font-family: 'Popins-bold';
+    float: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+ }
+
+ .displayCenterEven{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-evenly;
+ }
+
+ .boldFixedSize{
+     font-weight:bold;
+     font-size:16.67px;
+     margin-left:5px;
+ }
+
+ .top20HoldersContainer{
+     width:18%; 
+     display:flex;
+     background: #282931;
+     border-radius: 12px;
+ }
+
+
+
+ .IconChange{
+     width: 80px;
+     height: 80px;
+     margin: 10px;
+ }
+
+.smallLabel{
+     width:80%;
+}
+
+
+.flexCenter{
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+}
+
+@@media (min-width: 1920){
+    .container {
+        max-width: 90%;
+    }
+
+    
+ .IconChange{
+     width: 70px;
+     height: 70px;
+     margin: 10px;
+ }
+ .VotingBox {
+    width: 20%;
+    background: #282931;
+    border-radius: 12px;
+    display: flex;
+    margin: 0;
+    text-align: center;
+    margin-right: 5px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.addressField {
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: #938e8e;
+    display: flex;
+    width: 73%;
+}
+}
+
+ellipse {
+    opacity: 1;
+    fill: #d57a76;
+    stroke: #d57a76;
+    stroke-width: 2;
+ 
+}
+#reflectionChartAxisLine_1
+{
+    display:none;
+}
+
+#balanceChartAxisGroup1Inside{
+    display:none;
+}
+
+#reflectionChartAxisGroup1Inside{
+    display:none;
+}
+</style>
+
+<div class="flexRow miniMenuDistance">
+    <img src="~/images/star.png" />
+    <div class="addressField">
+        <div class="TIcon">
+            <img src="~/images/metamask.png" class="imgResponsive"/>
+        </div>
+        <span style="margin:auto;" id="Address">
+            0x78Ae40C60Dc37D64056de914E1305F5A7cDd85Ed
+        </span>
+        <div class="TIcon">
+            <img src="~/images/bsc.jpg" style="border-radius: 50%;" class="imgResponsive"/>
+        </div>
+    </div>
+
+    <div style="width:100%;">
+
+    </div>
+    <div style="width:100%">
+        <div class="flexRow" style="margin-left: auto;display: flex;flex-direction: row;justify-content: flex-end;">
+            <a href="">
+                <img src="/images/TrackerAssets/bell.png" style="width: 56px;height: 56px;margin-right: 10px;" />
+            </a>
+            <a href="">
+                <img src="/images/TrackerAssets/share.png" style="width: 56px;height: 56px;margin-right: 10px;"  />
+            </a>
+            <a href="">
+                <img src="/images/TrackerAssets/profile.png" style="width: 56px;height: 56px;margin-right: 10px;"  />
+            </a>
+              
+            <a href="#" id="ctnBtn" class="btnConnect inactive">
+                CONNECT
+            </a>
+        </div>
+           
+    </div>
+</div>
+    
+@*Initial Menu End*@
+
+ <div class="flexRow miniMenuDistance">
+     <div style="width:100%; display:flex; margin-right:5px;">
+        <div class="VotingBox">
+            <div class="centerSelectedLogo">
+                <img src="/images/LogoAssets/PNG/Letermark_Color.png" id="TrackerLogo" class="IconChange"  />
+                <span>
+                    LinkSync
+                </span>
+            </div>
+            
+            <div style="display: flex; margin-top: 18px;     margin-right: 0;">
+                <div id="votingBar" style="width: 14px;border-radius: 12px;border: 3px solid #353642; background: linear-gradient(180deg, rgba(42,162,113,1) 30%, rgba(227,71,71,1) 69%);">
+
+                </div>
+                <div class="VoteDistance">
+                    <div style="display: block;width: 100%;text-align: center;vertical-align: middle;    ">
+                        <div id="postiveVote" class="arrowSpace inactive" onclick="VoteToken(true)">
+                            <img src="/images/TrackerAssets/arrowup.png" style="width: 18px;height: 13px;"/>                        
+                        </div>
+                    </div>
+                    <div style="display: block;width: 100%;text-align: center;vertical-align: middle;    ">
+                         <div id="negativeVote" class="arrowSpace inactive" onclick="VoteToken(false)">
+                            <img src="/images/TrackerAssets/arrowdown.png" style="width: 18px;height: 13px;"/>                        
+                         </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div style="width:86%; background:#282931; border-radius:12px;">
+            <div class="detailsContainer">
+                <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Total Supply: <span style="float:right" id="totalSupply"> -- </span>
+                    </p>
+                </div>
+                 <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Circulating Supply: <span style="float:right" id="circulatingSupply"> -- </span>
+                    </p>
+                </div>
+                 <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Burned Supply: <span style="float:right" id="burnedSupply"> --</span>
+                    </p>
+                </div>
+                 <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Audit Certik: 
+                        <span style="float:right"> 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z"/></svg>
+                        </span>
+                    </p>
+                </div>
+                 <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Liquidity Locked: 
+                        <span style="float:right"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z"/></svg>
+                        </span>
+                    </p>
+                </div>
+                 <div style="display:flex; width:100%;">
+                    <p style="width:100%;">
+                        Total Holders: <span style="float:right" id="tokenHolders"> -- </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="width:100%;margin-right:5px; ">
+        <div style="height:18%" >
+            <div class="currentBalanceHolder"> 
+                <h1 id="totalAmountInUsd"> -- </h1>
+                <div style="display: grid;margin-left: 10px;">
+                    <span class="colorGreen" id="mPD" >
+                        --
+                    </span>  
+                    <span>
+                        SYNC
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div  style="height:82%; background: #282931; border-radius:12px;">
+            <div class="PosChartSwitch">
+                <div class="fullWidth flexCenter">
+                    <span>
+                        Balance
+                    </span>
+                     <input id="checked" type="checkbox" />
+                     <span>
+                         Reflections
+                     </span>
+                </div>
+            </div>
+            <div id="refChart">
+                <div id="reflectionChart" align='center'></div>
+            </div>
+            <div id="balChart"0 style="display:none;">
+                <div id="balanceChart" align='center' style="display:none;"></div>
+
+            </div>
+
+        </div>
+    </div>
+    <div style="width: 100%;display: flex;padding: 10px;background: #282931;border-radius: 12px; font-size:14.58px;">
+        <div style="width:100%; display:flex; padding:10px;">
+            <div class="profitBtnHolder">
+                <a href="" class="btnProfit active">
+                    Day
+                </a>
+                <a href="" class="btnProfit inactive">
+                    Week
+                </a>
+                <a href="" class="btnProfit inactive">
+                    Month
+                </a>
+                <a href="" class="btnProfit inactive">
+                    All Time
+                </a>
+            </div>
+            <div class="RoundPrice">
+                <div class="PriceRoundLabel">
+                    <h1  class="colorGreen BigPriceLabel" id="profitCounter">+$ -- </h1>
+                    <p style="letter-spacing: -0.67px; font-size:16.67px; font-weight:600;">
+                        24 h Profit & Loss
+                    </p>
+                </div>
+            </div>
+            <div style="width:20%;">
+                <a href="" >
+
+                </a>
+            </div>
+        </div>
+           
+    </div>
+</div>
+@*Token data ends*@
+
+
+@*Reflection Price Data starts*@
+<div class="flexRow miniMenuDistance">
+    <div class="TokenPriceDetailsContainer">
+        <span class="priceLabel smallLabel"  >
+            Token pice:&#8203 
+            <span class="colorGreen boldFixedSize" id="tokenPrice">
+                --
+            </span>
+        </span>
+        <span class="priceLabel smallLabel">
+            Market Cap:&#8203 
+            <span class="colorRed boldFixedSize" id="marketCapD">
+                --
+            </span>
+        </span>
+        <span class="priceLabel smallLabel" >
+            Trading Volume:&#8203 
+            <span class="colorRed boldFixedSize" id="TradingVolume">
+                --
+            </span>
+        </span>
+        <span class="priceLabel">
+            Price Change H:&#8203
+            <span class="colorRed boldFixedSize" id="hourlyChange">
+                --
+            </span>
+            , D:
+            <span class="colorGreen boldFixedSize" id="dailyChange">
+                --
+            </span>
+            , W:&#8203
+            <span class="colorGreen boldFixedSize" id="weeklyChange">
+               --
+            </span>
+        </span>
+    </div>
+    <div class="top20HoldersContainer">
+        <div class="priceLabel btnTop20Container clicable displayCenterEven" onclick="OpenTop()">
+            <img src="~/images/topaddress.png" id="addressImage" style="width: 30px;height: 23px;"/>
+            <span id="addressText">
+                Top 20 Addresses
+            </span>
+        </div>
+    </div>
+</div>
+@*Reflection Price Data Ends*@
+
+
+ 
+<div class="flexRow miniMenuDistance">
+    <div class="priceLabel" style="width:100%; background: #282931;border-radius: 12px;margin-right:5px; padding:20px;">
+        <div class="centerContent">
+            <h3>
+                SYNC owned
+            </h3>
+            <h3 id="syncAmount">
+                --
+            </h3>
+            <p class="colorGreen fontNormal" id="syncAmountBNB">
+                --
+            </p>
+        </div>
+   
+    </div>
+    <div class="priceLabel" style="width:100%; background: #282931;border-radius: 12px;margin-right:5px; padding:20px;">
+        <div class="centerContent">
+            <h3>
+                Reflections earned
+            </h3>
+            <h3 id="reflectionAmount">
+                --
+            </h3>
+            <p class="colorGreen fontNormal" id="reflectionAmountUsd">
+                --
+            </p>
+        </div>
+   
+    </div>
+    <div class="priceLabel" style="width:100%; background: #282931;border-radius: 12px;margin-right:5px;padding:20px;">
+        <div class="centerContent">
+            <h3>
+                Reflections earned in 6+ months
+            </h3>
+            <h3 id="reflectionsFutureAmount">
+                --
+            </h3 >
+            <p class="colorGreen fontNormal" id="reflectionFutureUsd">
+                --
+            </p>
+        </div>
+    </div>
+</div>
+ 
+ 
+<div class="flexRow miniMenuDistance" >
+    <div id="TopHolders" class="GridBackground" style="display:none;">
+        <div class="flexRow">
+            <span class="priceLabel gridTableSize" style="opacity: 0.5;">
+                Address          
+            </span>
+            <span class="priceLabel gridTableSize" style="opacity: 0.5;">
+                Amount  
+            </span>
+            <span class="priceLabel  gridTableSize" style="opacity: 0.5;">
+                Price BNB
+            </span>
+            <span  class="priceLabel  gridTableSize" style="opacity: 0.5;">
+                TxHash
+            </span>
+        </div>
+        <div class="PriceGrid fontNormal" id="TopHoldersTransactions">
+              
+             
+            
+             
+        </div>
+    </div>
+    <div id="UserTransactions" class="GridBackground">
+        <div class="flexRow">
+            <span class="priceLabel gridTableSize" style="opacity: 0.5;">
+                Date & Time            
+            </span>
+            <span class="priceLabel gridTableSize" style="opacity: 0.5;">
+                Amount            
+            </span>
+            <span class="priceLabel gridTableSize" style="opacity: 0.5;">
+                Price USDT
+            </span>
+            <span class="priceLabel  gridTableSize" style="opacity: 0.5;">
+                Price BNB
+            </span>
+        </div>
+        <div class="PriceGrid fontNormal" id="UserTransactionsBody">
+              
+              
+        </div>
+    </div>
+    <div style="width:40%;background: #282931;border-radius: 12px; margin-right:5px;">
+        <div class="flexRow" style="z-index: 22;position: relative;">
+            <span class="priceLabel gridTableSize alignLeft TokenNews" >
+                Token News
+            </span>
+            <a href="#" id="chat" class="SocialIconBg active" onclick="LoadFeed(1)">
+                <img  src="/images/TrackerAssets/chatactive.png" id="chatIcon" class="socialActive" />
+            </a>
+            <a href="#" id="twitter" class="SocialIconBg inactive"   onclick="LoadFeed(3)" >
+                <img  src="/images/TrackerAssets/twitter.png" id="twitterIcon" class="socialInactive"/>
+            </a>
+            <a href="#" id="instagram" class="SocialIconBg inactive" onclick="LoadFeed(2)">
+                <img  src="/images/TrackerAssets/instagram.png" id="instagramIcon" class="socialInactive"/>
+            </a>
+            <a href="#" id="youtube" class="SocialIconBg inactive" onclick="LoadFeed(4)">
+                <img  src="/images/TrackerAssets/youtube.png" id="youtubeIcon" class="socialInactive" />
+            </a>
+        </div>
+        <div id="UserChat">
+             <div class="flexRow">
+                 <div class="PriceGrid" id="ChatBody" style="height: 389px;width: 100%;">
+                     
+                 
+                </div>
+            </div>
+            <div class="flexRow" style="height:55px;     padding-right: 8px;">
+                <div  class="chatInputHolder">
+                    <input type="text" id="MessageBox" placeholder="Share your thoughts..." class="ChatSumbit" />
+                </div>
+                <div class="btnSend"  >
+                    <a href="#" class="Send" onclick="SendMessage()" >
+                        SEND
+                    </a>
+                </div>
+            </div>
+        </div>
+       <div id="InstagramFeed"  style="display:none;     height: 93%;">
+      
+       </div>
+       <div id="TwitterFeed" style="display:none;     height: 93%;">
+       
+       </div>
+       <div id="YoutubeFeed" style="display:none;     height: 93%;">
+
+        </div>
+    </div>
+</div>
+

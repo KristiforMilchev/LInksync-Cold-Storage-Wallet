@@ -357,5 +357,11 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             Utilities.OpenBrowser(link.Url);
         }
+
+
+        private void OpenTracker()
+        {
+            NavigationManager.NavigateTo("Tracker");
+        }
     }
 }
