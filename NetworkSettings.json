@@ -12,13 +12,13 @@
     "Logo":"/images/tokenLogos/eth.png",
     "CurrencyAddress": "0x8babbb98678facc7342735486c851abd7a0d17ca",
     "PairCurrency": "0x8a9424745056Eb399FD19a0EC26A14316684e274",
-    "Explorer":"https://rinkeby.etherscan.io/tx/"
+    "Explorer":"https://rinkeby.etherscan.io/tx/",
   },
   {
     "IsProduction": true,
     "Id": 1,
     "Chainid": 1,
-    "Endpoint": "https://mainnet.infura.io/v3/24e067d0dc7847f78b5a99a82f1cc38e",
+    "Endpoint": "https://eth-mainnet.g.alchemy.com/v2/K2Cq1_4i7QRp6GdD7Jq4qRXD-Mv9qsPl",
     "WS": "Uniswap",
     "Factory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     "Name": "ETH",
@@ -27,7 +27,8 @@
     "Logo":"/images/tokenLogos/eth.png",
     "CurrencyAddress": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
     "PairCurrency": "0x6b175474e89094c44da98b954eedeac495271d0f",
-    "Explorer":"https://etherscan.io/tx/"
+    "Explorer":"https://etherscan.io/tx/",
+     
   },
   {
     "IsProduction": true,
