@@ -7,6 +7,9 @@ using LInksync_Cold_Storage_Wallet;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using LInksync_Cold_Storage_Wallet.Services.Implementation;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +61,7 @@ if (HybridSupport.IsElectronActive)
 async void CreateWindow()
 {
     BrowserWindowOptions bo = new BrowserWindowOptions();
-
+    bo.AutoHideMenuBar = true;
     var window = await Electron.WindowManager.CreateWindowAsync(bo);
         window.OnClosed += () => {
         Electron.App.Quit();

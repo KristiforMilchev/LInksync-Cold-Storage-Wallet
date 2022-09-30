@@ -33,7 +33,7 @@
   
   <ItemGroup>
     <Reference Include="ArduinoUploader">
-      <HintPath>..\UploaderCore\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
+      <HintPath>..\ArduinoSketchUploader\Source\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

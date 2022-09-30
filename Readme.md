@@ -65,36 +65,46 @@ Prerequisites:  
  
 Compiling: 
 
-*   Windows => dotnet publish -r osx-x64
-*   Mac => (switch to the branch Migration_Electron) dotnet publish -r osx-x64
-*   Linux => (switch to the branch Migration_Electron) dotnet publish -r win-x64
+*   Windows => electronize build /target win
+*   Mac => electronize build /target osx
+*   Linux => electronize build /target linux
+
 
 
 ### How to install from binary ?
 
 You can download latest version from the repository LincSync latest release: 
 
-https://github.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/releases/tag/1.0.0.1
- 
- Important install process is temporary, due to issue with the main branch of Electron.net, once the issue is rosolved the dependency on wallet.sh will be dropped. UIRuntime will be replaced by the native Electron client from the Electron.Net project once it's upgraded .net 6
-
+https://github.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/releases/tag/1.0.0.2
+````
+Installing on Windows
+````
+Download the win-x64 from the link above, extract the archive to a folder of your chosing and install the app from LInksync-Cold-Storage-Wallet.exe
+````
 Installation on Linux:
+````
+Extract the Linux_1.0.0.2 contents into a folder
 
-Extract the Linux_1.0.0.1 contents into a folder
+Optional you can create a desktop link:
 
-Add all dependencies -> sudo apt install npm  (Or your choice of a package manager)
+sudo nano /usr/share/applications/SYNCWallet.desktop
+````
+[Desktop Entry]
+Version=1.0.2
+Name=SYNCWallet
+Comment=
+Exec=/yourfolderpath/l-inksync--cold--storage--wallet
+Icon=/yourfolderpath/icon-linux.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;
+````
 
-chmod +x wallet.sh
+Click save and you should have an icon for the app in your desktop manager.
 
-./wallet.sh
-
-Installation OSX:
-
-Extract the content of osx_x64
-
-chmod +x LInksync-Cold-Storage-Wallet
-
-./LInksync-Cold-Storage-Wallet
+````
+Mac OS is only supported by building from source OSX. No one on the team has Mac os to produce a build, thanks apple!
+ ````
 
 
 If you find my software beneficial, please consider buying me a coffee. Thanks! 

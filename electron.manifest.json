@@ -4,17 +4,25 @@
     "imageFile": ""
   },
   "name": "LInksync-Cold-Storage-Wallet",
-  "author": "",
+  "author": "Collaborativesoft LTD",
   "singleInstance": false,
   "environment": "Production",
   "build": {
     "appId": "com.LInksync-Cold-Storage-Wallet.app",
     "productName": "LInksync-Cold-Storage-Wallet",
     "copyright": "Copyright © 2019-2022",
-    "buildVersion": "1.0.0",
+    "buildVersion": "1.0.2",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
+    },
+    "win": {
+      
+      "icon": "../../../wwwroot/icon-linux.png"
+    },
+    "linux": {
+
+      "icon": "../../../wwwroot/icon-linux.png"
     },
     "extraResources": [
       {
