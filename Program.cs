@@ -13,9 +13,19 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseElectron(args);
 
-Electron.ReadAuth();
+try
+{
+    //builder.WebHost.UseElectron(args);
+
+    //Electron.ReadAuth();
+
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -52,10 +62,19 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-//Add the Electron 
-if (HybridSupport.IsElectronActive)
+try
 {
-    CreateWindow();
+    //Add the Electron 
+    if (HybridSupport.IsElectronActive)
+    {
+        CreateWindow();
+    }
+
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    
 }
 
 async void CreateWindow()
