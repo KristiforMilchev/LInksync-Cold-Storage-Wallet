@@ -18,6 +18,7 @@ namespace SYNCWallet.Models
         public string TokenSylmbol { get; set; }
         public string CurrencyAddress { get; set; }
         public string PairCurrency { get; set; }
+        public string Logo { get; set; }
 
         
     }
