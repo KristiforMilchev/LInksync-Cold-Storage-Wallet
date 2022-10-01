@@ -42,6 +42,8 @@
 
 	<link href="/monster/src/assets/extra-libs/toastr/dist/build/toastr.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/monster/src/assets/extra-libs/prism/prism.css">
+	<link href="/monster/src/assets/libs/morris.js/morris.css" rel="stylesheet">
+
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -603,11 +605,115 @@
 		{
 			Swal.fire(title,message);
 		}
+		
+		function InitDonut()
+		{
+			//#c43939 red
+			//39c449 green
+			  Morris.Donut({
+					element: 'morris-donut-chart',
+					data: [{
+						label: "Daily",
+						value: 12,
+			
+					}, {
+						label: "Monthly",
+						value: 30
+					}, {
+						label: "Yearly",
+						value: 20
+					}],
+					resize: true,
+					colors:['#009efb', '#39c449', '#2f3d4a']
+			  });
+			  var myChart = echarts.init(document.getElementById('basic-line'));
+              
+			  // specify chart configuration item and data
+			  var option = {
+					  // Setup grid
+					  grid: {
+						  left: '1%',
+						  right: '2%',
+						  bottom: '0%',
+						  containLabel: true
+					  },
+	  
+					  // Add Tooltip
+					  tooltip : {
+						  trigger: 'axis'
+					  },
+	  
+					  // Add Legend
+					  legend: {
+						  data:['Max temp','Min temp']
+					  },
+	  
+					  // Add custom colors
+					  color: ['#009efb', '#f62d51'],
+	  
+					  // Enable drag recalculate
+					  calculable : false,
+	  
+					  // Horizontal Axiz
+					  xAxis : [
+						  {
+							  type : 'category',
+							  boundaryGap : true,
+							  data : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+						  }
+					  ],
+	  
+					  // Vertical Axis
+					  yAxis : [
+						  {
+							  type : 'value',
+							  axisLabel : {
+								  formatter: '{value} °C'
+							  }
+						  }
+					  ],
+	  
+					  // Add Series
+					  series : [
+						  {
+							  name:'Max temp',
+							  type:'line',
+							  data:[5, 15, 11, 15, 12, 13, 10],
+							  markPoint : {
+								  data : [
+									  {type : 'max', name: 'Max'},
+									  {type : 'min', name: 'Min'}
+								  ]
+							  },
+							  markLine : {
+								  data : [
+									  {type : 'average', name: 'Average'}
+								  ]
+							  },
+							  lineStyle: {
+								  normal: {
+									  width: 2,
+									  shadowColor: 'rgba(0,0,0,0.1)',
+									  shadowBlur: 10,
+									  shadowOffsetY: 10
+								  }
+							  },
+						  },
+						  
+					  ]
+				  };
+			  // use configuration item and data specified to show chart
+			  myChart.setOption(option);
+
+		}
 	</script>
 
 	<script src="/monster/src/assets/extra-libs/prism/prism.js"></script>
-
-
+    <script src="/monster/src/assets/libs/raphael/raphael.min.js"></script>
+    <script src="/monster/src/assets/libs/morris.js/morris.min.js"></script>
+    <script src="/monster/dist/js/pages/morris/morris-data.js"></script>
+    <script src="/monster/src/assets/libs/echarts/dist/echarts-en.min.js"></script>
+    <script src="/monster/dist/js/pages/echarts/line/line-charts.js"></script>
 
     <script src="_framework/blazor.server.js"></script>
 </body>
