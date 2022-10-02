@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+        <Reference Include="ArduinoUploader">
+            <HintPath>..\..\..\ArduinoSketchUploader\Source\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
+        </Reference>
+        <Reference Include="System.IO.Ports">
+          <HintPath>..\..\..\..\.nuget\packages\system.io.ports\6.0.0\lib\net6.0\System.IO.Ports.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+</Project>
