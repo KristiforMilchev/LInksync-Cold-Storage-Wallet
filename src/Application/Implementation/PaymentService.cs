@@ -17,26 +17,26 @@ using System.Timers;
 
 namespace SYNCWallet.Data
 {
-    internal class PaymentService : IPaymentService
+    public class PaymentService : IPaymentService
     {
         private TransactionResult TransactionResult { get; set; }
-        IContractService ContractService { get; set; }
-        IUtilities Utilities { get; set; }
-        IAuthenicationService AuthenicationService { get; set; }
-        ICommunication Communication { get; set; }
+        public IContractService ContractService { get; set; }
+        public IUtilities Utilities { get; set; }
+        public IAuthenicationService AuthenicationService { get; set; }
+        public ICommunication Communication { get; set; }
 
         //Init the constructor and inherit all dependencies.
-        public PaymentService()
+        public PaymentService(IContractService contractService, IUtilities utilities, IAuthenicationService authenicationService, ICommunication communication)
         {
-            ContractService = ServiceHelper.GetService<IContractService>();
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
-            Communication = ServiceHelper.GetService<ICommunication>();
+            ContractService = contractService;
+            Utilities = utilities;
+            AuthenicationService = authenicationService;
+            Communication = communication;
         }
 
         public async Task<TransactionResult> BeginTransaction()
         {
-            var wallet = AuthenicationService.UnlockWallet(Communication.Pass); //One of decrypt the PK encoded on the device and open the wallet.
+            var wallet = AuthenicationService.UnlockWallet(Communication.Pass,Communication.ActiveNetwork.Chainid); //One of decrypt the PK encoded on the device and open the wallet.
            
             //If wallet doesn't exist return null
             if(wallet == null)
@@ -71,7 +71,7 @@ namespace SYNCWallet.Data
         {
             //We don't need a real wallet here, Pass is empty however due to how Nethereum operates we need to make the request from the object, so we can inherit the chain
             //That's why we just instance a object to interact with the chain.
-            var account = AuthenicationService.UnlockWallet(Communication.Pass);
+            var account = AuthenicationService.UnlockWallet(Communication.Pass, Communication.ActiveNetwork.Chainid);
 
             //If Hash is empty return false. Return an empty object to avoid recursion in the loop.
             if (string.IsNullOrEmpty(txHash))

@@ -6,9 +6,11 @@ namespace SYNCWallet.Services.Definitions
     {
         /// <summary>
         /// Returns a list of NetworkSettings, executes a query against the main github repository 
-        /// retruves the officially supported networks and then checks if there are any local networks returns the combined result
+        /// retrieves the officially supported networks and then checks if there are any local networks returns the combined result
+        /// <paramref name="os"/>
+        /// <param name="os">The type of operating system that the solution runs on.</param>
         /// </summary>
-        public Task<List<NetworkSettings>> SetupNetworks();
+        public Task<List<NetworkSettings>> SetupNetworks(int os);
 
         /// <summary>
         /// Returns the result of a Generic GET request as a model of T
@@ -99,9 +101,11 @@ namespace SYNCWallet.Services.Definitions
 
 
         /// <summary>
-        /// Returns the device files safe path, not onwed by system OS for downloads and local settings such as imported tokens, imported networks.
+        /// Returns the device files safe path, not owned by system OS for downloads and local settings such as imported tokens, imported networks.
+        /// <paramref name="os"/>
+        /// <param name="os">The type of operating system that the solution runs on.</param>
         /// </summary>
-        public string GetOsSavePath();
+        public string GetOsSavePath(int os);
 
         /// <summary>
         /// Opens a popup window that shows an alert

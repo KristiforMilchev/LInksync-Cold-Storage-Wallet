@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 namespace SYNCWallet.Models
 {
     [Function("decimals", "uint8")]
-
-    internal class GetDecimals : FunctionMessage
+    public class GetDecimals : FunctionMessage
     {
 
     }

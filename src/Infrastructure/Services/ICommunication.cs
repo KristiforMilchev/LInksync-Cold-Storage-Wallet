@@ -13,20 +13,17 @@ using static SYNCWallet.Models.GithubTokensModel;
 
 namespace SYNCWallet.Services.Definitions
 {
-    internal interface ICommunication
+    public interface ICommunication
     {
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public int RemainingAttempts { get; set; }
-        public int Os { get; set; }
         public string DefaultPath { get; set; }
         public string ContractABI { get; set; }
         public SerialPort _serialPort { get; set; }
-        public string ComPort { get; set; }
         public bool ConfigResponse { get; set; }
         public bool IsConfigured { get; set; }
         public bool RecordPK { get; set; }
-        public string PK { get; set; }
         public string Pass { get; set; }
         public bool IsLogged { get; set; }
         public string PublicAddress { get; set; }
@@ -49,18 +46,23 @@ namespace SYNCWallet.Services.Definitions
 
         public ConfigMode SoftwareType { get; set; }
 
+        
 
         public void Init();
+        /// <summary>
+        /// Gets the public key of the connected wallet.
+        /// </summary>
+        public string GetDefault();
         public void StartSerial();
-        public bool CheckConfigured(ConfigMode configMode);
+        public bool CheckConfigured(ConfigMode configMode, int os);
         public void ReadSerial();
         public void ProcessData();
         void SetPublic();
         void ExecuteCmd(string currentCMD);
         public void WriteState(string value);
         public void ClearCredentials();
-        public void WriteInternalStorage(HardwareWallet hardwareWallet);
-        public void ReadInternalStorage(string password);
+        public void WriteInternalStorage(HardwareWallet hardwareWallet, int os);
+        public void ReadInternalStorage(string password, int os);
         public void PublishError(string title, string message);
 
     }

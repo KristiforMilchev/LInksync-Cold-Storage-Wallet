@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 namespace SYNCWallet.Models
 {
     [Function("symbol", "string")]
-
-    internal class GetSymbol : FunctionMessage
+    public class GetSymbol : FunctionMessage
     {
 
     }

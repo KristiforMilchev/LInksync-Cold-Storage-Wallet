@@ -10,10 +10,8 @@ namespace SYNCWallet.Services.Definitions
 {
     public interface IAuthenicationService
     {
-        /// <summary>
-        /// Gets the public key of the connected wallet.
-        /// </summary>
-        public string GetDefault();
+        public string PK { get; set; }
+    
         /// <summary>
         /// Impoirts a custom EVM compatible blockchain network
         /// Parameters:
@@ -39,18 +37,7 @@ namespace SYNCWallet.Services.Definitions
         /// Parameters:
         /// <param name="pass">Password used to encrypt the wallet.</param>        
         /// </summary>
-        public Account UnlockWallet(string pass);
-        /// <summary>
-        /// Gets a list of supported tokens filtered by network id. Doesn't include market cap, price or supply
-        /// Parameters:
-        /// <param name="networkId">Blockchain endpoint, RPC address of the Blockchain network </param>        
-        /// </summary>
-        public Task<List<Token>> GetSupportedTokens(int networkId);
-        /// <summary>
-        /// Gets a list of supported tokens filtered by network id. Includes market cap price and supply.
-        /// Parameters:
-        /// <param name="networkId">Blockchain endpoint, RPC address of the Blockchain network </param>        
-        /// </summary>
-        public Task<List<Token>> GetTokenDetails(int networkId);
+        public Account UnlockWallet(string pass, int chainId);
+ 
     }
 }

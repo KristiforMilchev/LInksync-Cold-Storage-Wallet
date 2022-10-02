@@ -11,6 +11,11 @@ namespace SYNCWallet.Services.Definitions
 {
     public interface IHardwareService
     {
+        
+        public int Os { get; set; }
+        public string ComPort { get; set; }
+
+        
         /// <summary>
         /// Check if the hardware device is connected to the system
         /// </summary>
@@ -27,7 +32,7 @@ namespace SYNCWallet.Services.Definitions
         /// Parameters:
         /// <param name="port">Serial COM port that has arduino on it.</param>
         /// </summary>
-        public bool CreateNewDevice(string port);
+        public bool CreateNewDevice(string port, ArduinoModel device);
 
         /// <summary>
         /// Installs the latest firmware to an arduino device that matches the selected device.

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SYNCWallet.Models
 {
-    internal class SeedPhase
+    public class SeedPhase
     {
 
 

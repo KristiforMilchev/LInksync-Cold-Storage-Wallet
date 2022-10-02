@@ -16,17 +16,20 @@ using static SYNCWallet.Models.GithubTokensModel;
 
 namespace NFTLock.Data
 {
-    internal class ContractService : IContractService
+    public class ContractService : IContractService
     {
        
-        IUtilities Utilities { get; set; }
-        ICommunication Communication { get; set; }
+        public IUtilities Utilities { get; set; }
+        public ICommunication Communication { get; set; }
+        public IHardwareService HardwareService { get; set; }
         List<TokenContract> CachedTokenContracts { get; set; }
         decimal USDPrice { get; set; }
-        public ContractService()
+        
+        public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService)
         {
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            Communication = ServiceHelper.GetService<ICommunication>();
+            Utilities = utilities;
+            Communication = communication;
+            HardwareService = hardwareService;
 
         }
 
@@ -256,9 +259,9 @@ namespace NFTLock.Data
             if (CachedTokenContracts == null)
             {
                 //Checks if the price cache exist, delete and recreate it.
-                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
+                if (File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json"))
                 {
-                    var content = File.ReadAllText($"{Utilities.GetOsSavePath()}/CachePrices.json");
+                    var content = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json");
                     CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(content);
                     CachedTokenContracts = CachedTokenContracts == null ? new List<TokenContract>() : CachedTokenContracts;
                 }
@@ -303,11 +306,11 @@ namespace NFTLock.Data
             tokens = await GetListedTokensInitial(Communication.ListedTokens, tokens, getNetworkData);
 
             //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
-            if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
-                File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
+            if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json"))
+                File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", "");
 
             //Reads the content of the file.
-            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
+            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json");
 
 
 
@@ -410,11 +413,11 @@ namespace NFTLock.Data
             tokens = await GetListedTokens(Communication.ListedTokens, tokens, getNetworkData);
 
             //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
-            if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
-                File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
+            if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json"))
+                File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", "");
 
             //Reads the content of the file.
-            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
+            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json");
 
             //Converts the imported tokens to List<Token> 
             var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
@@ -512,10 +515,10 @@ namespace NFTLock.Data
 
 
                 //Checks if the price cache exist, delete and recreate it.
-                if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
-                    File.Delete($"{Utilities.GetOsSavePath()}/CachePrices.json");
+                if (File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json"))
+                    File.Delete($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json");
                 
-                File.WriteAllText($"{Utilities.GetOsSavePath()}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
+                File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
             }
 
 
@@ -675,10 +678,10 @@ namespace NFTLock.Data
             }
 
             //Checks if the price cache exist, delete and recreate it.
-            if (File.Exists($"{Utilities.GetOsSavePath()}/CachePrices.json"))
-                File.Delete($"{Utilities.GetOsSavePath()}/CachePrices.json");
+            if (File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json"))
+                File.Delete($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json");
 
-            File.WriteAllText($"{Utilities.GetOsSavePath()}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
+            File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
 
             return tokens;
         }

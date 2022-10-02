@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 namespace SYNCWallet.Models
 {
     [Function("totalSupply", "uint256")]
-
-    internal class GetSupply : FunctionMessage
+    public class GetSupply : FunctionMessage
     {
 
     }

@@ -8,21 +8,19 @@ using System.Text;
  
 namespace SYNCWallet.Services.Implementation
 {
-    internal class Utilities : IUtilities
+    public class Utilities : IUtilities
     {
-
-        ICommunication Communication = ServiceHelper.GetService<ICommunication>();
-
-        public async Task<List<NetworkSettings>> SetupNetworks()
+       
+        public async Task<List<NetworkSettings>> SetupNetworks(int os)
         {
 
-            if (!File.Exists($"{GetOsSavePath()}/LocalNetworks.json"))
+            if (!File.Exists($"{GetOsSavePath(os)}/LocalNetworks.json"))
                 return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
             else
             {
                 var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
 
-                var filesContent = File.ReadAllText($"{GetOsSavePath()}/LocalNetworks.json");
+                var filesContent = File.ReadAllText($"{GetOsSavePath(os)}/LocalNetworks.json");
                 var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
                 if(convertedNetworkList != null)
                     whiteListedNetworks.AddRange(convertedNetworkList);
@@ -126,11 +124,11 @@ namespace SYNCWallet.Services.Implementation
             return 0;
         }
 
-        public string GetOsSavePath()
+        public string GetOsSavePath(int os)
         {
             var result = string.Empty;
             string userName = Environment.UserName;
-            switch (Communication.Os)
+            switch (os)
             {
                 case 1:
                     result = $@"C:\Users\{userName}\Documents";

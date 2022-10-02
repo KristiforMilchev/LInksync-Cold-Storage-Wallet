@@ -1,5 +1,4 @@
-﻿
-using SYNCWallet;
+﻿using SYNCWallet;
 using System.Text;
 using System.Diagnostics;
 using NFTLock.Models;
@@ -9,22 +8,29 @@ using System.Security.Cryptography;
 using SYNCWallet.Models;
 using SYNCWallet.Services.Implementation;
 using System.Net;
- 
- using ArduinoUploader.Hardware;
+using ArduinoUploader.Hardware;
 using ArduinoUploader;
 using SYNCWallet.Services.Definitions;
 using SYNCWallet.Services;
 using System.IO.Ports;
 using ArduinoUploader.Config;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace NFTLock.Data
 {
-    internal class HardwareService : IHardwareService
-    { 
-        IUtilities Utilities = ServiceHelper.GetService<IUtilities>();
-        ICommunication Communication = ServiceHelper.GetService<ICommunication>();
-     
+    public class HardwareService : IHardwareService
+    {
+        public IUtilities Utilities { get; set; }
+        public int Os { get; set; }
+        public string ComPort { get; set; }
+
+        public HardwareService(IUtilities utilities)
+        {
+            Utilities = utilities;
+            Os = Utilities.GetSystemOs();
+        }
+        
         public string DeviceConnected()
         {            
             string[] portNames = SerialPort.GetPortNames();
@@ -35,7 +41,7 @@ namespace NFTLock.Data
             foreach (string port in portNames)
             {
                 Debug.WriteLine(port);
-                Communication.ComPort = port;
+                ComPort = port;
                 current = port;
             }
 
@@ -47,13 +53,13 @@ namespace NFTLock.Data
             return new List<ArduinoModel> { ArduinoModel.Leonardo, ArduinoModel.Mega1284, ArduinoModel.Mega2560, ArduinoModel.Micro, ArduinoModel.NanoR2, ArduinoModel.NanoR3, ArduinoModel.UnoR3 };
         }
 
-        public bool CreateNewDevice(string port)
+        public bool CreateNewDevice(string port, ArduinoModel device)
         {
             string userName = Environment.UserName;
             
             //If file exists, delete it, we want the latest version of the file.
-            if (File.Exists(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex"))
-                File.Delete(@$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex");
+            if (File.Exists(@$"{Utilities.GetOsSavePath(Os)}\wallet.ino.standard.hex"))
+                File.Delete(@$"{Utilities.GetOsSavePath(Os)}\wallet.ino.standard.hex");
 
 
             //Download the latest version of the file.
@@ -64,7 +70,7 @@ namespace NFTLock.Data
                 // Param1 = Link of file
                 new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
                 // Param2 = Path to save
-                @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex");
+                @$"{Utilities.GetOsSavePath(Os)}\wallet.ino.standard.hex");
             }
 
 
@@ -74,7 +80,7 @@ namespace NFTLock.Data
             //Run the update on a seprate thread
             Task.Run(() =>
             {
-                result = ConfigureHardware(Communication.DeviceType, @$"{Utilities.GetOsSavePath()}\wallet.ino.standard.hex", port);
+                result = ConfigureHardware(device, @$"{Utilities.GetOsSavePath(Os)}\wallet.ino.standard.hex", port);
             });
 
             var timeout = DateTime.UtcNow.AddSeconds(30);
@@ -84,7 +90,7 @@ namespace NFTLock.Data
             {
                 if(DateTime.UtcNow > timeout)
                 {
-                    Utilities.OpenErrorView("Connection timeout",$"Device not connected, please make sure you have connected device of type {Communication.DeviceType}",0);
+                    Utilities.OpenErrorView("Connection timeout",$"Device not connected, please make sure you have connected device of type {device}",0);
                     return false;
 
                 }

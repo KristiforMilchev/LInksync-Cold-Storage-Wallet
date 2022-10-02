@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{008122D0-B885-4C61-AE67-50D026D42888}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A05B99E-E640-4A6C-907D-D4C571B48181} = {2A05B99E-E640-4A6C-907D-D4C571B48181}
+		{00E153A3-6337-45C3-A625-CC1C23D38215} = {00E153A3-6337-45C3-A625-CC1C23D38215}
+		{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B} = {A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{00E153A3-6337-45C3-A625-CC1C23D38215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LInksync-Cold-Storage-Wallet", "Presentation\LInksync-Cold-Storage-Wallet.csproj", "{2A05B99E-E640-4A6C-907D-D4C571B48181}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinksyncWallet.tests", "..\Tests\LinksyncWallet.tests\LinksyncWallet.tests\LinksyncWallet.tests.csproj", "{B2163E14-82B9-45A2-95CC-A0E979E27A45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{008122D0-B885-4C61-AE67-50D026D42888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{008122D0-B885-4C61-AE67-50D026D42888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{008122D0-B885-4C61-AE67-50D026D42888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{008122D0-B885-4C61-AE67-50D026D42888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A259BAEA-D49B-4DAB-BB92-B12BB5DED96B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00E153A3-6337-45C3-A625-CC1C23D38215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00E153A3-6337-45C3-A625-CC1C23D38215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00E153A3-6337-45C3-A625-CC1C23D38215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00E153A3-6337-45C3-A625-CC1C23D38215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A05B99E-E640-4A6C-907D-D4C571B48181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A05B99E-E640-4A6C-907D-D4C571B48181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A05B99E-E640-4A6C-907D-D4C571B48181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A05B99E-E640-4A6C-907D-D4C571B48181}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2163E14-82B9-45A2-95CC-A0E979E27A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2163E14-82B9-45A2-95CC-A0E979E27A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2163E14-82B9-45A2-95CC-A0E979E27A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2163E14-82B9-45A2-95CC-A0E979E27A45}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

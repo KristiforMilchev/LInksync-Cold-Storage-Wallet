@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
+using System.Net.Http.Headers;
 using ArduinoUploader.Hardware;
 using Newtonsoft.Json;
+using NFTLock.Data;
 using NFTLock.Models;
 using SYNCWallet.Models;
 using SYNCWallet.Services;
@@ -17,14 +19,12 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public int RemainingAttempts { get; set; }
-        public int Os { get; set; }
         public string DefaultPath { get; set; }
         public string ContractABI { get; set; }
         public string ComPort { get; set; }
         public bool ConfigResponse { get; set; }
         public bool IsConfigured { get; set; }
         public bool RecordPK { get; set; }
-        public string PK { get; set; }
         public string Pass { get; set; }
         public bool IsLogged { get; set; }
         public string PublicAddress { get; set; }
@@ -37,8 +37,8 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public TokenContract SelectedContract { get; set; }
         public string TxHash { get; set; }
         public SerialPort _serialPort { get; set; }
-        IUtilities Utilities { get; set; }
-        IAuthenicationService AuthenicationService { get; set; }
+        public IUtilities Utilities { get; set; }
+        public IAuthenicationService AuthenicationService { get; set; }
         public string HideTokenList { get; set; }
         public string HideTokenSend { get; set; }
         public string ShowPinPanel { get; set; }
@@ -49,12 +49,24 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public ErrorCallback ErrorCallback {get; set;}
         public ConfigMode SoftwareType { get; set; }
 
-        public bool CheckConfigured(ConfigMode configMode)
+        public Communication(IAuthenicationService authenicationService, IUtilities utilities)
+        {
+            Utilities = utilities;
+            AuthenicationService = authenicationService;
+        }
+        
+        
+        public string GetDefault()
+        {
+            return PublicAddress;
+        }
+        
+        public bool CheckConfigured(ConfigMode configMode, int os)
         {
             if (configMode == ConfigMode.ColdWallet)
                 return CheckHardware();
 
-            return CheckSoftware();
+            return CheckSoftware(os);
         }
 
         public void PublishError(string title, string message)
@@ -62,9 +74,9 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             ErrorCallback?.Invoke(title, message);
         }
 
-        bool CheckSoftware()
+        bool CheckSoftware(int os)
         {
-            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            var file = $"{Utilities.GetOsSavePath(os)}/wallet.json";
             if (File.Exists(file))
             {
                 var wallet = JsonConvert.DeserializeObject<CryptoWallet>(File.ReadAllText(file));
@@ -75,19 +87,18 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             return false;
         }
 
-        public void WriteInternalStorage(HardwareWallet hardwareWallet)
+        public void WriteInternalStorage(HardwareWallet hardwareWallet, int os)
         {
-            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            var file = $"{Utilities.GetOsSavePath(os)}/wallet.json";
             if (!File.Exists(file))
             {
                 File.WriteAllText(file,JsonConvert.SerializeObject(hardwareWallet));
             }
         }
-
-        public void ReadInternalStorage(string password)
+        public void ReadInternalStorage(string password,  int os)
         {
             
-            var file = $"{Utilities.GetOsSavePath()}/wallet.json";
+            var file = $"{Utilities.GetOsSavePath(os)}/wallet.json";
             if (File.Exists(file))
             {
                 var readAll = File.ReadAllText(file);
@@ -122,9 +133,9 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                     LoginAttempt?.Invoke(false);
                     return;
                  }
-
-                PK = convert.PrivateKey;
-                var wallet = AuthenicationService.UnlockWallet(Pass);
+                
+                AuthenicationService.PK = convert.PrivateKey;
+                var wallet = AuthenicationService.UnlockWallet(Pass, 97);
 
                 PublicAddress = wallet.Address;
 
@@ -149,7 +160,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
                     RemainingAttempts = 3;
                     if (!KeepPrivateSingle)
-                        PK = string.Empty;
+                        AuthenicationService.PK = string.Empty;
 
                 }
             }
@@ -197,7 +208,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
         public void ClearCredentials()
         {
-            PK = string.Empty;
+            AuthenicationService.PK = string.Empty;
             Pass = string.Empty;
         }
 
@@ -220,7 +231,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                     break;
                 case "#SO:":
                     RecordPK = false;
-                    PK = PK.Substring(0, PK.Length - 4);
+                  AuthenicationService.PK =  AuthenicationService.PK.Substring(0,AuthenicationService.PK.Length - 4);
                     break;
                 default:
                     break;
@@ -248,7 +259,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                             {
                                 tpm += getPK[2].Replace(Environment.NewLine, "");
                             }
-                            PK = tpm;
+                            AuthenicationService.PK = tpm;
                             IsLogged = true;
                             SetPublic();
                         }
@@ -311,7 +322,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         {
             try
             {
-                var wallet = AuthenicationService.UnlockWallet(Pass);
+                var wallet = AuthenicationService.UnlockWallet(Pass,97);
 
              
                 PublicAddress = wallet.Address;
@@ -336,7 +347,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
                     RemainingAttempts = 3;
                     if (!KeepPrivateSingle)
-                        PK = string.Empty;
+                        AuthenicationService.PK = string.Empty;
 
                 }
 
@@ -370,8 +381,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
         public void Init()
         {
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+ 
 
             HideTokenList = "none";
             HideTokenSend = "none";
@@ -380,10 +390,6 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             Receipt = "none";
 
             IsDevelopment = true;
-
-            Utilities = new Utilities();
- 
-            Os = Utilities.GetSystemOs();
             RemainingAttempts = 3;
 
 

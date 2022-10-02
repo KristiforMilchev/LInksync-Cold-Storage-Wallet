@@ -9,32 +9,27 @@ namespace NFTLock.Data;
 
 public class AuthenicationHandler : IAuthenicationService
 {
-    ContractService _contractService { get; set; }
-    IUtilities Utilities { get; set; }
-    IContractService ContractService { get; set; }
-    IHardwareService HardwareService { get; set; }
-    ICommunication Communication { get; set; }
-    public AuthenicationHandler()
+    public IUtilities Utilities { get; set; }
+    public IHardwareService HardwareService { get; set; }
+    public string PK { get; set; }
+
+    
+    public AuthenicationHandler(IUtilities utilities, IHardwareService hardwareService)
     {
-        Utilities = ServiceHelper.GetService<IUtilities>();
-        ContractService = ServiceHelper.GetService<IContractService>();
-        HardwareService = ServiceHelper.GetService<IHardwareService>();
-        Communication = ServiceHelper.GetService<ICommunication>();
+        Utilities = utilities;
+        HardwareService = hardwareService;
+         
     }
 
  
-    public string GetDefault()
-    {
-        //WIP
-        return Communication.PublicAddress;
-    }
+
 
     public bool SetupNetwork(string networkName, string networkSymbol, string rpcUrl, int chainID, string blockExplorer)
     {
-        if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalNetworks.json"))
-            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json", "");
+        if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json"))
+            File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json", "");
 
-        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json");
 
         var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
 
@@ -55,7 +50,7 @@ public class AuthenicationHandler : IAuthenicationService
                 TokenSylmbol = networkSymbol
             });
 
-            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
+            File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json", JsonConvert.SerializeObject(convertedNetworkList));
             return true;
         }
 
@@ -64,10 +59,10 @@ public class AuthenicationHandler : IAuthenicationService
 
     public bool ImportToken(string contractAddress, string symbol, int delimiter, decimal supply, int network)
     {
-        if (!File.Exists($"{Utilities.GetOsSavePath()}/LocalTokens.json"))
-            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", "");
+        if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json"))
+            File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", "");
 
-        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json");
+        var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json");
 
         var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
         
@@ -95,23 +90,20 @@ public class AuthenicationHandler : IAuthenicationService
                     }
                 }
             });
-            File.WriteAllText($"{Utilities.GetOsSavePath()}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
+            File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", JsonConvert.SerializeObject(tokenList));
             return true;
         }
     }
 
 
-    public Account  UnlockWallet(string pass)
+    public Account  UnlockWallet(string pass, int chainId)
     {
-         var privateKey = HardwareService.DecryptAesEncoded(Communication.PK, pass);
+         var privateKey = HardwareService.DecryptAesEncoded(PK, pass);
 
         if (string.IsNullOrEmpty(privateKey))
             return null;
 
-        var chainId = 97;
-        if (Communication.ActiveNetwork != null)
-            chainId = Communication.ActiveNetwork.Chainid;
-        
+       
         
         var wallet = new Account(privateKey, chainId);
 
@@ -119,17 +111,7 @@ public class AuthenicationHandler : IAuthenicationService
         return wallet;
     }
 
-    public async Task<List<Token>> GetSupportedTokens(int networkId)
-    {
-         return await ContractService.GetNetworkTokensIntial(networkId);
-        
-    }
-
-    public async Task<List<Token>> GetTokenDetails(int networkId)
-    {
-        return await ContractService.GetNetworkTokens(networkId);
-
-    }
+   
     
 }   
 
