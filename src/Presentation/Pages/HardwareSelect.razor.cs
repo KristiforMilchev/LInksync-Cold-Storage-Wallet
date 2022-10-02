@@ -99,7 +99,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             {
                 if (!string.IsNullOrEmpty(port))
                 {
-                    var firmwareUpdated = HardwareService.CreateNewDevice(port);
+                    var firmwareUpdated = HardwareService.CreateNewDevice(port, Communication.DeviceType);
 
                     if (!firmwareUpdated)
                     {
@@ -114,7 +114,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                         return false;
                     }
 
-                    var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet);
+                    var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet, HardwareService.Os);
 
                     Communication.TriggerLoader.Invoke("none");
                     if (configStatus && firmwareUpdated)

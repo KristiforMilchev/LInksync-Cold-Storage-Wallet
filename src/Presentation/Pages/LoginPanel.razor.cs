@@ -83,7 +83,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                         }));
                      break;
                 case Enums.ConfigMode.HotWallet:
-                    Communication.ReadInternalStorage(passwrod);
+                    Communication.ReadInternalStorage(passwrod, HardwareService.Os);
                     break;
             }
 

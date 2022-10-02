@@ -48,7 +48,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void LoadHotWallet()
         {
-            var configStatus = Communication.CheckConfigured(ConfigMode.HotWallet);
+            var configStatus = Communication.CheckConfigured(ConfigMode.HotWallet, HardwareService.Os);
             if(configStatus)
                 NavigationManager.NavigateTo("LoginPanel");
 

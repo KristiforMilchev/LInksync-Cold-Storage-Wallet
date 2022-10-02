@@ -151,7 +151,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                                 Cmd = "NEW",
                                 Password = passwrod,
                                 PrivateKey = PK
-                            });
+                            }, HardwareService.Os);
                         break;
                 }
 

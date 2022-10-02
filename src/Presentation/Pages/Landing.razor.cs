@@ -1,3 +1,4 @@
+using System.Drawing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -52,6 +53,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         IPaymentService PaymentService { get; set; }
         IHardwareService HardwareService { get; set; }
         ICommunication Communication { get; set; }
+        IContractService ContractService { get; set; }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -74,6 +76,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
             PaymentService = ServiceHelper.GetService<IPaymentService>();
             HardwareService = ServiceHelper.GetService<IHardwareService>();
+            ContractService = ServiceHelper.GetService<IContractService>();
             Communication = ServiceHelper.GetService<ICommunication>();
             Communication.LoginAttempt = Callback;
 
@@ -95,12 +98,12 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             TokenName = "SYNC";
 
             //Load Network Settings
-            Communication.NetworkSettings = await Utilities.SetupNetworks(Communication.Os);
+            Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
             Networks = Communication.NetworkSettings.Where(x=> x.IsProduction == Communication.IsDevelopment).ToList();
             SelectedNetwork = Networks.FirstOrDefault();
             Communication.ActiveNetwork = SelectedNetwork;
-            WalletAddress = AuthenicationService.GetDefault();
-            Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+            WalletAddress = Communication.GetDefault();
+            Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
             Task.Run(() => DefaultToToken());
             NextCheck = DateTime.UtcNow.AddSeconds(20);
         }
@@ -149,7 +152,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             InvokeAsync(async () =>{
                 SelectedNetwork = network;
                 Communication.ActiveNetwork = SelectedNetwork;
-                Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id);
+                Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id);
                 StateHasChanged();
             });
         }
@@ -163,7 +166,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 {
                     if (SelectedNetwork != null)
                     {
-                        var updateTokens =  await AuthenicationService.GetTokenDetails(SelectedNetwork.Id); //Get All tokens and their balance
+                        var updateTokens =  await ContractService.GetNetworkTokens(SelectedNetwork.Id); //Get All tokens and their balance
                         var getNetwork = updateTokens.FirstOrDefault().Contracts.FirstOrDefault().Network;
                         //We don't want  updates in case we have already switched network since last request.
                         if (getNetwork == SelectedNetwork.Id)
@@ -246,7 +249,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             await InvokeAsync(async () =>
             {
               
-                Communication.NetworkSettings = await Utilities.SetupNetworks(Communication.Os);
+                Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
                 Networks = Communication.NetworkSettings.Where(x => x.IsProduction == Communication.IsDevelopment).ToList();
                 StateHasChanged();
 
@@ -259,7 +262,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             await InvokeAsync(async () =>
             {
-                Tokens = await AuthenicationService.GetSupportedTokens(SelectedNetwork.Id); //Get All tokens and their balance
+                Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
                 StateHasChanged();
             });
         }
