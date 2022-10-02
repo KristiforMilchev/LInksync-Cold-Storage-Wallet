@@ -21,7 +21,7 @@
     <PackageReference Include="Nethereum.RPC" Version="4.6.1" />
     <PackageReference Include="Nethereum.RPC.Reactive" Version="4.6.1" />
     <PackageReference Include="Nethereum.Web3" Version="4.6.1" />
-    <ProjectReference Include="../Electron.NET/ElectronNET.API/ElectronNET.API.csproj" />
+    <ProjectReference Include="../../Electron.NET/ElectronNET.API/ElectronNET.API.csproj" />
 
   </ItemGroup>
   
@@ -33,7 +33,10 @@
   
   <ItemGroup>
     <Reference Include="ArduinoUploader">
-      <HintPath>..\ArduinoSketchUploader\Source\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
+      <HintPath>..\..\ArduinoSketchUploader\Source\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
+    </Reference>
+    <Reference Include="ElectronNET.API">
+      <HintPath>..\..\Electron.NET\ElectronNET.API\bin\Release\net6.0\ElectronNET.API.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
