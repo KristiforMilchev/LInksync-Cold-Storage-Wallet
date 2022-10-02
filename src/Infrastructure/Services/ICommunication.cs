@@ -21,6 +21,7 @@ namespace SYNCWallet.Services.Definitions
         public string DefaultPath { get; set; }
         public string ContractABI { get; set; }
         public SerialPort _serialPort { get; set; }
+        public  string ComPort { get; set; }
         public bool ConfigResponse { get; set; }
         public bool IsConfigured { get; set; }
         public bool RecordPK { get; set; }

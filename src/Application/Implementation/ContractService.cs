@@ -392,7 +392,7 @@ namespace NFTLock.Data
                 {
                     Symbol = getNetworkData.TokenSylmbol,
                     Name = getNetworkData.Name,
-                    Logo = "/images/tokenLogos/bsc.png",
+                    Logo = getNetworkData.Logo,
                     IsChainCoin = true,
                     Contracts = new List<TokenContract>
                         {

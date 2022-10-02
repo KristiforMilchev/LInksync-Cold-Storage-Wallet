@@ -114,8 +114,9 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                         return false;
                     }
 
+                    Communication.ComPort = port;
                     var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet, HardwareService.Os);
-
+        
                     Communication.TriggerLoader.Invoke("none");
                     if (configStatus && firmwareUpdated)
                     {
