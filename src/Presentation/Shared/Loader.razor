@@ -1,0 +1,47 @@
+﻿@using SYNCWallet.Models
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
+
+
+<div style="display: @State;
+            flex-direction: column;
+            align-content: space-around;
+            flex-wrap: wrap;
+            height: 100%;
+            justify-content: center;
+            align-items: center;">
+
+    <div class="spinner-border text-danger" role="status">
+        <span class="sr-only">Sending transaction please wait</span>
+    </div>
+    @if (!string.IsNullOrEmpty(BindingData))
+    {
+        <p style="margin-top:10px;">
+            @BindingData
+        </p>
+    }
+</div>
+
+@code{
+    ICommunication Communication { get; set; }
+
+    private string State { get; set; }
+    [Parameter]
+    public string BindingData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Communication = ServiceHelper.GetService<ICommunication>();
+        Communication.TriggerLoader = TriggerLoader;
+        State = "none";
+    }
+
+    public void TriggerLoader(string status)
+    {
+        InvokeAsync(() =>
+        {
+            State = status;
+            StateHasChanged();
+        });
+    }
+}

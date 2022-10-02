@@ -1,0 +1,89 @@
+// Form checkbox
+
+.form-check-input {
+	background-position: left center;
+}
+
+.form-check-input {
+	// -----------------------------------------
+	// outline checkbox
+	// -----------------------------------------
+	&.check-outline {
+		&.outline-success {
+			border: 1px solid $success;
+			background-color: transparent;
+		}
+		&.outline-danger {
+			border: 1px solid $danger;
+			background-color: transparent;
+		}
+		&.outline-warning {
+			border: 1px solid $warning;
+			background-color: transparent;
+		}
+		&.outline-primary {
+			border: 1px solid $primary;
+			background-color: transparent;
+		}
+		&.outline-secondary {
+			border: 1px solid $secondary;
+			background-color: transparent;
+		}
+	}
+	// -----------------------------------------
+	// change bg without click
+	// -----------------------------------------
+	&.check-light-success{
+		background-color: $light-success;
+	}
+	&.check-light-warning{
+		background-color: $light-warning;
+	}
+	&.check-light-danger{
+		background-color: $light-danger;
+	}
+	&.check-light-primary{
+		background-color: $light-primary;
+	}
+	&.check-light-secondary{
+		background-color: $light-secondary;
+	}
+	// -----------------------------------------
+	// change bg on checked
+	// -----------------------------------------
+	// success
+	&.success {
+		&:checked {
+			background-color: $success !important;
+			border-color: $success !important;
+		}
+	}
+	// warning
+	&.warning {
+		&:checked {
+			background-color: $warning !important;;
+			border-color: $warning !important;;
+		}
+	}
+	// danger
+	&.danger {
+		&:checked {
+			background-color: $danger !important;;
+			border-color: $danger !important;;
+		}
+	}
+	// primary
+	&.primary {
+		&:checked {
+			background-color: $primary !important;;
+			border-color: $primary !important;;
+		}
+	}
+	 // secondary
+	&.secondary {
+		&:checked {
+			background-color: $secondary !important;;
+			border-color: $secondary !important;;
+		}
+	}
+}

@@ -1,0 +1,35 @@
+/*******************/
+/*Comment widgets*/
+/*******************/
+
+.comment-widgets {
+    .comment-row {
+        background: transparent;
+        &:hover,
+        &.active {
+            background: rgba(0,0,0,0.025);
+        }
+    }
+}
+
+.comment-text {
+    &:hover .comment-footer,
+    &.active .comment-footer {
+        .action-icons {
+            visibility: visible;
+        }
+    }
+}
+
+.comment-footer {
+    .action-icons {
+        visibility: hidden;
+        a {
+            color: $text-muted;
+            &:hover,
+            &.active {
+                color: $info;
+            }
+        }
+    }
+}

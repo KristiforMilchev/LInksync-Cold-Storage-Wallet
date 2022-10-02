@@ -1,0 +1,42 @@
+﻿@page "/LoginPanel"
+  
+<Loader BindingData="Please wait."></Loader>
+<div class="container FixCenter" id="LoginPanel" style="height:100vh; display:flex;">
+    <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+        <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
+            <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                <img src="/logo.png" style="width: 250px;height: 200px;" alt="homepage" class="light-logo" />
+
+            </div>
+            <div class="row" style="margin-top: 50px;">
+                <div class="card" style="padding: 0;overflow: hidden;">
+                    <div class="card-header bg-light">
+                        <h4 class="mb-0 text-white" style="text-align:center">Login</h4>
+                    </div>
+                    <div class="card-body">
+                 
+                        <div class="form-floating distanceTop">
+                            <input id="LPassword" @bind-value="Password" type="password" minlength="8" maxlength="8" class="form-control inputStyle" placeholder="Test Password">
+                            <label>
+                                <i class="me-2 mdi mdi-lock"></i>
+                                <span class="border-start border-danger ps-3 ">Password</span>
+                            </label>
+                        </div>
+
+                        <div class="row" style="margin-top: 30px;margin-top: 30px;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;">
+                            <button @onclick="LoginPublic" style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                <i class="icon-wallet"></i>
+                                Unlock
+                            </button>
+                        </div>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 

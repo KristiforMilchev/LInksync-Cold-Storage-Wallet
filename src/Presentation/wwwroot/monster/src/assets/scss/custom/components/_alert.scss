@@ -1,0 +1,36 @@
+.alert-primary,
+.alert-warning,
+.alert-success,
+.alert-info,
+.alert-danger {
+	color: $white;
+	.alert-link {
+		color: $white;
+	}
+}
+
+
+.alert {
+	&.customize-alert  {
+		padding: 20px 25px;
+		.btn-close {
+			width: 25px;
+		}
+		.side-line {
+			position: absolute;
+    			width: 3px;
+    			height: 25px;
+    			left: 0;
+    			top:  50%;
+    			transform: translateY(-50%);
+		}
+	}
+}
+
+@include media-breakpoint-down(sm) {
+	.alert {
+		&.customize-alert {
+			padding: 20px 15px;
+		}
+	}
+}

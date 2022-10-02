@@ -1,0 +1,72 @@
+{
+  "_args": [
+    [
+      "@walletconnect/types@1.7.0",
+      "C:\\Linksync\\LinkSynck\\platform"
+    ]
+  ],
+  "_from": "@walletconnect/types@1.7.0",
+  "_id": "@walletconnect/types@1.7.0",
+  "_inBundle": false,
+  "_integrity": "sha512-eoqnF+U04IuMfGIBsqYhAR6SIM2kzcrZM/RCVcomT/lIcsRoBwNxR+86+3Vn12/iaGnuAKn8xDZhZ47SLFmanQ==",
+  "_location": "/@walletconnect/types",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "@walletconnect/types@1.7.0",
+    "name": "@walletconnect/types",
+    "escapedName": "@walletconnect%2ftypes",
+    "scope": "@walletconnect",
+    "rawSpec": "1.7.0",
+    "saveSpec": null,
+    "fetchSpec": "1.7.0"
+  },
+  "_requiredBy": [
+    "/@walletconnect/browser-utils",
+    "/@walletconnect/client",
+    "/@walletconnect/core",
+    "/@walletconnect/http-connection",
+    "/@walletconnect/iso-crypto",
+    "/@walletconnect/qrcode-modal",
+    "/@walletconnect/socket-transport",
+    "/@walletconnect/utils",
+    "/@walletconnect/web3-provider",
+    "/walletconnect"
+  ],
+  "_resolved": "https://registry.npmjs.org/@walletconnect/types/-/types-1.7.0.tgz",
+  "_spec": "1.7.0",
+  "_where": "C:\\Linksync\\LinkSynck\\platform",
+  "author": {
+    "name": "WalletConnect, Inc.",
+    "email": "walletconnect.com"
+  },
+  "bugs": {
+    "url": "https://github.com/walletconnect/walletconnect-monorepo/issues"
+  },
+  "description": "Typescript Types for WalletConnect",
+  "gitHead": "165f7993c2acc907c653c02847fb02721052c6e7",
+  "homepage": "https://github.com/WalletConnect/walletconnect-monorepo/",
+  "keywords": [
+    "wallet",
+    "walletconnect",
+    "ethereum",
+    "jsonrpc",
+    "mobile",
+    "qrcode",
+    "web3",
+    "crypto",
+    "cryptocurrency",
+    "dapp"
+  ],
+  "license": "Apache-2.0",
+  "main": "",
+  "name": "@walletconnect/types",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walletconnect/walletconnect-monorepo.git"
+  },
+  "scripts": {},
+  "types": "index",
+  "version": "1.7.0"
+}

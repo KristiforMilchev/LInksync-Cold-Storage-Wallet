@@ -1,0 +1,281 @@
+//
+// Font Colors
+//
+.text-orange {
+  color: rgba($color: $orange, $alpha: 0.5) !important;
+}
+
+.text-cyan {
+  color: rgba($color: $cyan, $alpha: 0.5) !important;
+}
+
+.text-info {
+  color: rgba($color: $info, $alpha: 0.7) !important;
+}
+
+.text-primary {
+  color: rgba($color: $primary, $alpha: 0.7) !important;
+}
+
+.text-success {
+  color: rgba($color: $success, $alpha: 0.5) !important;
+}
+
+.text-dark {
+  color: $gray-200 !important;
+}
+
+//
+// Button and Background colors
+//
+.bg-cyan,
+.card.bg-cyan,
+.btn-cyan {
+  background-color: rgba($color: $cyan, $alpha: 0.5) !important;
+}
+
+.btn-info,
+.bg-info,
+.card.bg-info,
+.badge-info,
+.label-info {
+  background-color: rgba($color: $info, $alpha: 0.5) !important;
+  border-color: rgba($color: $info, $alpha: 0.5) !important;
+}
+
+.btn-secondary,
+.bg-secondary,
+.card.bg-secondary,
+.badge-secondary {
+  background-color: rgba($color: $secondary, $alpha: 0.5) !important;
+}
+
+.btn-primary,
+.bg-primary,
+.card.bg-primary,
+.badge-primary,
+.label-primary {
+  background-color: rgba($color: $primary, $alpha: 0.5) !important;
+  border-color: rgba($color: $primary, $alpha: 0.5) !important;
+}
+
+.btn-orange,
+.bg-orange,
+.card.bg-orange {
+  background-color: rgba($color: $orange, $alpha: 0.5) !important;
+  border-color: rgba($color: $orange, $alpha: 0.5) !important;
+}
+
+.btn-success,
+.bg-success,
+.card.bg-success,
+.badge-success,
+.label-success {
+  background-color: rgba($color: $success, $alpha: 0.5) !important;
+  border-color: rgba($color: $success, $alpha: 0.5) !important;
+}
+
+.btn-danger,
+.bg-danger,
+.card.bg-danger,
+.card.bg-danger,
+.badge-danger,
+.label-danger {
+  background-color: rgba($color: $danger, $alpha: 0.5) !important;
+  border-color: rgba($color: $danger, $alpha: 0.5) !important;
+}
+
+.bg-warning,
+.card.bg-warning,
+.btn-warning,
+.badge-warning,
+.round.round-warning {
+  background-color: rgba($color: $warning, $alpha: 0.5) !important;
+  border-color: rgba($color: $warning, $alpha: 0.5) !important;
+}
+
+.bg-white {
+  background-color: $theme-dark-card-bg !important;
+}
+
+.bg-dark {
+  background-color: $gray-600 !important;
+}
+
+.round.round-danger {
+  background: rgba($color: $danger, $alpha: 0.5);
+}
+
+.bg-light {
+  background-color: $theme-dark-bg-light !important;
+}
+
+.bg-light-info,
+.btn-light-info,
+.alert-light-info {
+  background-color: rgba($color: $info, $alpha: 0.3) !important;
+  border-color: rgba($color: $info, $alpha: 0.3) !important;
+}
+
+.bg-light-success,
+.btn-light-success,
+.alert-light-success,
+.email-app .email-table .selected {
+  background-color: rgba($color: $success, $alpha: 0.3) !important;
+  border-color: rgba($color: $success, $alpha: 0.3) !important;
+}
+
+.bg-light-warning,
+.btn-light-warning,
+.alert-light-warning,
+.mark, mark {
+  background-color: rgba($color: $warning, $alpha: 0.3) !important;
+  border-color: rgba($color: $warning, $alpha: 0.3) !important;
+}
+
+.bg-light-danger,
+.alert-light-danger,
+.btn-light-danger {
+  background-color: rgba($color: $danger, $alpha: 0.3) !important;
+  border-color: rgba($color: $danger, $alpha: 0.3) !important;
+}
+
+.bg-light-cyan,
+.btn-light-cyan {
+  background-color: #405863 !important;
+  border-color: #405863 !important;
+}
+
+.bg-light-secondary,
+.btn-light-secondary,
+.alert-light-secondary {
+  background-color: rgba($color: $secondary, $alpha: 0.3) !important;
+  border-color: rgba($color: $secondary, $alpha: 0.3) !important;
+}
+
+.bg-light-inverse {
+  background-color: #544f4f !important;
+}
+
+.bg-light-primary,
+.btn-light-primary,
+.alert-light-primary {
+  background-color: rgba($color: $purple, $alpha: 0.3) !important;
+  border-color: rgba($color: $purple, $alpha: 0.3) !important;
+}
+
+.btn-light-primary {
+  &:hover, &:focus {
+    background-color: $primary !important;
+    border-color: $primary !important;
+    color: $white !important;
+  }
+}
+
+.btn-light-success {
+  &:hover, &:focus {
+    background-color: $success !important;
+    border-color: $success !important;
+    color: $white !important;
+  }
+}
+
+.btn-light-warning {
+  &:hover, &:focus {
+    background-color: $warning !important;
+    border-color: $warning !important;
+    color: $white !important;
+  }
+}
+
+.btn-light-danger {
+  &:hover, &:focus {
+    background-color: $danger !important;
+    border-color: $danger !important;
+    color: $white !important;
+  }
+}
+
+.btn-light-secondary {
+  &:hover, &:focus {
+    background-color: $secondary !important;
+    border-color: $secondary !important;
+    color: $white !important;
+  }
+}
+
+.btn-light-info {
+  &:hover, &:focus {
+    background-color: $info !important;
+    border-color: $info !important;
+    color: $white !important;
+  }
+}
+
+.badge-light {
+  background-color: $gray-800;
+  color: $theme-dark-text-color;
+}
+
+.btn-light {
+  background-color: $gray-800;
+  border-color: $gray-800;
+  color: $theme-dark-text-color;
+}
+
+.badge-light-success {
+  background-color: #516d55;
+}
+
+.badge-light-info {
+  background-color: #27546f;
+}
+
+.badge-light-danger {
+  background-color: #583a41;
+}
+
+.alert-primary {
+  background-color: rgba($color: $primary, $alpha: 0.4);
+  border-color: rgba($color: $primary, $alpha: 0.3);
+  color: $purple;
+}
+
+.alert-secondary {
+  background-color: rgba($color: #475667, $alpha: 0.4);
+  border-color: rgba($color: #dee2e7, $alpha: 0.3);
+  color: $gray-600;
+}
+
+.alert-success {
+  background-color: rgba($color: $success, $alpha: 0.4);
+  border-color: rgba($color: $success, $alpha: 0.3);
+}
+
+.alert-danger {
+  background-color: rgba($color: $danger, $alpha: 0.4);
+  border-color: rgba($color: $danger, $alpha: 0.3);
+}
+
+.alert-warning {
+  background-color: rgba($color: $warning, $alpha: 0.4);
+  border-color: rgba($color: $warning, $alpha: 0.3);
+}
+
+.alert-info {
+  background-color: rgba($color: $info, $alpha: 0.4);
+  border-color: rgba($color: $info, $alpha: 0.3);
+}
+
+.alert-light {
+  background-color: rgba($color: #fdfefe, $alpha: 0.4);
+  border-color: rgba($color: #fcfdfe, $alpha: 0.3);
+}
+
+.alert-dark {
+  background-color: rgba($color: $dark, $alpha: 0.4);
+  border-color: rgba($color: $dark, $alpha: 0.3);
+}
+
+
+

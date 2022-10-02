@@ -1,0 +1,83 @@
+// 
+// Charts index & index2 [common]
+// 
+.revenue {
+    position: relative;
+    .ct-series-a .ct-line {
+        stroke: $info; 
+        stroke-width: 1px;
+    }
+    .ct-series-a .ct-point {
+        stroke: $info; 
+        stroke-width: 5px;
+    }
+    .ct-series-b .ct-line {
+        stroke: $success;
+        stroke-width: 1px;
+    }
+    .ct-series-b .ct-point {
+        stroke: $success;
+        stroke-width: 5px;
+    }
+    .ct-series-a .ct-area {
+        fill: $info;
+        fill-opacity: 0.2;
+    }
+    .ct-series-b .ct-area {
+        fill: $success;
+        fill-opacity: 0.2;
+    }
+}
+
+// 
+// Index & Index5 [common]
+// 
+.round-overlap {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    left: 0;
+    right: 0;
+    top: 107px;
+    margin: 0 auto;
+    border: 2px solid $border-color;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+        line-height: 150px;
+    }
+}
+
+
+.sales-diff {
+    position: relative;
+    .ct-series-a .ct-slice-donut {
+        stroke: $success;
+    }
+    .ct-series-b .ct-slice-donut {
+        stroke: $light;
+    }
+    .ct-series-c .ct-slice-donut {
+        stroke: $info;
+    }
+}
+
+// 
+// project of the month [common]
+// 
+.stylish-table {
+    tbody tr {
+        border-left: 4px solid transparent;
+        &:hover,
+        &.active {
+            border-left: 4px solid $info;
+        }
+    }
+    tbody td {
+        small {
+            line-height: 12px;
+        }
+    }
+}

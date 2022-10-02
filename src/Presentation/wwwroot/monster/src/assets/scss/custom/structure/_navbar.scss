@@ -1,0 +1,195 @@
+//
+// Topbar
+//
+@import "notify";
+.topbar {
+  position: relative;
+  height: $topbar-height;
+  background: $topbar;
+  z-index: 50;
+  transition: $transitions;
+  box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.05);
+  .navbar-collapse {
+    padding: $navbar-collapse-padding;
+  }
+  .top-navbar {
+    min-height: $topbar-height;
+    padding: 0;
+    .dropdown-toggle::after {
+      display: none;
+    }
+    .navbar-header {
+      line-height: $topbar-navlink-height;
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: $topbar-navbrand-padding;
+        margin: 0;
+        .dark-logo {
+          display: none;
+        }
+        .logo-icon {
+          margin-right: 5px;
+        }
+      }
+    }
+    .navbar-nav > .nav-item > .nav-link {
+      line-height: $topbar-navlink-height;
+      height: $topbar-navlink-height;
+      padding: $topbar-navlink-padding;
+      font-size: $topbar-navlink-font-size;
+    }
+    .navbar-nav > .nav-item {
+      transition: 0.2s ease-in;
+      &:hover {
+        background: $transparent-dark-bg;
+      }
+    }
+  }
+  .user-dd,
+  .mailbox {
+    width: $topbar-dropdown-width;
+  }
+  .nav-toggler,
+  .topbartoggler {
+    color: $theme-light;
+    padding: $topbar-togglar-padding;
+  }
+}
+
+//
+// Search box
+//
+.app-search {
+  position: relative;
+  margin-top: 13px;
+  margin-right: 10px;
+  display: inline-block;
+  input {
+    width: 200px;
+    font-size: $topbar-navlink-text-size;
+    transition: 0.5s ease-in;
+    &:focus {
+      width: 240px;
+    }
+  }
+  .srh-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    font-size: $topbar-navlink-text-size;
+  }
+}
+
+//
+// Mega Dropdown
+//
+.topbar {
+  .mega-dropdown {
+    position: static;
+    .dropdown-menu {
+      padding: 30px;
+      @extend %square;
+      width: 100%;
+      max-height: $mega-dd-height;
+      overflow: auto;
+    }
+  }
+}
+
+//
+// Topbar Dropdown
+//
+.topbar {
+  .dropdown-menu {
+    padding-top: 0;
+    border: 0;
+    box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.1);
+    .with-arrow {
+      position: absolute;
+      top: -10px;
+      width: 40px;
+      height: 10px;
+      overflow: hidden;
+      > span {
+        @extend %rotate45;
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        content: "";
+        top: 3px;
+        left: 15px;
+        background-color: $white;
+        border-radius: 6px 0 0 0;
+      }
+    }
+    &.dropdown-menu-right {
+      .with-arrow {
+        right: 0px;
+        > span {
+          right: 20px;
+          left: auto;
+        }
+      }
+    }
+  }
+}
+
+//
+// Mobile View Responsive
+//
+@media (max-width: 767px) {
+  .topbar .top-navbar {
+    .navbar-collapse.show,
+    .navbar-collapse.collapsing {
+      display: flex;
+      width: 100%;
+      border-top: 1px solid $border-color;
+    }
+    .navbar-nav {
+      flex-direction: row;
+      .dropdown {
+        position: static;
+      }
+    }
+    .navbar-nav > .nav-item > .nav-link {
+      padding: 0 10px;
+    }
+    .navbar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .dropdown-menu {
+      position: absolute;
+      width: 100%;
+      .with-arrow {
+        display: none;
+      }
+    }
+  }
+}
+
+//
+// Landspace
+//
+@media only screen and (max-width: 767px) and (orientation: landscape) {
+  .mailbox {
+    .message-center {
+      height: 110px !important;
+    }
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .topbar {
+    .navbar-expand-md .navbar-collapse {
+      justify-content: space-between;
+    }
+  }
+}

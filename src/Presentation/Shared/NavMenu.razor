@@ -1,0 +1,203 @@
+﻿@using NFTLock.Data
+@using SYNCWallet.Services
+@using SYNCWallet.Services.Definitions
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+
+<button class="btn btn-light-danger text-danger" style="display:none;" id="SidebarMenu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Offcanvas Right</button>
+ 
+ 
+ 
+<div class="offcanvas offcanvas-end show" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="true" role="dialog" style="background:rgb(42 43 50) !important;">
+	<div class="offcanvas-header">
+		<h5 class="offcanvas-title" id="offcanvasExampleLabel" style="text-align:center;"></h5>
+		<button style="display:none;" type="button" id="closeHidden" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+ 	</div>
+	<div class="offcanvas-body">
+		<div id="SetupNetworkPanel">
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="NetworkName" class="form-control inputStyle" placeholder="BSC Mainnet">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Network Name</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="RPCUrl" class="form-control inputStyle" placeholder="https://bsc-dataseed1.ninicoin.io">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">New RPC URL</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="ChainID" class="form-control inputStyle" placeholder="56">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Chain ID</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="NetworkSymbol" class="form-control inputStyle" placeholder="BNB">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Currency Symbol</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="BlockExplorer" class="form-control inputStyle" placeholder="https://bscscan.com/">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Block Explorer</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="row" style="margin-top: 30px;margin-top: 30px;
+								display: flex;
+								flex-direction: row;
+								justify-content: center;">
+				<button style="width: 300px;" @onclick="ImportNetwork"  type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+					<i class="icon-wallet"></i>
+					Add Network
+				</button>
+			</div>
+		</div>
+		<div id="ImportTokenSettings" style="display:none;">
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @onchange="@((ChangeEventArgs __e)  => ContractUpdated(__e?.Value?.ToString()))" class="form-control inputStyle" placeholder="test">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Contract Address</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="Symbol" class="form-control inputStyle" placeholder="test">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">SYMBOL</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="flexInnerRow">
+				<div class="form-floating distanceTop" style="    width: 100%;">
+					<input id="TokensToSend" type="text" @bind-value="Decimals" class="form-control inputStyle" placeholder="test">
+					<label>
+						<i class="me-2 icon-wallet"></i>
+						<span class="border-start border-danger ps-3 ">Decimals</span>
+					</label>
+
+				</div>
+			</div>
+			<div class="row" style="margin-top: 30px;margin-top: 30px;
+								display: flex;
+								flex-direction: row;
+								justify-content: center;">
+				<button style="width: 300px;" @onclick="ImportToken" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+					<i class="icon-wallet"></i>
+					Import Token
+				</button>
+			</div>
+			<div class="row">
+				<p style="padding: 28px;text-align: justify;">
+					Anyone can create a BEP20 token on BSC with any name, including creating fake versions of existing tokens and tokens that claim to represent projects that do not have a token.
+					If you interact with an unverified token you are at a risk losing all of your wallet assets due to fragulent proxies that drain assets!
+				</p>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+
+@code {
+
+	[Parameter]
+	public EventCallback NetworkAdded { get; set; }
+
+	[Parameter]
+	public EventCallback TokenImported { get; set; }
+
+
+	//Import Network Binding
+	public string NetworkName {get; set;}
+	public string  RPCUrl { get; set; }
+	public int ChainID { get; set; }
+	public string NetworkSymbol {get; set;}
+	public string BlockExplorer { get; set; }
+
+	//Import Token Binding
+	public string ContractAddress { get; set; }
+	public string Symbol { get; set; }
+	public int Decimals { get; set; }
+	public decimal TotalSupply{ get; set; }
+
+	IUtilities Utilities { get; set; }
+	IAuthenicationService AuthenicationService { get; set; }
+	ICommunication Communication { get; set; }
+	IContractService ContractService { get; set; }
+
+	private void OpenMenu(string location)
+	{
+		NavigationManager.NavigateTo(location);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		Utilities = ServiceHelper.GetService<IUtilities>();
+		AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
+		Communication = ServiceHelper.GetService<ICommunication>();
+		ContractService = ServiceHelper.GetService<IContractService>();
+	}
+
+
+	private async void ImportNetwork()
+	{
+
+
+		await JS.InvokeVoidAsync("ImportNewNetwork");
+		var result = AuthenicationService.SetupNetwork(NetworkName, NetworkSymbol, RPCUrl, ChainID, BlockExplorer);
+		await NetworkAdded.InvokeAsync();
+	}
+
+
+	private async void ImportToken()
+	{
+		await JS.InvokeVoidAsync("ImportTokens");
+
+		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, TotalSupply, Communication.ActiveNetwork.Id);
+		await TokenImported.InvokeAsync();
+
+	}
+
+	private void ContractUpdated(string value)
+	{
+		ContractAddress = value;
+		InvokeAsync(async () =>
+		{
+			var tokenData = await ContractService.CheckTokenDetails(value, Communication.ActiveNetwork.Endpoint);
+			Symbol = tokenData.Symbol;
+			Decimals = tokenData.Decimals;
+			TotalSupply = tokenData.Supply;
+			StateHasChanged();
+		});
+	}
+
+}

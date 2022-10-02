@@ -1,0 +1,76 @@
+// Form
+.form-check-input {
+	background-color: $theme-dark-bg-layout;
+	border: 1px solid $theme-dark-border-color;
+	&:checked {
+		background-color: $info;
+		border-color: $info;
+	}
+}
+
+// Table
+
+// tables
+.table-primary,
+.table-success,
+.table-info,
+.table-warning,
+.table-danger {
+  --bs-table-bg: unset;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+	--bs-table-accent-bg: #313642;
+}
+
+.table-danger,
+.table-danger > th,
+.table-danger > td {
+  background-color: rgba($color: $danger, $alpha: 0.2) !important;
+}
+
+.table-success,
+.table-success > th,
+.table-success > td {
+  background-color: rgba($color: $success, $alpha: 0.2) !important;
+}
+
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+  background-color: rgba($color: $primary, $alpha: 0.2) !important;
+}
+
+.table-info,
+.table-info > th,
+.table-info > td {
+  background-color: rgba($color: $info, $alpha: 0.2) !important;
+}
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: rgba($color: $warning, $alpha: 0.2) !important;
+}
+
+// Form color borders
+
+.form-control.border.border-warning {
+  border-color: $warning !important;
+}
+
+.form-control.border.border-info {
+  border-color: $info !important;
+}
+
+.form-control.border.border-danger {
+  border-color: $danger !important;
+}
+
+.form-control.border.border-primary {
+  border-color: $primary !important;
+}
+
+.form-control.border.border-success {
+  border-color: $success !important;
+}

@@ -1,0 +1,431 @@
+//
+// Button lists margin
+//
+.button-group {
+	.btn {
+		margin-bottom: 8px;
+		margin-right: 8px;
+	}
+}
+
+//
+// Circle Buttons
+//
+// There are mixins which we have created in mixins/mix_buttons
+
+.btn-circle {
+	border-radius: 100%;
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+	line-height: 30px;
+
+	// Different Size of Buttons
+	// #####################################################################
+	&.btn-sm {
+		width: 35px;
+		height: 35px;
+		padding: 8px 10px;
+		font-size: 14px;
+	}
+	&.btn-lg {
+		width: 50px;
+		height: 50px;
+		padding: 14px 10px;
+		font-size: 18px;
+		line-height: 23px;
+	}
+	&.btn-xl {
+		width: 70px;
+		height: 70px;
+		padding: 14px 15px;
+		font-size: 24px;
+	}
+}
+
+//
+// Rounded Buttons
+//
+// There are mixins which we have created in mixins/mix_buttons
+
+.btn-rounded {
+	border-radius: 60px;
+	padding: 7px 18px;
+
+	// Different Size of Buttons
+	// #####################################################################
+	&.btn-xs {
+		padding: .25rem .5rem;
+		font-size: 10px;
+	}
+	&.btn-sm {
+		padding: .25rem .5rem;
+		font-size: 12px;
+	}
+	&.btn-md {
+		padding: 12px 35px;
+		font-size: 16px;
+	}
+	&.btn-lg {
+		padding: .75rem 1.5rem;
+	}
+}
+
+//
+// Extra Small Button
+//
+.btn-xs {
+    padding: .25rem .5rem;
+    font-size: 10px;
+}
+
+//
+// Active with icons
+//
+.btn {
+	.text-active {
+		display: none;
+	}
+	&.active {
+		.text-active {
+			display: inline-block;
+		}
+	}
+}
+
+// ------------------------------------------
+// Buttons
+// ------------------------------------------
+button:focus {
+	outline: 0;
+}
+
+.btn-danger,
+.btn-secondary,
+.btn-primary,
+.btn-info,
+.btn-warning,
+.btn-success,
+ {
+	color: $white;
+	&:hover,
+	&:focus,
+	&.disabled,
+	&:disabled,
+	&.active {
+		color: $white;
+	}
+}
+
+.btn-outline-danger,
+.btn-outline-primary,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-success {
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-check {
+	&:checked,
+	&.active {
+		&+.btn-outline-danger,
+		&+.btn-outline-primary,
+		&+.btn-outline-info,
+		&+.btn-outline-warning,
+		&+.btn-outline-success {
+			color: $white;
+		}
+	}
+}
+
+.btn-circle {
+	border-radius: 100%;
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+	line-height: 30px;
+	&.btn-sm {
+		width: 35px;
+		height: 35px;
+		padding: 8px 10px;
+		font-size: 14px;
+	}
+	&.btn-lg {
+		width: 50px;
+		height: 50px;
+		padding: 14px 10px;
+		font-size: 18px;
+		line-height: 23px;
+	}
+	&.btn-xl {
+		width: 70px;
+		height: 70px;
+		padding: 14px 15px;
+		font-size: 24px;
+	}
+}
+
+.btn-xs {
+	padding: 0.25rem 0.5rem;
+	font-size: 10px;
+}
+
+.btn-rounded {
+	border-radius: 60px;
+	padding: 7px 18px;
+
+	&.btn-lg {
+		padding: 0.75rem 1.5rem;
+	}
+	&.btn-sm {
+		padding: 0.25rem 0.5rem;
+		font-size: 12px;
+	}
+	&.btn-xs {
+		padding: 0.25rem 0.5rem;
+		font-size: 10px;
+	}
+	&.btn-md {
+		padding: 12px 35px;
+		font-size: 16px;
+	}
+}
+
+.btn-default {
+	background-color: $info;
+	color: $white;
+	&:hover {
+		color: $white;
+	}
+}
+
+// ------------------------------------------
+// social buttons
+// ------------------------------------------
+.btn-facebook {
+	color: $white;
+	background-color: #3b5998;
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-twitter {
+	color: $white;
+	background-color: #55acee;
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-linkedin {
+	color: $white;
+	background-color: #007bb6;
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-dribbble {
+	color: $white;
+	background-color: #ea4c89;
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-googleplus {
+	color: $white;
+	background-color: #dd4b39;
+	&:hover {
+		color: $white;
+	}
+}
+
+.btn-instagram {
+	color: $white;
+	background-color: #3f729b;
+}
+
+.btn-pinterest {
+	color: $white;
+	background-color: #cb2027;
+}
+
+.btn-dropbox {
+	color: $white;
+	background-color: #007ee5;
+}
+
+.btn-flickr {
+	color: $white;
+	background-color: #ff0084;
+}
+
+.btn-tumblr {
+	color: $white;
+	background-color: #32506d;
+}
+
+.btn-skype {
+	color: $white;
+	background-color: #00aff0;
+}
+
+.btn-youtube {
+	color: $white;
+	background-color: #ff0000;
+}
+
+.btn-github {
+	color: $white;
+	background-color: #171515;
+}
+
+.button-group {
+	.btn {
+		margin-bottom: 8px;
+		margin-right: 8px;
+	}
+}
+.no-button-group .btn {
+	margin-bottom: 5px;
+	margin-right: 0px;
+}
+
+.btn .text-active {
+	display: none;
+}
+
+.btn.active .text-active {
+	display: inline-block;
+}
+
+.btn.active .text {
+	display: none;
+}
+
+// ------------------------------------------
+// Dropdown animation effect
+// ------------------------------------------
+ @-webkit-keyframes animation-dropdown-menu-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes animation-dropdown-menu-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@-webkit-keyframes animation-dropdown-menu-move-up {
+	from {
+		top: 71px;
+	}
+	to {
+		top: 70px;
+	}
+}
+@keyframes animation-dropdown-menu-move-up {
+	from {
+		top: 71px;
+	}
+	to {
+		top: 70px;
+	}
+}
+
+.dropdown-menu-animate-up {
+	-webkit-animation: animation-dropdown-menu-fade-in 0.5s ease 1, animation-dropdown-menu-move-up 0.5s ease-out 1;
+	animation: animation-dropdown-menu-fade-in 0.5s ease 1, animation-dropdown-menu-move-up 0.5s ease-out 1;
+}
+
+// ------------------------------------------
+// Light Color Button Hover effect
+// ------------------------------------------
+.btn-light-primary {
+	&:hover {
+		background-color: $primary;
+		border-color: $primary;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+.btn-light-secondary {
+	&:hover {
+		background-color: $secondary;
+		border-color: $secondary;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+.btn-light-success {
+	&:hover {
+		background-color: $success;
+		border-color: $success;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+.btn-light-info {
+	&:hover {
+		background-color: $info;
+		border-color: $info;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+.btn-light-warning {
+	&:hover {
+		background-color: $warning;
+		border-color: $warning;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+.btn-light-danger {
+	&:hover {
+		background-color: $danger;
+		border-color: $danger;
+		color: $white !important;
+		svg, i  {
+			color: $white !important;
+		}
+	}
+}
+
+
+.btn-close {
+	background-size: 11px;
+}
+
+.remove-close-icon {
+	.btn-close {
+		background: none;
+		opacity: 1;
+	}
+}

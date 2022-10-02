@@ -1,0 +1,151 @@
+﻿.flexInnerRow {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.dropdown-menu.show {
+    display: block;
+    position: absolute !important;
+    left: 68% !important;
+    top: 4% !important;
+    background: #282931;
+}
+
+.contentCard {
+    height: 650px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* (1280x720) Galaxy Note 2, WXGA */
+@media only screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .contentCard {
+        height: 450px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+/* (1280x1024) SXGA Display */
+@media screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .contentCard {
+        height: 450px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+/* (1366x768) WXGA Display */
+@media screen and (max-width: 1366px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .contentCard {
+        height: 450px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+/* (1440x900) WXGA+ Display */
+@media screen and (max-width: 1440px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .contentCard {
+        height: 450px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+/* (1440x900) WXGA+ Display */
+@media screen and (max-height: 908px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .contentCard {
+        height: 450px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+/* (1600x900) HD+ Display */
+@media screen and (max-width: 1600px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 60%;
+        max-width: 100%;
+    }
+}
+
+/* (1920x1080) Full HD Display */
+@media screen and (max-width: 1920px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+}

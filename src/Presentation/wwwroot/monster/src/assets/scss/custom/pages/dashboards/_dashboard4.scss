@@ -1,0 +1,46 @@
+.total-sales {
+    position: relative;
+    .ct-series-a .ct-bar {
+        stroke: #0f8edd;
+    }
+    .ct-series-b .ct-bar {
+        stroke: #11a0f8;
+    }
+    .ct-series-c .ct-bar {
+        stroke: #51bdff;
+    }
+}
+
+.ct-chart {
+    position: relative;
+    .ct-series-a .ct-slice-donut {
+        stroke: $success;
+    }
+    .ct-series-b .ct-slice-donut {
+        stroke: $light;
+    }
+    .ct-series-c .ct-slice-donut {
+        stroke: $info;
+    }
+}
+
+// 
+// Set height of calendar
+// 
+.dashboard-calendar {
+    .fc-scroller {
+        overflow: hidden !important;
+    }
+}
+@media (min-width: 1800px){
+    .dashboard-calendar {
+        .fc-view {
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 479px;
+        }
+        .fc td, .fc th {
+            border-width: 0;
+        }
+    }
+}
