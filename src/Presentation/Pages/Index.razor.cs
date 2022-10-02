@@ -59,14 +59,6 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void LoadColdWallet()
         {
-            // if(Communication.Os == 1)
-            // {
-            //   
-            // }
-            // else
-            // {
-            //     Communication.PublishError("Not supported",$"This feature is not supported under Linux and Mac due to kernal compatabilities.");
-            // }
             Communication.SoftwareType = ConfigMode.ColdWallet;
             NavigationManager.NavigateTo("HardwareSelect");
         }

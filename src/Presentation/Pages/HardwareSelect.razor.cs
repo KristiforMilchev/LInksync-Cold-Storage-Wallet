@@ -101,18 +101,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 {
                     var firmwareUpdated = HardwareService.CreateNewDevice(port, Communication.DeviceType);
 
-                    if (!firmwareUpdated)
-                    {
-
-                        await InvokeAsync(() =>
-                        {
-                            ShowPicker = "flex";
-                            Communication.TriggerLoader.Invoke("none");
-                            StateHasChanged();
-
-                        });
-                        return false;
-                    }
+                    if (!await CheckFirmwareUpdated(firmwareUpdated)) return false;
 
                     Communication.ComPort = port;
                     var configStatus = Communication.CheckConfigured(ConfigMode.ColdWallet, HardwareService.Os);
@@ -135,8 +124,23 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             }
             catch (Exception e)
             {
+                return false;
+            }
 
-                throw;
+            return true;
+        }
+
+        private async Task<bool> CheckFirmwareUpdated(bool firmwareUpdated)
+        {
+            if (!firmwareUpdated)
+            {
+                await InvokeAsync(() =>
+                {
+                    ShowPicker = "flex";
+                    Communication.TriggerLoader.Invoke("none");
+                    StateHasChanged();
+                });
+                return false;
             }
 
             return true;
