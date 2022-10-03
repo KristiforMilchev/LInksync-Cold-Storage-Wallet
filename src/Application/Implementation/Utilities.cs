@@ -15,10 +15,10 @@ namespace SYNCWallet.Services.Implementation
         {
 
             if (!File.Exists($"{GetOsSavePath(os)}/LocalNetworks.json"))
-                return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
+                return await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LinkSync-Whitelistings/main/NetworkSettings.json");
             else
             {
-                var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/NetworkSettings.json");
+                var whiteListedNetworks = await GetRequest<List<NetworkSettings>>(@"https://raw.githubusercontent.com/KristiforMilchev/LinkSync-Whitelistings/main/NetworkSettings.json");
 
                 var filesContent = File.ReadAllText($"{GetOsSavePath(os)}/LocalNetworks.json");
                 var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);

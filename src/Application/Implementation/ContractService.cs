@@ -271,7 +271,7 @@ namespace NFTLock.Data
 
             // On startup, it gets thge list of officially supported tokens by running a query against githubs API
             if (Communication.ListedTokens == null)
-                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LinkSync-Whitelistings/contents/Whitelist");
 
             //Define a local collection of token.
             var tokens = new List<Token>();
@@ -294,7 +294,8 @@ namespace NFTLock.Data
                             {
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
-                                Network = networkId
+                                Network = networkId,
+
                                 //V1 doesn't support native token prices. TODO V2
                                // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
@@ -350,7 +351,7 @@ namespace NFTLock.Data
             //In case tokens exist loop over the tokens and convert them to a system token
             foreach (var token in listedTokenData)
             {
-                var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/Models/Tokens/{token.name}/token.json");
+                var currentToken = await Utilities.GetRequest<Token>($"https://raw.githubusercontent.com/KristiforMilchev/LinkSync-Whitelistings/main/Whitelist/{token.name}/token.json");
                 var contracts = new List<TokenContract>();
 
                 //Get the current contract on the network
@@ -358,10 +359,17 @@ namespace NFTLock.Data
                 if (getContract != null)
                 {
                     var exists = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+
                     if (exists != null)
+                    {
+                        if (string.IsNullOrEmpty(exists.PairName))
+                            exists.PairName = getContract.PairName;
+                        
                         currentToken.Contracts = new List<TokenContract>{
                             exists
                         };
+                    }
+                    
                     tokens.Add(currentToken);
                 }
 
@@ -374,7 +382,7 @@ namespace NFTLock.Data
         {
             // On startup, it gets thge list of officially supported tokens by running a query against githubs API
             if(Communication.ListedTokens == null)
-                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LInksync-Cold-Storage-Wallet/contents/Models/Tokens");
+                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LinkSync-Whitelistings/contents/Whitelist"); // 
 
             //Define a local collection of token.
             var tokens = new List<Token>();
@@ -401,7 +409,7 @@ namespace NFTLock.Data
                                 ContractAddress = getNetworkData.CurrencyAddress,
                                 UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
                                 Network = networkId,
-                                CurrentPrice = tokenPrice
+                                CurrentPrice = tokenPrice,
                                 //V1 doesn't support native token prices. TODO V2
                                // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
@@ -655,7 +663,7 @@ namespace NFTLock.Data
                         (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
                         getContract.MarketCap = tokenMarketData.mCap;
                         getContract.CirculatingSupply = tokenMarketData.circulating;
-
+                        
                         if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress) != null)
                             CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
                         CachedTokenContracts.Add(getContract);
@@ -774,6 +782,13 @@ namespace NFTLock.Data
 
         }
 
+        public async Task<(decimal,decimal)> GetContractLpSupply(TokenContract token)
+        {
+            var network = Communication.NetworkSettings.FirstOrDefault(x => x.Id == token.Network);
+            var x = await CheckUserBalanceForContract(token.MainLiquidityPool, token.ContractAddress, network.Endpoint, token.Decimals); // Main token 
+            var y = await CheckUserBalanceForContract(token.MainLiquidityPool, token.PairTokenAddress, network.Endpoint, 18); //Pair Token
 
+            return (x, y);
+        }
     }
 }

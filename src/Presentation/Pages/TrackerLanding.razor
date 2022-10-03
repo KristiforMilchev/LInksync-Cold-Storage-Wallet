@@ -1,5 +1,6 @@
 
 @page "/Tracker"
+@using SYNCWallet.Models
 
 <style>
     #morris-donut-chart  text{
@@ -58,14 +59,14 @@
                                         <div class="mb-2">Market Capital</div>
                                          <i class="fas fa-piggy-bank fs-6 mb-2"></i>
                                         <div>
-                                            $ 26,361.13
+                                            @Communication.SelectedContract.MarketCap.ToString("C2")
                                         </div>
                                     </div>
                                     <div class="col-6 col-md-2 border-end">
                                         <div class="mb-2">Liquidity</div>
                                         <i class="fas fa-wine-glass fs-6 mb-2"></i>
                                         <div>
-                                            31 BNB
+                                            @PairPoolSupply.ToString("F1") @Communication.SelectedContract.PairName
                                         </div>
                                     </div>
                                     <div class="col-6 col-md-2 border-end">
@@ -79,14 +80,14 @@
                                         <div class="mb-2">Network</div>
                                         <i class="fas fa-wifi fs-6 mb-2"></i>
                                         <div>
-                                            Binance Smart Chain
+                                            @Communication.ActiveNetwork.Name
                                         </div>
                                     </div>
                                     <div class="col-6 col-md-2 ">
                                         <div class="mb-2">Price</div>
                                         <i class="fas fa-dollar-sign fs-6 mb-2"></i>
                                         <div>
-                                            $ 0.000000000047
+                                            $ @Utilities.TruncateDecimals(@Communication.SelectedContract.CurrentPrice) 
                                         </div>
                                     </div>
             
@@ -107,7 +108,7 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Total Supply</h4>
                                     <div class="text-end">
-                                        <h2 class="fw-light mb-0"><i class="ti-arrow-up text-success"></i> 1 000 000 000 000</h2>
+                                        <h2 class="fw-light mb-0"><i class="ti-arrow-up text-success"></i> @Communication.SelectedContract.Supply</h2>
                                         <span class="text-muted">Self reported</span>
                                     </div>
                                     <span class="text-info">100%</span>
@@ -118,8 +119,8 @@
                             </div>
                         </div>
                         <div class="row" style="min-height: 399px;">
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card" style="padding: 0;">
+                                <div class="card-body" style="height: 390px; overflow: hidden; overflow-y: auto;">
                                     <div class="d-md-flex align-items-center">
                                         <div>
                                             <h4 class="card-title">Hot Links</h4>
@@ -129,70 +130,113 @@
                                         <table class="table stylish-table no-wrap v-middle">
                 
                                             <tbody>
-                                            <tr>
-                                                <td>
+                                            @foreach (var link in Communication.SelectedToken.Links)
+                                            {
+                                                switch (link.Type)
+                                                {
+                                                    case LinkTypes.Website:
+                                                      <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
+                                                            <td>
+            
+                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                    <i class="fas fa-at"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="font-weight-medium mb-0 nowrap">
+                                                                    <a href="javascript:void(0)" class="link">
+                                                                        @link.Url
+                                                                    </a>
+                                                                </h6>
+                                                            </td>
+                                                       </tr>
+                                                        break;
+                                                    case LinkTypes.Twitter:
+                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)"> 
+                                                            <td>
+                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                    <i class="fab fa-twitter"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="font-weight-medium mb-0 nowrap">
+                                                                    <a href="javascript:void(0)" class="link">
+                                                                        @link.Name
+                                                                    </a>
+                                                                </h6>
+                                                                <small class="text-muted no-wrap">@link.Url</small>
+                                                            </td>
+
+                                                        </tr>
+                                                        break;
+                                                    case LinkTypes.Facebook:
+                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
+                                                            <td>
+                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                    <i class="fab fa-fabook"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="font-weight-medium mb-0 nowrap">
+                                                                    <a href="javascript:void(0)" class="link">
+                                                                        @link.Name
+                                                                    </a>
+                                                                </h6>
+                                                                <small class="text-muted no-wrap">
+                                                                    @link.Url
+                                                                </small>
+                                                            </td>
+
+                                                        </tr>
+                                                        break;
+                                                    case LinkTypes.Reddit:
+                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
+                                                            <td>
+                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                    <i class="fab fa-reddit"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="font-weight-medium mb-0 nowrap">
+                                                                    <a href="javascript:void(0)" class="link">
+                                                                        @link.Name
+                                                                    </a>
+                                                                </h6>
+                                                                <small class="text-muted no-wrap">
+                                                                    @link.Url
+                                                                </small>
+                                                            </td>
+
+                                                        </tr>
+                                                        break;
+                                                    case LinkTypes.Telegram:
+                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
+                                                            <td>
+
+                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                    <i class="fab fa-telegram-plane"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="font-weight-medium mb-0 nowrap">
+                                                                    <a href="javascript:void(0)" class="link">
+                                                                        @link.Name
+                                                                    </a>
+                                                                </h6>
+                                                                <small class="text-muted no-wrap">
+                                                                    @link.Url
+                                                                </small>
+                                                            </td>
+
+                                                        </tr>
+                                                    break;
                                                     
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fas fa-at"></i>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            https://linksync.tech
-                                                        </a>
-                                                    </h6>
-                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fab fa-telegram-plane"></i>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            Telegram
-                                                        </a>
-                                                    </h6>
-                                                    <small class="text-muted no-wrap">@@linksync_Official</small>
-                                                </td>
-                
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fab fa-twitter"></i>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            Twitter
-                                                        </a>
-                                                    </h6>
-                                                    <small class="text-muted no-wrap">@@linksync_Official</small>
-                                                </td>
-                
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fab fa-discord"></i>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            Discord
-                                                        </a>
-                                                    </h6>
-                                                    <small class="text-muted no-wrap">https://Discord.gg/linksync </small>
-                                                </td>
-                
-                                            </tr>
+                                                }
+                                            }
+                                          
+                                  
+                                           
+                                           
                                             </tbody>
                                         </table>
                                     </div>
@@ -206,19 +250,19 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Circulating Supply</h4>
                                     <div class="text-end">
-                                        <h2 class="fw-light mb-0"><i class="ti-arrow-up text-info"></i> 560,585,896,855,624</h2>
+                                        <h2 class="fw-light mb-0"><i class="ti-arrow-up text-info"></i> @Utilities.TruncateDecimals(@Communication.SelectedContract.CirculatingSupply)</h2>
                                         <span class="text-muted">Based on LP -> 0x2345...5323</span>
                                     </div>
-                                    <span class="text-info">60%</span>
+                                    <span class="text-info">@SupplyDifference %</span>
                                     <div class="progress">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 30%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: @SupplyDifference%; height: 6px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row" style="min-height: 399px;">
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card" style="padding: 0;">
+                                <div class="card-body" style="height: 390px; overflow: hidden; overflow-y: auto;">
                                     <div class="d-md-flex align-items-center">
                                         <div>
                                             <h4 class="card-title">Exchange listings</h4>
@@ -228,37 +272,27 @@
                                         <table class="table stylish-table no-wrap v-middle">
                 
                                             <tbody>
-                                            <tr>
-                                                <td>
-                                                    
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fas fa-exchange-alt"></i>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            PancakeSwap
-                                                        </a>
-                                                    </h6>
-                                                </td>
-                
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                        <i class="fas fa-exchange-alt"></i>
-                                                    </span>
-                                                </td>                                             
-                                                <td>
-                                                    <h6 class="font-weight-medium mb-0 nowrap">
-                                                        <a href="javascript:void(0)" class="link">
-                                                            Feg Ex
-                                                        </a>
-                                                    </h6>
-                                                </td>
-                                            </tr>
-                                     
+                                            @foreach (var link in Communication.SelectedToken.Links.Where(x=>x.Type == LinkTypes.Exchange).ToList())
+                                            {
+                                                <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
+                                                    <td>
+
+                                                        <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                            <i class="fas fa-exchange-alt"></i>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <h6 class="font-weight-medium mb-0 nowrap">
+                                                            <a href="javascript:void(0)"  class="link">
+                                                                @link.Name
+                                                            </a>
+                                                        </h6>
+                                                    </td>
+
+                                                </tr>
+                                            }
+                                            
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -375,7 +409,7 @@
         </div>
     </div>
     <div class="row" style="padding: 12px;">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -402,75 +436,6 @@
                     <div   style='padding: 20px; display: @YoutubeVisible'>
 
                         
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Recent Chats</h4>
-                    <div class="chat-box scrollable ps-container ps-theme-default ps-active-y" style="height: 375px;" data-ps-id="0b1d2342-4dc1-5294-1779-252e6129e552">
-                        <!--chat Row -->
-                        <ul class="chat-list m-0 p-0">
-                            <!--chat Row -->
-                            <li class="mt-4">
-                                <div class="chat-img d-inline-block align-top"><img src="../assets/images/users/1.jpg" alt="user" class="rounded-circle"></div>
-                                <div class="chat-content ps-3 d-inline-block">
-                                    <h6 class="text-muted text-nowrap">James Anderson</h6>
-                                    <div class="box mb-2 d-inline-block text-dark message fw-normal fs-3 bg-light-info">Lorem Ipsum is simply dummy text of the printing &amp; type setting industry.</div>
-                                </div>
-                                <div class="chat-time d-inline-block text-end text-muted">10:56 am</div>
-                            </li>
-                            <!--chat Row -->
-                            <li class="mt-4">
-                                <div class="chat-img d-inline-block align-top"><img src="../assets/images/users/2.jpg" alt="user" class="rounded-circle"></div>
-                                <div class="chat-content ps-3 d-inline-block">
-                                    <h6 class="text-muted text-nowrap">Bianca Doe</h6>
-                                    <div class="box mb-2 d-inline-block text-dark message fw-normal fs-3 bg-light-success">It’s Great opportunity to work.</div>
-                                </div>
-                                <div class="chat-time d-inline-block text-end text-muted">10:57 am</div>
-                            </li>
-                            <!--chat Row -->
-                            <li class="odd mt-4">
-                                <div class="chat-content ps-3 d-inline-block text-end">
-                                    <div class="box mb-2 d-inline-block text-dark message fw-normal fs-3 bg-light-inverse">I would love to join the team.</div>
-                                    <br>
-                                </div>
-                                <div class="chat-time d-inline-block text-end text-muted">10:58 am</div>
-                            </li>
-                            <!--chat Row -->
-                            <li class="odd mt-4">
-                                <div class="chat-content ps-3 d-inline-block text-end">
-                                    <div class="box mb-2 d-inline-block text-dark message fw-normal fs-3 bg-light-inverse">Whats budget of the new project.</div>
-                                    <br>
-                                </div>
-                                <div class="chat-time d-inline-block text-end text-muted">10:59 am</div>
-                            </li>
-                            <!--chat Row -->
-                            <li class="mt-4">
-                                <div class="chat-img d-inline-block align-top"><img src="../assets/images/users/3.jpg" alt="user" class="rounded-circle"></div>
-                                <div class="chat-content ps-3 d-inline-block">
-                                    <h6 class="text-muted text-nowrap">Angelina Rhodes</h6>
-                                    <div class="box mb-2 d-inline-block text-dark message fw-normal fs-3 bg-light-primary">Well we have good budget for the project</div>
-                                </div>
-                                <div class="chat-time d-inline-block text-end text-muted">11:00 am</div>
-                            </li>
-                            <!--chat Row -->
-                        </ul>
-                        <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: -53px;">
-                            <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div></div>
-                        <div class="ps-scrollbar-y-rail" style="top: 53px; right: 3px; height: 375px;">
-                            <div class="ps-scrollbar-y" tabindex="0" style="top: 39px; height: 275px;"></div></div></div>
-                </div>
-                <div class="card-body border-top">
-                    <div class="row">
-                        <div class="col-8">
-                            <textarea placeholder="Type your message here" class="form-control border-0"></textarea>
-                        </div>
-                        <div class="col-4 text-end">
-                            <button type="button" class="btn btn-info btn-circle btn-lg"><i class="fas fa-paper-plane"></i> </button>
-                        </div>
                     </div>
                 </div>
             </div>

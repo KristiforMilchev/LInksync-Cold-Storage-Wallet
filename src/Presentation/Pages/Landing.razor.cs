@@ -191,10 +191,12 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void SelectToken(TokenContract contract, Token token)
         {
+            
             InvokeAsync(() =>
             {
                 SelectedToken = token;
                 SelectedContract = contract;
+                Communication.SelectedToken = token;
                 Communication.SelectedContract = contract;
                 Communication.Receipt = "none";
                 Communication.HideTokenList = "none";

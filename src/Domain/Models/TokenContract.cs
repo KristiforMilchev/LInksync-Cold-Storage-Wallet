@@ -21,5 +21,6 @@ namespace SYNCWallet.Models
         public string MainLiquidityPool { get; set; }
         public string PairTokenAddress { get; set; }
         public string ListedExchangeRouter { get; set; }
+        public string PairName { get; set; }
     }
 }

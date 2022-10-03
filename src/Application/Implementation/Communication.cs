@@ -35,6 +35,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public string ReceiverAddress { get; set; }
         public decimal Amount { get; set; }
         public TokenContract SelectedContract { get; set; }
+        public  Token SelectedToken { get; set; }
         public string TxHash { get; set; }
         public SerialPort _serialPort { get; set; }
         public IUtilities Utilities { get; set; }

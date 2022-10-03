@@ -183,6 +183,13 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="chainId">The chain ID of the blockchain</param>
         /// </summary>
         public Task<bool> ExecuteNative(string receiver, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId);
+        
+        /// <summary>
+        /// Returns the amount of pair token in a given liquidity pool
+        /// Parameters:
+        /// <param name="token">TokenContract object containing all the market data provider properties to query the LP holdings.</param>
+        /// </summary>
+        public Task<(decimal,decimal)> GetContractLpSupply(TokenContract token);
 
     }
 }
