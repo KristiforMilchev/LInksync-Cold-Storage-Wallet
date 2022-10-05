@@ -462,43 +462,7 @@ function InitDonut()
 
 }
 
-function SelectToken(token) {
-    OpenAssetsPanel();
-    ClearChatData();
-    var volumeDTO = {
-        Id: token
-    }
-
-    Token = token;
-
-
-    $.ajax({
-        method: "POST",
-        contentType: "application/json",
-        url: "/Tracker/ChangeToken",
-        data: JSON.stringify(volumeDTO)
-    }).done(function (msg) {
-
-        if (msg !== undefined) {
-            $("#InstagramFeed").html("");
-            $("#TwitterFeed").html("");
-            $("#YoutubeFeed").html("");
-
-            var twt = `<iframe src="https://platform-development.azurewebsites.net/Tracker/RenderSocial?Id=` + token +`&&type=1" style="border: none;    position: relative; top:-8px;" name="myiFrame" scrolling="no"  marginheight="0px" marginwidth="0px" height="100%" width="100%" allowfullscreen></iframe>`;
-            var insta = `<iframe src="https://platform-development.azurewebsites.net/Tracker/RenderSocial?Id=` + token +`&&type=2" style="border: none;    position: relative; top:-8px;" name="myiFrame" scrolling="no"  marginheight="0px" marginwidth="0px" height="100%" width="100%" allowfullscreen></iframe>`;
-            var yt = `<iframe src="https://platform-development.azurewebsites.net/Tracker/RenderSocial?Id=` + token +`&&type=3"  style="border: none;    position: relative; top:-8px;" name="myiFrame" scrolling="no"  marginheight="0px" marginwidth="0px" height="100%" width="100%" allowfullscreen></iframe>`
-            $("#InstagramFeed").html(msg.instagram);
-            $("#TwitterFeed").html(msg.twitter);
-            $("#YoutubeFeed").html(msg.youtube);
-            window.dispatchEvent(new Event('DOMContentLoaded'));
-
-
-            GetTokenPriceData();
-
-        }
-        else {
-            alert("Token not found");
-        }
-
-    });
+function LoadSocialMediaFeed(key, feedData)
+{
+    $("#"+key).html(feedData);
 }

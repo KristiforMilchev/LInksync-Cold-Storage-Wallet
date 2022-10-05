@@ -17,19 +17,22 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private IContractService ContractService { get; set; }
         public bool IsChartRendered { get; set; }
         private string TokenId { get; set; }
-        public string TwitterVisible { get; set; } = "none";
-        public string InstagramVisible { get; set; } = "block";
+        public string TwitterVisible { get; set; } = "block";
+        public string InstagramVisible { get; set; } = "none";
         public string YoutubeVisible { get; set; } = "none";
         public decimal SupplyDifference { get; set; }
         public decimal TokenPoolSupply { get; set; }
         public decimal PairPoolSupply { get; set; }
-        
+ 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (!IsChartRendered)
             {
  
                 Task.Run(() => JS.InvokeAsync<string>("InitDonut"));
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "TwitterFeed", Communication.SelectedToken.TwitterFeed)); 
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "InstagramFeed", Communication.SelectedToken.InstagramFeed));
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "YoutubeFeed", Communication.SelectedToken.YoutubeFeed));
                 IsChartRendered = !IsChartRendered;
             }
 
@@ -49,6 +52,9 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             var poolSupplyData = await ContractService.GetContractLpSupply(Communication.SelectedContract);
             TokenPoolSupply = poolSupplyData.Item1;
             PairPoolSupply = poolSupplyData.Item2;
+  
+
+
         }
         
         public void SocialFeedSelected(int networkType)
@@ -58,8 +64,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 case 1:
                     InvokeAsync(() =>
                     {
-                        InstagramVisible = "block";
-                        TwitterVisible = "none";
+                        InstagramVisible = "none";
+                        TwitterVisible = "block";
                         YoutubeVisible = "none";
                         this.StateHasChanged();
                     });
@@ -67,8 +73,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 case 2:
                     InvokeAsync(() =>
                     {
-                        InstagramVisible = "none";
-                        TwitterVisible = "block";
+                        InstagramVisible = "block";
+                        TwitterVisible = "none";
                         YoutubeVisible = "none";
                         this.StateHasChanged();
                     });
