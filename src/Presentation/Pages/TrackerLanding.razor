@@ -35,7 +35,7 @@
     }
 </style>
 <div>
-    <TrackerNavigationComponent>
+    <TrackerNavigationComponent CurrentToken="Communication.SelectedToken">
         
         
     </TrackerNavigationComponent>
@@ -92,7 +92,7 @@
                                         <div class="mb-2">Price</div>
                                         <i class="fas fa-dollar-sign fs-6 mb-2"></i>
                                         <div>
-                                            $ @Utilities.TruncateDecimals(@Communication.SelectedContract.CurrentPrice) 
+                                            @Utilities.TruncateDecimals(@Communication.SelectedContract.CurrentPrice) 
                                         </div>
                                     </div>
             
