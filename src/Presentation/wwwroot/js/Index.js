@@ -365,6 +365,8 @@ function RiseError(title, message)
 
 function InitDonut()
 {
+    $(".select2").select2();
+
     //#c43939 red
     //39c449 green
     Morris.Donut({
