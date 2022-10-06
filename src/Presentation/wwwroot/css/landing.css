@@ -134,6 +134,9 @@
         width: 60%;
         max-width: 100%;
     }
+    .containerFullPage{
+        margin-top: 80%;
+    }
 }
 
 /* (1920x1080) Full HD Display */
@@ -148,4 +151,6 @@
         width: 100%;
         max-width: 100%;
     }
+
+ 
 }

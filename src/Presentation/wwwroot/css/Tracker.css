@@ -1,0 +1,302 @@
+ 
+@media only screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+ 
+}
+
+/* (1280x1024) SXGA Display */
+@media screen and (max-width: 1280px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+ 
+}
+
+/* (1366x768) WXGA Display */
+@media screen and (max-width: 1366px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+    }
+
+ 
+}
+
+/* (1440x900) WXGA+ Display */
+@media screen and (max-width: 1440px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    
+}
+/* (1440x900) WXGA+ Display */
+@media screen and (max-height: 908px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+ 
+}
+
+/* (1600x900) HD+ Display */
+@media screen and (max-width: 1600px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 60%;
+        max-width: 100%;
+    }
+  
+}
+
+/* (1920x1080) Full HD Display */
+@media screen and (max-width: 1920px) {
+    /* insert styles here */
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+}
+ 
+#morris-donut-chart  text{
+    fill:#689aa4;
+}
+.page {
+    height: 100vh;
+    display: block;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: scroll;
+}
+.form-control {
+    color: #54667a;
+    background-color: #1e1f26;
+    border-color: rgba(0,0,0,.25);
+    outline: 0;
+    box-shadow: unset;
+}
+
+.successBG{
+    background:  #39c449!important;
+}
+.sellBG{
+    background:#f62d51!important;
+}
+
+.boxCenter{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+.page{
+    overflow-x:hidden ;
+}
+
+.select2-container--default .select2-selection--single {
+    border-radius: 4px;
+    width: 300px;
+    margin: auto;
+    font-size: 22px;
+    color: red;
+    background: none;
+    border: none;
+     
+    padding: 28px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #689aa4;
+    font-size: 33px;
+
+
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 20px;
+    display: none;
+}
+
+.CardFluent{
+    padding: 0;
+    margin: 0;
+}
+
+.PromotedAssetContainer {
+    width: 100%;
+    display: grid;
+    align-items: stretch;
+    grid-template-columns: repeat(12, minmax(300px, 1fr));
+    grid-column-gap: 30px;
+    grid-row-gap: 60px;
+    width: 60%;
+    overflow: hidden;
+    margin: auto;
+}
+
+.Promoteditem{
+    width: 100%;
+    display: flex;
+    position: relative;
+    animation: slide 10s infinite linear;
+
+}
+.Promoteditem > span{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.PLogoSize{
+    width: 24px;
+    height: 24px;
+}
+
+.TokenTimeline{
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+@-webkit-keyframes slide{
+     0%,100% {
+         margin-left:0%;
+     }
+
+     12% {
+         margin-left:0%;
+     }
+
+     24% {
+         margin-left:-100%;
+     }
+
+     36% {
+         margin-left:-100%;
+     }
+
+     48% {
+         margin-left:-200%;
+     }
+
+     60% {
+         margin-left:-200%;
+     }
+
+     72% {
+         margin-left:-300%;
+     }
+
+     84% {
+         margin-left:-300%;
+     }
+ }
+@-moz-keyframes slide{
+     0%,100% {
+         margin-left:0%;
+     }
+
+     12% {
+         margin-left:0%;
+     }
+
+     24% {
+         margin-left:-100%;
+     }
+
+     36% {
+         margin-left:-100%;
+     }
+
+     48% {
+         margin-left:-200%;
+     }
+
+     60% {
+         margin-left:-200%;
+     }
+
+     72% {
+         margin-left:-300%;
+     }
+
+     84% {
+         margin-left:-300%;
+     }
+ }
+@keyframes slide{
+     0%,100% {
+         margin-left:0%;
+     }
+
+     12% {
+         margin-left:0%;
+     }
+
+     24% {
+         margin-left:-100%;
+     }
+
+     36% {
+         margin-left:-100%;
+     }
+
+     48% {
+         margin-left:-200%;
+     }
+
+     60% {
+         margin-left:-200%;
+     }
+
+     72% {
+         margin-left:-300%;
+     }
+
+     84% {
+         margin-left:-300%;
+     }
+ }
+
+.TokenLogo{
+    width: auto;
+    height: 75px;
+
+}
+    
