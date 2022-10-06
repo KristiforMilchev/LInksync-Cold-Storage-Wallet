@@ -3,6 +3,7 @@ using Nethereum.BlockchainProcessing.BlockStorage.Entities;
 using Nethereum.BlockchainProcessing.BlockStorage.Repositories;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
+using NFTLock.Data;
 using SQLite;
 using SYNCWallet.Services.Definitions;
 
@@ -14,11 +15,15 @@ namespace Application.Implementation
         public IUtilities Utilities { get; set; }
         public IHardwareService HardwareService { get; set; }
 
-        TransactionRepository()
+        public TransactionRepository(IUtilities utilities, IHardwareService hardwareService)
         {
+            Utilities = utilities;
+            HardwareService = hardwareService;
+            
             var dbPath = Path.Combine(Utilities.GetOsSavePath(HardwareService.Os), "transactions.db");
             _database = new SQLiteConnection(dbPath);
             _database.CreateTable<TranscationRecordDTO>();
+     
         }
         
         public int Create(TranscationRecordDTO entity)
