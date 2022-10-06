@@ -8,5 +8,6 @@ namespace Domain.Models
         public string To { get; set; }
         public decimal Amount { get; set; }
         public decimal Value { get; set; }
+        public DateTime TransactionDate { get; set; }
     }
 }
