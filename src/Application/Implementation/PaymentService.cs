@@ -11,9 +11,12 @@ using SYNCWallet.Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using Domain.Models;
+using ITransactionRepository = Nethereum.BlockchainProcessing.BlockStorage.Repositories.ITransactionRepository;
 
 namespace SYNCWallet.Data
 {
@@ -24,14 +27,16 @@ namespace SYNCWallet.Data
         public IUtilities Utilities { get; set; }
         public IAuthenicationService AuthenicationService { get; set; }
         public ICommunication Communication { get; set; }
+        private SYNCWallet.Services.Definitions.ITransactionRepository Repository { get; set; }
 
         //Init the constructor and inherit all dependencies.
-        public PaymentService(IContractService contractService, IUtilities utilities, IAuthenicationService authenicationService, ICommunication communication)
+        public PaymentService(IContractService contractService, IUtilities utilities, IAuthenicationService authenicationService, ICommunication communication, SYNCWallet.Services.Definitions.ITransactionRepository repository)
         {
             ContractService = contractService;
             Utilities = utilities;
             AuthenicationService = authenicationService;
             Communication = communication;
+            Repository = repository;
         }
 
         public async Task<TransactionResult> BeginTransaction()
@@ -124,6 +129,15 @@ namespace SYNCWallet.Data
                         Timestamp = DateTime.UtcNow,
                         TransactionHash = transactionReceipt.TransactionHash
                     };
+                    Repository.Create(new TranscationRecordDTO
+                    {
+                        Asset = Communication.ActiveNetwork.CurrencyAddress,
+                        Amount = Communication.Amount,
+                        From = Communication.PublicAddress,
+                        To = Communication.ReceiverAddress,
+                        TransactionHash = Communication.TxHash,
+                        Value = Communication.Amount * Communication.SelectedContract.CurrentPrice
+                    });
                     Communication.TxHash = string.Empty;
                     return true;
                 }
@@ -159,6 +173,18 @@ namespace SYNCWallet.Data
                 Timestamp = DateTime.UtcNow,
                 TransactionHash = transactionReceipt.TransactionHash
             };
+            
+            Repository.Create(new TranscationRecordDTO
+            {
+                Asset = Communication.ActiveNetwork.CurrencyAddress,
+                Amount = actualTransfer,
+                From = transferEvent.From,
+                To = transferEvent.To,
+                TransactionHash = Communication.TxHash,
+                Value = actualTransfer * Communication.SelectedContract.CurrentPrice,
+                TransactionDate = DateTime.UtcNow
+            });
+            
             Communication.TxHash = string.Empty;
 
             return true;
