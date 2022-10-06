@@ -1,0 +1,44 @@
+@using System.Collections
+@namespace SYNCWallet.Components.Navigation;
+
+<div class="table-responsive">
+    <table class="table table-hover no-wrap">
+        <thead>
+        <tr>
+            <th class="text-center border-0">#</th>
+            <th class="border-0">Quantity</th>
+            <th class="border-0">STATUS</th>
+            <th class="border-0">DATE</th>
+            <th class="border-0">PRICE</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        @foreach (var transcation in Transactions)
+        {
+            if (transcation.From == Communication.PublicAddress)
+            {
+                <tr>
+                    <td class="text-center">@transcation.TransactionHash</td>
+                    <td class="fw-normal text-center text-muted">@transcation.Amount</td>
+                    <td><span class="badge text-center bg-success boxCenter  successBG">Incoming</span> </td>
+                    <td class="fw-normal text-center text-muted">@transcation.TransactionDate.ToShortDateString()</td>
+                    <td><span class="text-success text-center"> @transcation.Value <i class="fas fa-caret-up"></i></span></td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td class="text-center">@transcation.TransactionHash</td>
+                    <td class="fw-normal text-muted text-center">@transcation.Amount</td>
+                    <td><span class="badge bg-success py-1 sellBG boxCenter">Outgoing</span> </td>
+                    <td class="fw-normal text-muted text-center">@transcation.TransactionDate.ToShortDateString()</td>
+                    <td><span class="text-danger text-center"> @transcation.Value <i class="fas fa-caret-down"></i></span></td>
+                </tr>
+            }
+        }
+    
+      
+        </tbody>
+    </table>
+</div>
