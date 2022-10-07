@@ -191,5 +191,11 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         public Task<(decimal,decimal)> GetContractLpSupply(TokenContract token);
 
+        /// <summary>
+        /// Returns a list of token prices representing price changes across 24h 1 month and 1 year.
+        /// Parameters:
+        /// <param name="symbol">Blockchain address of a token, must be on the whitelisted network.</param>
+        /// </summary>
+        public Task<( decimal lastDayPercentage,decimal lastMonthPercentage, decimal lastYearPercentage)> GetPriceChange(string symbol);
     }
 }

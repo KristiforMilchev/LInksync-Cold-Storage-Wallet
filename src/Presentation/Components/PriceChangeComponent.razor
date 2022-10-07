@@ -1,0 +1,31 @@
+ 
+@namespace SYNCWallet.Components.PriceChanges
+
+<div class="card" style="height: 95%;">
+    <div class="card-body" style="display: flex;
+                                      flex-direction: column;
+                                      justify-content: space-evenly;
+                                      align-content: space-around;">
+        <h3 class="text-center">
+             Price changes
+        </h3>
+        <div class="row">
+            <h4>Daily change</h4>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar @DailyBackground" style="width: @DailyChange%;" role="progressbar">@DailyChange%</div>
+            </div>
+        </div>
+        <div class="row">
+            <h4>Monthly change</h4>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar @MonthlyBackground" style="width: @MonthlyChange%;" role="progressbar">@MonthlyChange%</div>
+            </div>
+        </div>
+        <div class="row">
+            <h4>Yearly change</h4>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar @YearlyBackground" style="width: @YearlyChange%;" role="progressbar">@YearlyChange%</div>
+            </div>
+        </div>
+    </div>
+</div>
