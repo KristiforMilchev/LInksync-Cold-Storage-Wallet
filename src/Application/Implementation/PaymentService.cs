@@ -176,7 +176,7 @@ namespace SYNCWallet.Data
             
             Repository.Create(new TranscationRecordDTO
             {
-                Asset = Communication.ActiveNetwork.CurrencyAddress,
+                Asset = Communication.SelectedContract.ContractAddress,
                 Amount = actualTransfer,
                 From = transferEvent.From,
                 To = transferEvent.To,

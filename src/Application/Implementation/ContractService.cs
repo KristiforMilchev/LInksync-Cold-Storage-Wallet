@@ -256,87 +256,97 @@ namespace NFTLock.Data
 
         public async Task<List<Token>> GetNetworkTokensIntial(int networkId)
         {
-            if (CachedTokenContracts == null)
-            {
-                //Checks if the price cache exist, delete and recreate it.
-                if (File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json"))
-                {
-                    var content = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json");
-                    CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(content);
-                    CachedTokenContracts = CachedTokenContracts == null ? new List<TokenContract>() : CachedTokenContracts;
-                }
-                else
-                    CachedTokenContracts = new List<TokenContract>();
-            }
-
-            // On startup, it gets thge list of officially supported tokens by running a query against githubs API
-            if (Communication.ListedTokens == null)
-                Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LinkSync-Whitelistings/contents/Whitelist");
-
             //Define a local collection of token.
             var tokens = new List<Token>();
-
-            //Check if the selected network exists
-            var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
-
-            //In case it exists we add the native token to the list and run a query to get the user balance of the token.
-            if (getNetworkData != null)
+            try
             {
-                tokens.Add(new Token
+                if (CachedTokenContracts == null)
                 {
-                    Symbol = getNetworkData.TokenSylmbol,
-                    Name = getNetworkData.Name,
-                    Logo = getNetworkData.Logo,
-                    IsChainCoin = true,
-                    Contracts = new List<TokenContract>
-                        {
-                            new TokenContract
+                    //Checks if the price cache exist, delete and recreate it.
+                    if (File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json"))
+                    {
+                        var content = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json");
+                        CachedTokenContracts = JsonConvert.DeserializeObject<List<TokenContract>>(content);
+                        CachedTokenContracts = CachedTokenContracts == null ? new List<TokenContract>() : CachedTokenContracts;
+                    }
+                    else
+                        CachedTokenContracts = new List<TokenContract>();
+                }
+
+                // On startup, it gets thge list of officially supported tokens by running a query against githubs API
+                if (Communication.ListedTokens == null)
+                    Communication.ListedTokens = await Utilities.GetRequest<List<ListedToken>>($"https://api.github.com/repos/KristiforMilchev/LinkSync-Whitelistings/contents/Whitelist");
+
+               
+
+                //Check if the selected network exists
+                var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
+
+                //In case it exists we add the native token to the list and run a query to get the user balance of the token.
+                if (getNetworkData != null)
+                {
+                    tokens.Add(new Token
+                    {
+                        Symbol = getNetworkData.TokenSylmbol,
+                        Name = getNetworkData.Name,
+                        Logo = getNetworkData.Logo,
+                        IsChainCoin = true,
+                        Contracts = new List<TokenContract>
                             {
-                                ContractAddress = getNetworkData.CurrencyAddress,
-                                UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
-                                Network = networkId,
+                                new TokenContract
+                                {
+                                    ContractAddress = getNetworkData.CurrencyAddress,
+                                    UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
+                                    Network = networkId,
 
-                                //V1 doesn't support native token prices. TODO V2
-                               // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
+                                    //V1 doesn't support native token prices. TODO V2
+                                   // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
+                                }
                             }
-                        }
-                });
-            }
+                    });
+                }
 
-            //Gets the list of officially supported tokens on the selected network.
-            tokens = await GetListedTokensInitial(Communication.ListedTokens, tokens, getNetworkData);
+                //Gets the list of officially supported tokens on the selected network.
+                tokens = await GetListedTokensInitial(Communication.ListedTokens, tokens, getNetworkData);
 
-            //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
-            if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json"))
-                File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", "");
+                //Checks if the user has imported tokens in case it the file doesn't exists it creates a blank one.
+                if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json"))
+                    File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json", "");
 
-            //Reads the content of the file.
-            var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json");
-
+                //Reads the content of the file.
+                var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalTokens.json");
 
 
-            //Converts the imported tokens to List<Token> 
-            var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
 
-            //Checks if the tokens exist, in case the file is blank the collection is null
-            if (tokenList != null)
-            {
-                //Filter only by selected network
-                tokenList = tokenList.Where(x => x.Contracts.Any(y => y.Network == networkId)).ToList();
+                //Converts the imported tokens to List<Token> 
+                var tokenList = JsonConvert.DeserializeObject<List<Token>>(filesContent);
 
-                //Loop over the token list
-                foreach (var currentToken in tokenList)
+                //Checks if the tokens exist, in case the file is blank the collection is null
+                if (tokenList != null)
                 {
-                    var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
+                    //Filter only by selected network
+                    tokenList = tokenList.Where(x => x.Contracts.Any(y => y.Network == networkId)).ToList();
 
-                    var exists = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
-                    if (exists != null)
-                        currentToken.Contracts = new List<TokenContract>{
-                            exists
-                        };
-                    tokens.Add(currentToken);
+                    //Loop over the token list
+                    foreach (var currentToken in tokenList)
+                    {
+                        var getContract = currentToken.Contracts.FirstOrDefault(x => x.Network == networkId);
+
+                        var exists = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
+                        if (exists != null)
+                            currentToken.Contracts = new List<TokenContract>{
+                                exists
+                            };
+                        tokens.Add(currentToken);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                
+            }
+        
 
 
             return tokens;

@@ -51,7 +51,7 @@
                     <img class="TokenLogo" src="@CurrentToken.Logo"/>
                 </div>
                 <div class="row">
-                    <select class="select2 form-control custom-select" style="width: 100%; height:36px;">
+                    <select class="select2 form-control custom-select" id="TrackerSelect" onchange="TrackerCurrencyChanged" style="width: 100%; height:36px;">
                         <option>@CurrentToken.Name</option>
                         
                           @foreach (var ntGroup in @ListedTokens)
@@ -63,7 +63,7 @@
                                       {
                                           @foreach (var token in ntGroup.Tokens)
                                           {
-                                              <option value="@token.Name" @onclick="() => TokenSelected(token)">
+                                              <option value="@token.Name">
                                                   <div>
                                                       <span>
                                                           @token.Name (@token.Symbol)
