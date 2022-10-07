@@ -387,7 +387,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             ShowLoader = "none";
             Receipt = "none";
 
-            IsDevelopment = false;
+            IsDevelopment = true;
             RemainingAttempts = 3;
 
 
