@@ -365,7 +365,11 @@ function RiseError(title, message)
 
 function InitDonut()
 {
-    $(".select2").select2();
+    $(".select2").select2().on('select2:select', function (e) {
+        console.log(e.params.data);
+        DotNet.invokeMethodAsync('LInksync-Cold-Storage-Wallet', 'TokenSelected', e.params.data.id);
+        
+    });
 
     //#c43939 red
     //39c449 green
@@ -468,3 +472,10 @@ function LoadSocialMediaFeed(key, feedData)
 {
     $("#"+key).html(feedData);
 }
+
+function  TrackerCurrencyChanged(args)
+{
+    console.log(args);
+}
+
+ 

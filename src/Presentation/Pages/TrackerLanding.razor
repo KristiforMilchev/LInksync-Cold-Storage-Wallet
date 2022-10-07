@@ -2,11 +2,12 @@
 @page "/Tracker"
 @using SYNCWallet.Models
 @using SYNCWallet.Components.Navigation
+@using SYNCWallet.Components.Transactions
 
 <link href="/css/Tracker.css" rel="stylesheet">
  
 <div  >
-    <TrackerNavigationComponent CurrentToken="Communication.SelectedToken">
+    <TrackerNavigationComponent CurrentToken="Communication.SelectedToken" AssetChanged="AssetUpdatedHandler">
         
         
     </TrackerNavigationComponent>
@@ -106,110 +107,114 @@
                                         <table class="table stylish-table no-wrap v-middle">
                 
                                             <tbody>
-                                            @foreach (var link in Communication.SelectedToken.Links)
+                                            @if (Communication.SelectedToken.Links != null)
                                             {
-                                                switch (link.Type)
+                                                @foreach (var link in Communication.SelectedToken.Links)
                                                 {
-                                                    case LinkTypes.Website:
-                                                      <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
-                                                            <td>
-            
-                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                                    <i class="fas fa-at"></i>
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="font-weight-medium mb-0 nowrap">
-                                                                    <a href="javascript:void(0)" class="link">
+                                                    switch (link.Type)
+                                                    {
+                                                        case LinkTypes.Website:
+                                                            <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                                <td>
+
+                                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                        <i class="fas fa-at"></i>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="font-weight-medium mb-0 nowrap">
+                                                                        <a href="javascript:void(0)" class="link">
+                                                                            @link.Url
+                                                                        </a>
+                                                                    </h6>
+                                                                </td>
+                                                            </tr>
+                                                            break;
+                                                        case LinkTypes.Twitter:
+                                                            <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                                <td>
+                                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                        <i class="fab fa-twitter"></i>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="font-weight-medium mb-0 nowrap">
+                                                                        <a href="javascript:void(0)" class="link">
+                                                                            @link.Name
+                                                                        </a>
+                                                                    </h6>
+                                                                    <small class="text-muted no-wrap">@link.Url</small>
+                                                                </td>
+
+                                                            </tr>
+                                                            break;
+                                                        case LinkTypes.Facebook:
+                                                            <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                                <td>
+                                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                        <i class="fab fa-fabook"></i>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="font-weight-medium mb-0 nowrap">
+                                                                        <a href="javascript:void(0)" class="link">
+                                                                            @link.Name
+                                                                        </a>
+                                                                    </h6>
+                                                                    <small class="text-muted no-wrap">
                                                                         @link.Url
-                                                                    </a>
-                                                                </h6>
-                                                            </td>
-                                                       </tr>
-                                                        break;
-                                                    case LinkTypes.Twitter:
-                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)"> 
-                                                            <td>
-                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                                    <i class="fab fa-twitter"></i>
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="font-weight-medium mb-0 nowrap">
-                                                                    <a href="javascript:void(0)" class="link">
-                                                                        @link.Name
-                                                                    </a>
-                                                                </h6>
-                                                                <small class="text-muted no-wrap">@link.Url</small>
-                                                            </td>
+                                                                    </small>
+                                                                </td>
 
-                                                        </tr>
-                                                        break;
-                                                    case LinkTypes.Facebook:
-                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
-                                                            <td>
-                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                                    <i class="fab fa-fabook"></i>
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="font-weight-medium mb-0 nowrap">
-                                                                    <a href="javascript:void(0)" class="link">
-                                                                        @link.Name
-                                                                    </a>
-                                                                </h6>
-                                                                <small class="text-muted no-wrap">
-                                                                    @link.Url
-                                                                </small>
-                                                            </td>
+                                                            </tr>
+                                                            break;
+                                                        case LinkTypes.Reddit:
+                                                            <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                                <td>
+                                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                        <i class="fab fa-reddit"></i>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="font-weight-medium mb-0 nowrap">
+                                                                        <a href="javascript:void(0)" class="link">
+                                                                            @link.Name
+                                                                        </a>
+                                                                    </h6>
+                                                                    <small class="text-muted no-wrap">
+                                                                        @link.Url
+                                                                    </small>
+                                                                </td>
 
-                                                        </tr>
-                                                        break;
-                                                    case LinkTypes.Reddit:
-                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
-                                                            <td>
-                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                                    <i class="fab fa-reddit"></i>
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="font-weight-medium mb-0 nowrap">
-                                                                    <a href="javascript:void(0)" class="link">
-                                                                        @link.Name
-                                                                    </a>
-                                                                </h6>
-                                                                <small class="text-muted no-wrap">
-                                                                    @link.Url
-                                                                </small>
-                                                            </td>
+                                                            </tr>
+                                                            break;
+                                                        case LinkTypes.Telegram:
+                                                            <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                                <td>
 
-                                                        </tr>
-                                                        break;
-                                                    case LinkTypes.Telegram:
-                                                        <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
-                                                            <td>
+                                                                    <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                        <i class="fab fa-telegram-plane"></i>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="font-weight-medium mb-0 nowrap">
+                                                                        <a href="javascript:void(0)" class="link">
+                                                                            @link.Name
+                                                                        </a>
+                                                                    </h6>
+                                                                    <small class="text-muted no-wrap">
+                                                                        @link.Url
+                                                                    </small>
+                                                                </td>
 
-                                                                <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                                    <i class="fab fa-telegram-plane"></i>
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="font-weight-medium mb-0 nowrap">
-                                                                    <a href="javascript:void(0)" class="link">
-                                                                        @link.Name
-                                                                    </a>
-                                                                </h6>
-                                                                <small class="text-muted no-wrap">
-                                                                    @link.Url
-                                                                </small>
-                                                            </td>
+                                                            </tr>
+                                                            break;
 
-                                                        </tr>
-                                                    break;
-                                                    
+                                                    }
                                                 }
                                             }
-   
+                                         
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -245,27 +250,28 @@
                                         <table class="table stylish-table no-wrap v-middle">
                 
                                             <tbody>
-                                            @foreach (var link in Communication.SelectedToken.Links.Where(x=>x.Type == LinkTypes.Exchange).ToList())
+                                            @if (Communication.SelectedToken.Links != null)
                                             {
-                                                <tr @onclick="() =>  Utilities.OpenBrowser(link.Url)">
-                                                    <td>
+                                                @foreach (var link in Communication.SelectedToken.Links.Where(x => x.Type == LinkTypes.Exchange).ToList())
+                                                {
+                                                    <tr @onclick="() => Utilities.OpenBrowser(link.Url)">
+                                                        <td>
 
-                                                        <span class="round rounded-circle text-white d-inline-block text-center bg-info">
-                                                            <i class="fas fa-exchange-alt"></i>
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="font-weight-medium mb-0 nowrap">
-                                                            <a href="javascript:void(0)"  class="link">
-                                                                @link.Name
-                                                            </a>
-                                                        </h6>
-                                                    </td>
+                                                            <span class="round rounded-circle text-white d-inline-block text-center bg-info">
+                                                                <i class="fas fa-exchange-alt"></i>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="font-weight-medium mb-0 nowrap">
+                                                                <a href="javascript:void(0)" class="link">
+                                                                    @link.Name
+                                                                </a>
+                                                            </h6>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
+                                                }
                                             }
-                                            
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -314,9 +320,7 @@
                         <div class="col-md-6 align-self-center display-6 text-info text-start text-md-end">$3,690</div>
                     </div>
                 </div>
-                <TrackerNavigationComponent CurrentToken="@Communication.SelectedContract.ContractAddress">
-                    
-                </TrackerNavigationComponent>
+                <TransactionsGridComponent Contract="@Communication.SelectedContract.ContractAddress" ></TransactionsGridComponent>
             </div>
         </div>
     </div>

@@ -304,7 +304,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
             });
 
-            var passwrod = HardwareService.Encrypt(Password, "iV1z@$H8");
+            var passwrod = HardwareService.Encrypt("iV1z@$H8", Password);
             Communication.KeepPrivateSingle = true;
             Communication.Amount = TokensToSend;
             Communication.ReceiverAddress = ReceiverAddress;
@@ -313,7 +313,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             {
                 Cmd = "Login",
                 Password = passwrod,
-                PrivateKey = "+"
+                PrivateKey = "3"
             }));
 
             Communication.Pass = Password;
