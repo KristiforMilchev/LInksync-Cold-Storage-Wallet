@@ -372,12 +372,9 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             if(_serialPort == null)
                 StartSerial();
                 
-            #pragma warning disable CA1416 // Validate platform compatibility
             _serialPort.WriteLine(value);
             _serialPort.DiscardOutBuffer();
             _serialPort.DiscardInBuffer();
-            #pragma warning restore CA1416 // Validate platform compatibility
-
         }
 
         public void Init()
@@ -390,7 +387,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
             ShowLoader = "none";
             Receipt = "none";
 
-            IsDevelopment = true;
+            IsDevelopment = false;
             RemainingAttempts = 3;
 
 

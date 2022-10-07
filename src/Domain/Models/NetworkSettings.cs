@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Crypto.Prng;
 
 namespace SYNCWallet.Models
 {
@@ -19,6 +20,7 @@ namespace SYNCWallet.Models
         public string CurrencyAddress { get; set; }
         public string PairCurrency { get; set; }
         public string Logo { get; set; }
+        public string Explorer { get; set; }
 
         
     }
