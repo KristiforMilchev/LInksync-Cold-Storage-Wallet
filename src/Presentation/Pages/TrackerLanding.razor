@@ -3,6 +3,7 @@
 @using SYNCWallet.Models
 @using SYNCWallet.Components.Navigation
 @using SYNCWallet.Components.Transactions
+@using SYNCWallet.Components.PriceChanges
 
 <link href="/css/Tracker.css" rel="stylesheet">
  
@@ -280,15 +281,9 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <div class="card" style="height: 95%;">
-                            <div class="card-body">
-                                <h3 class="text-center">
-                                     Price change in %
-                                </h3>
-                                <div id="morris-donut-chart"></div>
+                        <PriceChangeComponent>
                             
-                            </div>
-                        </div>
+                        </PriceChangeComponent>
                     </div>
             </div>
         </div>

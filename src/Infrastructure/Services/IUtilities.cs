@@ -133,5 +133,13 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="url">The website URL</param>
         /// </summary>
         void OpenBrowser(string url);
+
+        /// <summary>
+        /// Converts DateTime to unix timestamp
+        /// Parameters:
+        /// <paramref name="dateTime"/>
+        /// <param name="dateTime">Valid DateTime object to be converted</param>
+        /// </summary>
+        double DateTimeToUnixTimestamp(DateTime dateTime);
     }
 }

@@ -363,32 +363,19 @@ function RiseError(title, message)
     Swal.fire(title,message);
 }
 
-function InitDonut()
+function InitDropdown()
 {
     $(".select2").select2().on('select2:select', function (e) {
         console.log(e.params.data);
         DotNet.invokeMethodAsync('LInksync-Cold-Storage-Wallet', 'TokenSelected', e.params.data.id);
-        
-    });
 
-    //#c43939 red
-    //39c449 green
-    Morris.Donut({
-        element: 'morris-donut-chart',
-        data: [{
-            label: "Daily",
-            value: 12,
-
-        }, {
-            label: "Monthly",
-            value: 30
-        }, {
-            label: "Yearly",
-            value: 20
-        }],
-        resize: true,
-        colors:['#009efb', '#39c449', '#2f3d4a']
     });
+}
+
+function InitBalanceChart()
+{
+ 
+    
     var myChart = echarts.init(document.getElementById('basic-line'));
 
     // specify chart configuration item and data

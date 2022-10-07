@@ -15,6 +15,8 @@ namespace SYNCWallet.Components.Navigation
                 
         [Inject]
         NavigationManager NavigationManager { get; set; }
+        [Inject]
+        private IJSRuntime JS { get; set; }
         
         [Parameter]
         public Token CurrentToken { get; set; }
@@ -23,9 +25,23 @@ namespace SYNCWallet.Components.Navigation
 
         private ICommunication _Communication { get; set; }
         private IContractService _contractService { get; set; }
+        public bool IsChartRendered { get; set; }
+
 
         public List<NetworkTokenGroup> ListedTokens { get; set; }
         public object ItemChanged { get; set; }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (!IsChartRendered)
+            {
+                Task.Run(() => JS.InvokeAsync<string>("InitDropdown"));
+                IsChartRendered = !IsChartRendered;
+            }
+
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
 
 
         protected override async Task OnInitializedAsync()
