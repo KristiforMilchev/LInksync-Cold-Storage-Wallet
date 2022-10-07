@@ -10,21 +10,21 @@
              Price changes
         </h3>
         <div class="row">
-            <h4>Daily change</h4>
-            <div class="progress" style="height: 10px;">
-                <div class="progress-bar @DailyBackground" style="width: @DailyChange%;" role="progressbar">@DailyChange%</div>
+            <h4>Daily change: @_priceChanges.lastDayPercentage.ToString("F1")</h4>
+            <div class="progress" style="height: 10px; padding: 0;">
+                <div class="progress-bar @DailyBackground" style="width: @DailyChange%;" role="progressbar"></div>
             </div>
         </div>
         <div class="row">
-            <h4>Monthly change</h4>
-            <div class="progress" style="height: 10px;">
-                <div class="progress-bar @MonthlyBackground" style="width: @MonthlyChange%;" role="progressbar">@MonthlyChange%</div>
+            <h4>Monthly change: @_priceChanges.lastMonthPercentage.ToString("F1")</h4>
+            <div class="progress" style="height: 10px; padding: 0;">
+                <div class="progress-bar @MonthlyBackground" style="width: @MonthlyChange%;" role="progressbar"></div>
             </div>
         </div>
         <div class="row">
-            <h4>Yearly change</h4>
-            <div class="progress" style="height: 10px;">
-                <div class="progress-bar @YearlyBackground" style="width: @YearlyChange%;" role="progressbar">@YearlyChange%</div>
+            <h4>Yearly change: @_priceChanges.lastYearPercentage.ToString("F1")</h4>
+            <div class="progress" style="height: 10px; padding: 0;">
+                <div class="progress-bar @YearlyBackground" style="width: @YearlyChange%;" role="progressbar"></div>
             </div>
         </div>
     </div>

@@ -10,8 +10,7 @@ namespace SYNCWallet.Components.PriceChanges
 {
     public partial class PriceChangeComponent
     {
-        [Inject]
-        private IJSRuntime JS { get; set; }
+        [Inject] private IJSRuntime JS { get; set; }
 
         private IContractService ContractService { get; set; }
         private ICommunication Communication { get; set; }
@@ -22,14 +21,18 @@ namespace SYNCWallet.Components.PriceChanges
         public decimal YearlyChange { get; set; }
         public string YearlyBackground { get; set; }
 
+        public (decimal lastDayPercentage, decimal lastMonthPercentage, decimal lastYearPercentage) _priceChanges
+        {
+            get;
+            set;
+        }
 
-        
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
         {
             ContractService = ServiceHelper.GetService<IContractService>();
             Communication = ServiceHelper.GetService<ICommunication>();
             TrackerHandler.NotifyChildren += ParentUpdated;
-
+            await LoadContractPriceChanges();
         }
 
         private async void ParentUpdated()
@@ -43,25 +46,34 @@ namespace SYNCWallet.Components.PriceChanges
 
         private async Task LoadContractPriceChanges()
         {
-            var priceChanges = await ContractService.GetPriceChange(Communication.SelectedContract.ContractAddress);
-            DailyChange = priceChanges.lastDayPercentage;
-            MonthlyChange = priceChanges.lastMonthPercentage;
-            YearlyChange = priceChanges.lastYearPercentage;
+            _priceChanges = await ContractService.GetPriceChange(Communication.SelectedContract.ContractAddress);
+            DailyChange = _priceChanges.lastDayPercentage;
+            MonthlyChange = _priceChanges.lastMonthPercentage;
+            YearlyChange = _priceChanges.lastYearPercentage;
             
             if (DailyChange > 0)
                 DailyBackground = "bg-success";
             else
-                DailyBackground = "bg-error";
+            {
+                DailyBackground = "sellBG";
+                DailyChange = DailyChange * -1;
+            }
             
             if (MonthlyChange > 0)
                 MonthlyBackground = "bg-success";
             else
-                MonthlyBackground = "bg-error";
+            {
+                MonthlyBackground = "sellBG";
+                MonthlyChange = MonthlyChange * -1;
+            }
             
             if (YearlyChange > 0)
                 YearlyBackground = "bg-success";
             else
-                YearlyBackground = "bg-error";
+            {
+                YearlyBackground = "sellBG";
+                YearlyChange = YearlyChange * -1;
+            }
         }
         
 
