@@ -825,7 +825,7 @@ namespace NFTLock.Data
             PriceCacheRepository.SelectDatabase(contractAddress);
 
             var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
-            if (cacheResult != null)
+            if (cacheResult != null && cacheResult.Count > 0)
                 return cacheResult;
 
             var result = await Utilities.GetRequest<List<RangeBarModel>>(
