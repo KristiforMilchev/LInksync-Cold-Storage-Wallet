@@ -27,7 +27,7 @@ namespace SYNCWallet.Components.PriceChanges
             set;
         }
 
-    protected override async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             ContractService = ServiceHelper.GetService<IContractService>();
             Communication = ServiceHelper.GetService<ICommunication>();
