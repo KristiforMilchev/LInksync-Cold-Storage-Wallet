@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.Models;
 using SQLite;
 using SYNCWallet.Services.Definitions;
@@ -56,21 +57,22 @@ namespace Application.Implementation
 
         public List<RangeBarModel> GetAllForAddress(string address)
         {
-            return new List<RangeBarModel>();
+            throw new RepositoryObjectMethodNotSupported("GetAllForAddress is not supported for RangeBarModel," +
+            " as each address is stored on it's on database, use GetAll to get all the entities in for a certain chart.");
         }
 
         public List<RangeBarModel> GetAllRange(string address, DateTime from, DateTime to)
         {
             try
             {
-                var listTDTO = default(List<RangeBarModel>);
+                var listTDto = default(List<RangeBarModel>);
                 using (SQLiteConnection c = new SQLiteConnection(DB))
                 {
-                    listTDTO = c.Table<RangeBarModel>().Where(x=>x.Date >= from && x.Date <= to).ToList();
+                    listTDto = c.Table<RangeBarModel>().Where(x=>x.Date >= from && x.Date <= to).ToList();
 
                 }
            
-                return listTDTO;
+                return listTDto;
             }
             catch (Exception e)
             {
@@ -81,7 +83,21 @@ namespace Application.Implementation
 
         public RangeBarModel GetEntity(string hash)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var dto = default(RangeBarModel);
+                using (SQLiteConnection c = new SQLiteConnection(DB))
+                {
+                    dto = c.Table<RangeBarModel>().FirstOrDefault(x=>x.Timestamp ==  int.Parse(hash));
+                }
+           
+                return dto;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public int CreateEntity(RangeBarModel entity)
@@ -148,7 +164,7 @@ namespace Application.Implementation
 
         public int SoftDeleteEntity(RangeBarModel entity)
         {
-            throw new NotImplementedException();
+            throw new RepositoryObjectMethodNotSupported("SoftDeleteEntity is not supported for RangeBarModel, as data is being collected externally..");
         }
     }
 }

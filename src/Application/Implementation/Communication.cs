@@ -380,9 +380,10 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
         public void Init()
         {
-
-            DataApiEndpoint = "http://data.uksouth.cloudapp.azure.com";
-
+            
+            //    DataApiEndpoint = "http://data.uksouth.cloudapp.azure.com";
+            DataApiEndpoint = "https://localhost:7280";
+            
             HideTokenList = "none";
             HideTokenSend = "none";
             ShowPinPanel = "none";

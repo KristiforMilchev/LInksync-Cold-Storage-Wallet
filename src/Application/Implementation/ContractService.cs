@@ -24,15 +24,18 @@ namespace NFTLock.Data
         public ICommunication Communication { get; set; }
         public IHardwareService HardwareService { get; set; }
         public ICacheRepository<RangeBarModel> PriceCacheRepository { get; set; } 
+        public ICacheRepository<CurrencyDataSetting> CurrencyCacheSettingRepository { get; set; }
         List<TokenContract> CachedTokenContracts { get; set; }
         decimal USDPrice { get; set; }
         
-        public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService, ICacheRepository<RangeBarModel> priceCacheRepository)
+        public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService,
+            ICacheRepository<RangeBarModel> priceCacheRepository, ICacheRepository<CurrencyDataSetting> currencyCache)
         {
             Utilities = utilities;
             Communication = communication;
             HardwareService = hardwareService;
             PriceCacheRepository = priceCacheRepository;
+            CurrencyCacheSettingRepository = currencyCache;
 
         }
 
@@ -820,32 +823,52 @@ namespace NFTLock.Data
 
         public async Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to)
         {
-            
-            contractAddress = "0xf6a22b0593df74f218027a2d8b7953c9b4542aa1";
+            var cacheCombined = new List<RangeBarModel>();
+
             PriceCacheRepository.SelectDatabase(contractAddress);
-
+            CurrencyCacheSettingRepository.SelectDatabase(contractAddress);
             var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
+            var settings = CurrencyCacheSettingRepository.GetEntity(contractAddress);
             if (cacheResult != null && cacheResult.Count > 0)
-                return cacheResult;
-
-            var result = await Utilities.GetRequest<List<RangeBarModel>>(
-                $"{Communication.DataApiEndpoint}/home/GetRange?currency={contractAddress}&&from={from.Ticks}&&to={to.Ticks}&&resolution=1");
-
-            if (result != null)
             {
-                
-                Task.Run(() =>
+                if (settings.LastUpdate.AddDays(1) < DateTime.UtcNow)
                 {
-                    result.ForEach(x =>
-                    {
-                        PriceCacheRepository.CreateEntity(x);
-                    });
-                });
-                
-                return result;
+                    cacheCombined = cacheResult;
+                }
+                else
+                {
+                    return cacheResult;
+                }
             }
             
-            return new List<RangeBarModel>();
+            var network = Communication.ActiveNetwork;
+            var result = await Utilities.GetRequest<List<RangeBarModel>>(
+                $"{Communication.DataApiEndpoint}/home/GetRangeGeneric?currency={contractAddress}&&from={from.Ticks}&&to={to.Ticks}&&resolution=1&&networkId={network.Id}");
+
+            AddCacheEntries(contractAddress, result, settings);
+            cacheCombined.AddRange(result);
+            return cacheCombined;
+        }
+
+        private void AddCacheEntries(string contractAddress, List<RangeBarModel> result, CurrencyDataSetting settings)
+        {
+            if (result != null)
+            {
+                Task.Run(() =>
+                {
+                    if (settings == null)
+                    {
+                        CurrencyCacheSettingRepository.CreateEntity(new CurrencyDataSetting
+                        {
+                            ContractAddress = contractAddress,
+                            IsEnabled = 1,
+                            LastUpdate = DateTime.UtcNow
+                        });
+                    }
+
+                    result.ForEach(x => { PriceCacheRepository.CreateEntity(x); });
+                });
+            }
         }
 
         private async Task<decimal> GetChangeForPeriod(string from, string to, string symbol)
