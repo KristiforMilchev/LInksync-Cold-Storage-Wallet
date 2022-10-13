@@ -3,6 +3,11 @@ namespace SYNCWallet.Services.Definitions
     public interface ICacheRepository<T>
     {
         /// <summary>
+        /// Sets the current database to be used for entity manipulations.
+        /// </summary>
+        ///
+        public void SelectDatabase(string database);
+        /// <summary>
         /// Takes in a generic T, opens a database reads all from T and returns a List<T>
         /// </summary>
         ///
@@ -24,7 +29,7 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="to">DateTime UTC date end to.</param>
         /// </summary>
         ///
-        public List<T> GetAllRange(string address, string from, string to);
+        public List<T> GetAllRange(string address, DateTime from, DateTime to);
         /// <summary>
         /// Takes in a string, opens a database reads a single entity from T that match the hash  and returns a T
         /// Parameters:

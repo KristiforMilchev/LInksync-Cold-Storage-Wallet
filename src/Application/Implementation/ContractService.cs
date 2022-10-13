@@ -23,14 +23,16 @@ namespace NFTLock.Data
         public IUtilities Utilities { get; set; }
         public ICommunication Communication { get; set; }
         public IHardwareService HardwareService { get; set; }
+        public ICacheRepository<RangeBarModel> PriceCacheRepository { get; set; } 
         List<TokenContract> CachedTokenContracts { get; set; }
         decimal USDPrice { get; set; }
         
-        public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService)
+        public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService, ICacheRepository<RangeBarModel> priceCacheRepository)
         {
             Utilities = utilities;
             Communication = communication;
             HardwareService = hardwareService;
+            PriceCacheRepository = priceCacheRepository;
 
         }
 
@@ -818,12 +820,30 @@ namespace NFTLock.Data
 
         public async Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to)
         {
+            
             contractAddress = "0xf6a22b0593df74f218027a2d8b7953c9b4542aa1";
+            PriceCacheRepository.SelectDatabase(contractAddress);
+
+            var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
+            if (cacheResult != null)
+                return cacheResult;
+
             var result = await Utilities.GetRequest<List<RangeBarModel>>(
                 $"{Communication.DataApiEndpoint}/home/GetRange?currency={contractAddress}&&from={from.Ticks}&&to={to.Ticks}&&resolution=1");
 
             if (result != null)
+            {
+                
+                Task.Run(() =>
+                {
+                    result.ForEach(x =>
+                    {
+                        PriceCacheRepository.CreateEntity(x);
+                    });
+                });
+                
                 return result;
+            }
             
             return new List<RangeBarModel>();
         }
