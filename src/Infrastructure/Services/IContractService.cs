@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Models;
 using static SYNCWallet.Models.GithubTokensModel;
 
 namespace SYNCWallet.Services.Definitions
@@ -197,5 +198,13 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="symbol">Blockchain address of a token, must be on the whitelisted network.</param>
         /// </summary>
         public Task<( decimal lastDayPercentage,decimal lastMonthPercentage, decimal lastYearPercentage)> GetPriceChange(string symbol);
+
+        /// <summary>
+        /// Returns a list of token prices representing price changes across 24h 1 month and 1 year.
+        /// Parameters:
+        /// <param name="symbol">Blockchain address of a token, must be on the whitelisted network.</param>
+        /// </summary>
+        ///
+        public Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to);
     }
 }

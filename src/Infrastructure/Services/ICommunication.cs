@@ -47,6 +47,7 @@ namespace SYNCWallet.Services.Definitions
         public ErrorCallback ErrorCallback {get; set;}
 
         public ConfigMode SoftwareType { get; set; }
+        public string DataApiEndpoint { get; set; }
 
         
 

@@ -1,4 +1,5 @@
 using Application.Implementation;
+using Domain.Models;
 using SYNCWallet.Services.Definitions;
 using LInksync_Cold_Storage_Wallet;
 using ElectronNET.API;
@@ -37,14 +38,18 @@ builder.Services.AddScoped(typeof(IContractService), typeof(ContractService));
 builder.Services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
 builder.Services.AddScoped(typeof(ICommunication), typeof(Communication));
 builder.Services.AddScoped(typeof(ITransactionRepository), typeof(TransactionRepository));
+builder.Services.AddScoped(typeof(ICacheRepository<RangeBarModel>), typeof(PriceDataCache));
+builder.Services.AddScoped(typeof(ICacheRepository<CurrencyDataSetting>), typeof(CurrencySettingCache));
 
  
  
 
 var app = builder.Build();
+var isProduction = false;
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    isProduction = true;
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();

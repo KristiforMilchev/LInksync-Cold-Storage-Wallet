@@ -207,89 +207,7 @@ function logError(e) {
 
 }
 
-
-function RenderChart() {
-
-    // -----------------------------------------------------------------------
-    // Realtime chart
-    // -----------------------------------------------------------------------
-
-    var options_Android_Vs_iOS = {
-        series: [{
-            name: "Growth ",
-            data: [8, 1, 1, 10, 11, 6, 12, 14, 21, 15, 21, 24, 28, 23, 34, 38, 41, 47]
-        }, {
-            name: "Loss ",
-            data: [11, 4, 3, 14, 9, 10, 18, 15, 24, 17, 19, 26, 31, 26, 37, 41, 46, 51]
-        },],
-        chart: {
-            height: 300,
-            type: 'area',
-            stacked: false,
-            fontFamily: 'Rubik,sans-serif',
-            zoom: {
-                enabled: false
-            },
-            toolbar: {
-                show: false
-            },
-            sparkline: {
-                enabled: true
-            }
-        },
-        colors: ['#706e6e', '#706e6e'],
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: false
-        },
-        markers: {
-            size: 2,
-            strokeColors: 'transparent',
-            colors: '#706e6e',
-        },
-        fill: {
-            type: 'solid',
-            colors: ['#706e6e', '#706e6e'],
-            opacity: 1
-        },
-        grid: {
-            show: true,
-            strokeDashArray: 3,
-            borderColor: "rgba(0,0,0,0.1)"
-        },
-        xaxis: {
-            labels: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            }
-        },
-        yaxis: {
-            labels: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            }
-        },
-        legend: {
-            show: false
-        },
-        tooltip: {
-            theme: "dark",
-            marker: {
-                show: true,
-            },
-        },
-    };
-
-    var chart_line_overview = new ApexCharts(document.querySelector("#android-vs-ios"), options_Android_Vs_iOS);
-    chart_line_overview.render();
-    return "OK";
-}
+ 
 
 function OpenSeedConfimr() {
     $("#Options").hide();
@@ -372,86 +290,148 @@ function InitDropdown()
     });
 }
 
-function InitBalanceChart()
+function InitBalanceChart(marketData)
 {
+
  
+    var data = [];
+    for(var item in marketData)
+    {
+        var x = marketData[item];
+        data.push({
+            date: new Date(x.date).getTime(),
+            value: x.close,
+            open: x.open,
+            low: x.low,
+            high: x.high
+        });
+    }
+   var example = generateChartData();
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("chartdiv");
+    root.numberFormatter.set("numberFormat", "#,###.00000000000000000");
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([am5themes_Animated.new(root)]);
+
+    function generateChartData() {
+        var chartData = [];
+        var firstDate = new Date();
+        firstDate.setDate(firstDate.getDate() - 1000);
+        firstDate.setHours(0, 0, 0, 0);
+        var value = 1200;
+        for (var i = 0; i < 5000; i++) {
+            var newDate = new Date(firstDate);
+            newDate.setDate(newDate.getDate() + i);
+
+            value += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
+            var open = value + Math.round(Math.random() * 16 - 8);
+            var low = Math.min(value, open) - Math.round(Math.random() * 5);
+            var high = Math.max(value, open) + Math.round(Math.random() * 5);
+
+            chartData.push({
+                date: newDate.getTime(),
+                value: value,
+                open: open,
+                low: low,
+                high: high
+            });
+        }
+        return chartData;
+    }
+
+
     
-    var myChart = echarts.init(document.getElementById('basic-line'));
+// Create chart
+// https://www.amcharts.com/docs/v5/charts/xy-chart/
+    var chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+            focusable: true,
+            panX: true,
+            panY: true,
+            wheelX: "panX",
+            wheelY: "zoomX"
+        })
+    );
+ 
+// Create axes
+// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xAxis = chart.xAxes.push(
+        am5xy.DateAxis.new(root, {
+            groupData: true,
+            maxDeviation:0.1,
+            baseInterval: { timeUnit: "minute", count: 1 },
+            renderer: am5xy.AxisRendererX.new(root, {pan:"zoom"}),
+            tooltip: am5.Tooltip.new(root, {})
+        })
+    );
 
-    // specify chart configuration item and data
-    var option = {
-        // Setup grid
-        grid: {
-            left: '1%',
-            right: '2%',
-            bottom: '0%',
-            containLabel: true
-        },
+    var yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+            maxDeviation:1,
+            renderer: am5xy.AxisRendererY.new(root, {pan:"zoom"})
+        })
+    );
 
-        // Add Tooltip
-        tooltip : {
-            trigger: 'axis'
-        },
+    var color = root.interfaceColors.get("background");
 
-        // Add Legend
+// Add series
+// https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    var series = chart.series.push(
+        am5xy.CandlestickSeries.new(root, {
+            fill: color,
+            calculateAggregates: true,
+            stroke: color,
+            name: "MDXI",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "value",
+            openValueYField: "open",
+            lowValueYField: "low",
+            highValueYField: "high",
+            valueXField: "date",
+            lowValueYGrouped: "low",
+            highValueYGrouped: "high",
+            openValueYGrouped: "open",
+            valueYGrouped: "close",
+            legendValueText:
+                "open: {openValueY} low: {lowValueY} high: {highValueY} close: {valueY}",
+            legendRangeValueText: "{valueYClose}",
+            tooltip: am5.Tooltip.new(root, {
+                pointerOrientation: "horizontal",
+                labelText: "open: {openValueY}\nlow: {lowValueY}\nhigh: {highValueY}\nclose: {valueY}"
+            })
+        })
+    );
 
+// Add cursor
+// https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+    var cursor = chart.set(
+        "cursor",
+        am5xy.XYCursor.new(root, {
+            xAxis: xAxis
+        })
+    );
+    cursor.lineY.set("visible", false);
 
-        // Add custom colors
-        color: ['#009efb', '#f62d51'],
+// Stack axes vertically
+// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/#Stacked_axes
+    chart.leftAxesContainer.set("layout", root.verticalLayout);
 
-        // Enable drag recalculate
-        calculable : false,
+ 
 
-        // Horizontal Axiz
-        xAxis : [
-            {
-                type : 'category',
-                boundaryGap : true,
-                data : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-            }
-        ],
+    
+    
+// set data
+    series.data.setAll(data);
 
-        // Vertical Axis
-        yAxis : [
-            {
-                type : 'value',
-                axisLabel : {
-                    formatter: '{value} °C'
-                }
-            }
-        ],
-
-        // Add Series
-        series : [
-            {
-                name:'Max temp',
-                type:'line',
-                data:[5, 15, 11, 15, 12, 13, 10],
-                markPoint : {
-                    data : [
-                        {type : 'max', name: 'Max'},
-                        {type : 'min', name: 'Min'}
-                    ]
-                },
-                markLine : {
-                    data : [
-                        {type : 'average', name: 'Average'}
-                    ]
-                },
-                lineStyle: {
-                    normal: {
-                        width: 2,
-                        shadowColor: 'rgba(0,0,0,0.1)',
-                        shadowBlur: 10,
-                        shadowOffsetY: 10
-                    }
-                },
-            },
-
-        ]
-    };
-    // use configuration item and data specified to show chart
-    myChart.setOption(option);
+    
+// Make stuff animate on load
+// https://www.amcharts.com/docs/v5/concepts/animations/
+    series.appear(1000);
+    chart.appear(1000, 100);
 
 }
 

@@ -49,6 +49,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public TriggerLoader TriggerLoader { get; set; }
         public ErrorCallback ErrorCallback {get; set;}
         public ConfigMode SoftwareType { get; set; }
+        public string DataApiEndpoint { get; set; }
 
         public Communication(IAuthenicationService authenicationService, IUtilities utilities)
         {
@@ -379,15 +380,17 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
         public void Init()
         {
- 
-
+            
+            //    DataApiEndpoint = "http://data.uksouth.cloudapp.azure.com";
+            DataApiEndpoint = "https://localhost:7280";
+            
             HideTokenList = "none";
             HideTokenSend = "none";
             ShowPinPanel = "none";
             ShowLoader = "none";
             Receipt = "none";
 
-            IsDevelopment = true;
+            IsDevelopment = false;
             RemainingAttempts = 3;
 
 
