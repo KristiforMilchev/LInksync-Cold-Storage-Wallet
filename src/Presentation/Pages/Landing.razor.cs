@@ -289,7 +289,11 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private async void EnterPin()
         {
             if (Password.Length < 8)
+            {
+                Communication.PublishError("Requirements not met", "Password cannot be less then 8 characters");
                 return;
+            }
+                
 
             Communication.TriggerLoader.Invoke("flex");
             await InvokeAsync(() =>
