@@ -33,7 +33,10 @@ namespace SYNCWallet.Services.Implementation
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                HttpClient client = new HttpClient(clientHandler);
                 client.DefaultRequestHeaders.Add("User-Agent", "request");
                 HttpResponseMessage response = await client.GetAsync(url);
 

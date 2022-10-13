@@ -30,8 +30,6 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             if (!IsChartRendered)
             {
-                Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart"));
-
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "TwitterFeed", Communication.SelectedToken.TwitterFeed)); 
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "InstagramFeed", Communication.SelectedToken.InstagramFeed));
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "YoutubeFeed", Communication.SelectedToken.YoutubeFeed));

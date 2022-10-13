@@ -816,6 +816,18 @@ namespace NFTLock.Data
             return (lastDayPercentage, lastWeekPercentage, lastYearPercentage);
         }
 
+        public async Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to)
+        {
+            contractAddress = "0xf6a22b0593df74f218027a2d8b7953c9b4542aa1";
+            var result = await Utilities.GetRequest<List<RangeBarModel>>(
+                $"{Communication.DataApiEndpoint}/home/GetRange?currency={contractAddress}&&from={from.Ticks}&&to={to.Ticks}&&resolution=1");
+
+            if (result != null)
+                return result;
+            
+            return new List<RangeBarModel>();
+        }
+
         private async Task<decimal> GetChangeForPeriod(string from, string to, string symbol)
         {
             var query = $"https://tradingviewudfproviderexample20220828131239.azurewebsites.net//api/trading-view/udf/history?symbol={symbol}&resolution=60&from={from}&to={to}";

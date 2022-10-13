@@ -4,6 +4,7 @@
 @using SYNCWallet.Components.Navigation
 @using SYNCWallet.Components.Transactions
 @using SYNCWallet.Components.PriceChanges
+@using SYNCWallet.Components.PriceChart
 
 <link href="/css/Tracker.css" rel="stylesheet">
  
@@ -16,11 +17,7 @@
 <div class="container ">
     <div class="row">
         <div class="col-lg-12">
-             <div class="card">
-                 <div class="card-body analytics-info">
-                     <div id="basic-line" style="height:400px; width: 100%"></div>
-                 </div>
-            </div>
+            <PriceChartComponent ContractAddress="@Communication.SelectedContract.ContractAddress"></PriceChartComponent>
         </div>
     </div>
     <!-- Row -->
