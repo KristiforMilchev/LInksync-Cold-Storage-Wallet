@@ -63,7 +63,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             if (Password.Length < 8)
             {
-                //TODO send error message.
+                Communication.PublishError("Requirements not met", "Password cannot be less then 8 characters");
                 return;
             }
 
