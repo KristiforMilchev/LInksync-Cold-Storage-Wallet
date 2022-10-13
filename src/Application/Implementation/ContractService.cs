@@ -809,10 +809,10 @@ namespace NFTLock.Data
 
         public  async Task<(decimal lastDayPercentage, decimal lastMonthPercentage, decimal lastYearPercentage)> GetPriceChange(string symbol)
         {
-            var lastMonth = Utilities.DateTimeToUnixTimestamp(DateTime.UtcNow.AddDays(-30)).ToString().Split('.')[0];
-            var current = Utilities.DateTimeToUnixTimestamp(DateTime.UtcNow).ToString().Split('.')[0];
-            var lastDayTime = Utilities.DateTimeToUnixTimestamp(DateTime.UtcNow.AddDays(-1)).ToString().Split('.')[0];
-            var lastYear = Utilities.DateTimeToUnixTimestamp(DateTime.UtcNow.AddDays(-365)).ToString().Split('.')[0];
+            var lastMonth = DateTime.UtcNow.AddDays(-30);
+            var current = DateTime.UtcNow;
+            var lastDayTime = DateTime.UtcNow.AddDays(-1);
+            var lastYear = DateTime.UtcNow.AddDays(-365);
 
             var lastWeekPercentage = await GetChangeForPeriod(lastMonth, current, symbol);
             var lastDayPercentage = await GetChangeForPeriod(lastDayTime, current, symbol);
@@ -871,17 +871,21 @@ namespace NFTLock.Data
             }
         }
 
-        private async Task<decimal> GetChangeForPeriod(string from, string to, string symbol)
+        private async Task<decimal> GetChangeForPeriod(DateTime from, DateTime to, string symbol)
         {
-            var query = $"https://tradingviewudfproviderexample20220828131239.azurewebsites.net//api/trading-view/udf/history?symbol={symbol}&resolution=60&from={from}&to={to}";
-            var data = await Utilities.GetRequest<CurrentBar>(query);
-            if (data == null || data.c.FirstOrDefault() == 0)
-                return 0;
+            PriceCacheRepository.SelectDatabase(symbol);
+            CurrencyCacheSettingRepository.SelectDatabase(symbol);
+            var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
+            var settings = CurrencyCacheSettingRepository.GetEntity(symbol);
+            var diff = default(decimal);
+            if (cacheResult != null && cacheResult.Count > 0)
+            {
+                var lastWeekData = cacheResult.FirstOrDefault().Close;
+                var currentPrice = cacheResult.LastOrDefault().Close;
+                var sevenDaysPriceChange = (currentPrice - lastWeekData);
+                diff = (sevenDaysPriceChange.Value / lastWeekData.Value) * 100;
+            }
             
-            var lastWeekData = data.c.FirstOrDefault();
-            var currentPrice = data.c.LastOrDefault();
-            var sevenDaysPriceChange = (currentPrice - lastWeekData);
-            var diff = (sevenDaysPriceChange / lastWeekData) * 100;
             return diff;
         }
 
