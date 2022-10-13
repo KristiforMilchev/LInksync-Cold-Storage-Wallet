@@ -48,7 +48,7 @@ namespace SYNCWallet.Services.Definitions
         /// Parameters:
         /// <param name="words">The list of words to reconstruct the wallet.</param>
         /// </summary>
-        /// TODO: in V2, implement a mapping to a book reference so it can create a mnemonic alogirthm to make it more conviniant 
+        /// TODO: in V2, implement a mapping to a book reference so it can create a mnemonic algorithm to make it more convenient  
         public CryptoWallet ImportAccount(List<Word> words);
 
 

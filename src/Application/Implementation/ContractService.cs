@@ -305,8 +305,6 @@ namespace NFTLock.Data
                                     UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
                                     Network = networkId,
 
-                                    //V1 doesn't support native token prices. TODO V2
-                                   // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                                 }
                             }
                     });
@@ -426,8 +424,6 @@ namespace NFTLock.Data
                                 UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
                                 Network = networkId,
                                 CurrentPrice = tokenPrice,
-                                //V1 doesn't support native token prices. TODO V2
-                               // Price =  await GetTokenPrice(getNetworkData.Factory, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.WS)
                             }
                         }
                 });

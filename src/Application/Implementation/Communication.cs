@@ -131,7 +131,6 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 
                 if (convert == null)
                 {
-                    //Todo
                     LoginAttempt?.Invoke(false);
                     return;
                  }
