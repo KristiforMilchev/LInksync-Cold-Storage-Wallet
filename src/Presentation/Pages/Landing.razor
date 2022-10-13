@@ -16,71 +16,59 @@
  
 
 <div class="container">
-    <div class="flexInnerRow">
-        <p style="    margin: auto;
-    display: flex;
-    width: 67%;
-    justify-content: space-around;">
-             @if(SelectedNetwork != null)
+<!-- Row -->
+    <div class="row" >
+        <div class="row" style="margin:0;">
+            
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6" style="text-align: center;">
+                @if (SelectedNetwork != null)
                 {
-                  <span>
-                    Factory: @SelectedNetwork.WS
-                  </span>                
-                }
-          
-            <span>
-                 @Communication.PublicAddress
-            </span>
-           
-        </p>
-        <div class="NetworkDropdown">
-            <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
-                <i class="me-2 mdi mdi-access-point-network"></i>
-                @if(SelectedNetwork != null)
-                {
-                    <span id="network">@SelectedNetwork.Name</span>
-                }
-            </a>
-            <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;"> 
-                @if (Networks != null)
-                {
-                    @foreach (var network in Networks)
-                    {
-                        <a class="dropdown-item"  @onclick="(() => NetworkChanged(network))">
-                            <i class="me-2 mdi mdi-access-point-network"></i>
-                            @network.Name
-                        </a>
-                    }
-         
+                    <span>
+                        Factory: @SelectedNetwork.WS
+                    </span>
                 }
             </div>
-
-            <button class="btn btn-outline-secondary" @onclick="OpenNetworkImport" type="button">
-                <i class="fas fa-cog"></i>
-                Network Settings
-            </button>
- 
-        </div>
-    </div>
-    <!-- Row -->
-    <div class="row" style="display:none;">
-        <div class="col-12">
-            <div class="card">
-                <div >
-                    <div class="col-lg-8">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-0">Balance History @TokenName</h6>
-                        </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6" style="text-align: center;">
+                <span>
+                    @Communication.PublicAddress
+                </span>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="NetworkDropdown" style="float:right;">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark"   href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-weight: 400;">
+                        <i class="me-2 mdi mdi-access-point-network"></i>
+                        @if(SelectedNetwork != null)
+                        {
+                            <span id="network">@SelectedNetwork.Name</span>
+                        }
+                    </a>
+                    <div id="dropdownNetworks" class="dropdown-menu dropdown-menu-end user-dd animated flipInY" style="left: 68%;top: 4%; position:absolute !important;"> 
+                        @if (Networks != null)
+                        {
+                            @foreach (var network in Networks)
+                            {
+                                <a class="dropdown-item"  @onclick="(() => NetworkChanged(network))">
+                                    <i class="me-2 mdi mdi-access-point-network"></i>
+                                    @network.Name
+                                </a>
+                            }
+                          
+                        }
                     </div>
-
-
-                    <div id="android-vs-ios" class=" border-top"> </div>
+                 
+                    <button class="btn btn-outline-secondary" @onclick="OpenNetworkImport" type="button">
+                        <i class="fas fa-cog"></i>
+                        Network Settings
+                    </button>
+                  
                 </div>
             </div>
+            
         </div>
-    </div>
-    <div class="row" >
-
+        
         <div class="row" style="margin:0;">
 
             <!-- Column -->
