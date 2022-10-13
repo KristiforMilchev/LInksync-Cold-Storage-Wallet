@@ -10,11 +10,17 @@ namespace Application.Implementation
         public  string DB { get; set; }
 
 
-        public PriceDataCache(ICommunication communication, string database)
+        public PriceDataCache(ICommunication communication)
+        {
+            Communication = communication;
+
+         
+        }
+
+        public void SelectDatabase(string database)
         {
             try
             {
-                Communication = communication;
                 DB = Path.Combine(Communication.DefaultPath, $"{database}.db");
                 using (SQLiteConnection c = new SQLiteConnection(DB))
                 {
@@ -27,7 +33,7 @@ namespace Application.Implementation
                 Console.WriteLine(e);
             }
         }
-        
+
         public List<RangeBarModel> GetAll()
         {
             try
