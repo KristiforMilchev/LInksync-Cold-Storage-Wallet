@@ -834,11 +834,11 @@ namespace NFTLock.Data
             var settings = CurrencyCacheSettingRepository.GetEntity(contractAddress);
             if (cacheResult != null && cacheResult.Count > 0)
             {
-                if (settings.LastUpdate.AddDays(1) < DateTime.UtcNow)
+                if (settings != null && settings.LastUpdate.AddDays(1) < DateTime.UtcNow)
                 {
                     cacheCombined = cacheResult;
                 }
-                else
+                else if(settings != null)
                 {
                     return cacheResult;
                 }
@@ -868,7 +868,12 @@ namespace NFTLock.Data
                             LastUpdate = DateTime.UtcNow
                         });
                     }
-
+                    else
+                    {
+                        settings.LastUpdate = DateTime.UtcNow;
+                        CurrencyCacheSettingRepository.UpdateEntity(settings);
+                    }
+                        
                     result.ForEach(x => { PriceCacheRepository.CreateEntity(x); });
                 });
             }
