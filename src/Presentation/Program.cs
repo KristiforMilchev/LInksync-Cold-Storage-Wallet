@@ -14,11 +14,14 @@ using SYNCWallet.Services.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseElectron(args);
+
+Electron.ReadAuth();
 
 try
-{
-  //  builder.WebHost.UseElectron(args);
-  // Electron.ReadAuth();
+{ 
+
+    builder.WebHost.UseElectron(args);
 
 }
 catch (Exception e)
@@ -67,19 +70,9 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-try
+if (HybridSupport.IsElectronActive)
 {
-    //Add the Electron 
-    if (HybridSupport.IsElectronActive)
-    {
-        CreateWindow();
-    }
-
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-    
+    CreateWindow();
 }
 
 async void CreateWindow()
