@@ -52,7 +52,7 @@ namespace Application.Implementation
                 var exists = default(CurrencyDataSetting);
                 using (SQLiteConnection c = new SQLiteConnection(DB))
                 {
-                    c.Table<CurrencyDataSetting>().FirstOrDefault(x => x.ContractAddress == hash);
+                    exists = c.Table<CurrencyDataSetting>().FirstOrDefault(x => x.ContractAddress == hash);
                 }
 
                 return exists;
