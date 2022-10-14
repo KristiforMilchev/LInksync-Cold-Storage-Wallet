@@ -25,6 +25,7 @@ namespace SYNCWallet.Components.Navigation
 
         private ICommunication _Communication { get; set; }
         private IContractService _contractService { get; set; }
+        private IUtilities Utilities { get; set; }
         public bool IsChartRendered { get; set; }
 
 
@@ -49,6 +50,7 @@ namespace SYNCWallet.Components.Navigation
             ListedTokens = new List<NetworkTokenGroup>();
             _contractService = ServiceHelper.GetService<IContractService>();
             _Communication = ServiceHelper.GetService<ICommunication>();
+            Utilities = ServiceHelper.GetService<IUtilities>();
             Initializer.DateTimePicker += RegisterPickerCallback;
             LoadAllNetworkTokens();
           
@@ -88,6 +90,11 @@ namespace SYNCWallet.Components.Navigation
                 Network = _Communication.ActiveNetwork,
                 Tokens = tokens
             });
+        }
+
+        private void ReturnToLanding()
+        {
+            NavigationManager.NavigateTo("Landing");
         }
     }
 }
