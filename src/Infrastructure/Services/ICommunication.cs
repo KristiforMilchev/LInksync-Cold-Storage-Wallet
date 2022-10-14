@@ -15,6 +15,7 @@ namespace SYNCWallet.Services.Definitions
 {
     public interface ICommunication
     {
+        public int TrackerOpenCounter { get; set; }
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public int RemainingAttempts { get; set; }

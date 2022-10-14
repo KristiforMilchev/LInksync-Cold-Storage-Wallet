@@ -20,8 +20,16 @@ namespace SYNCWallet.Components.PriceChart
         {
             if (!IsChartRendered)
             {
-                var data = await ContractService.GetContractPriceData(ContractAddress, "", DateTime.UtcNow.AddMonths(-3), DateTime.Now);
-                Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart",data));
+                try
+                {
+                    var data = await ContractService.GetContractPriceData(ContractAddress, "", DateTime.UtcNow.AddMonths(-3), DateTime.Now);
+                    Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart",data));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+              
  
                 IsChartRendered = !IsChartRendered;
             }

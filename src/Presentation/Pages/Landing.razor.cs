@@ -27,27 +27,20 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         NavigationManager NavigationManager { get; set; }
         [Inject]
         private IJSRuntime JS { get; set; }
- 
         public string TokenName { get; set; }
         private bool IsChartRendered { get; set; }
         List<Token> Tokens { get; set; }
         private List<NetworkSettings> Networks { get; set; }
         public string WalletAddress { get; set; }
-
-
         public NetworkSettings SelectedNetwork { get; set; }
         public Token SelectedToken{ get; set; }
         public TokenContract SelectedContract { get; set; }
-
         private decimal TokensToSend { get; set; }
         private string ReceiverAddress { get; set; }
-
         private string Password { get; set; }
-
         TransactionResult Receipt { get; set; }
         System.Timers.Timer BalanceCheck { get; set; }
         DateTime NextCheck { get; set; }
-
         IUtilities Utilities { get; set; }
         IAuthenicationService AuthenicationService { get; set; }
         IPaymentService PaymentService { get; set; }
@@ -369,6 +362,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void OpenTracker()
         {
+            Communication.TrackerOpenCounter += 1;
             NavigationManager.NavigateTo("Tracker");
         }
     }

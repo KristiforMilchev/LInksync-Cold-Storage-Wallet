@@ -5,6 +5,7 @@
 @using SYNCWallet.Components.Transactions
 @using SYNCWallet.Components.PriceChanges
 @using SYNCWallet.Components.PriceChart
+@using SYNCWallet.Components.Advertisement
 
 <link href="/css/Tracker.css" rel="stylesheet">
  
@@ -350,16 +351,6 @@
     </div>
 </div>
 
-<button class="btn btn-light-warning text-warning"  type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom" style="display: none;">Offcanvas Bottom</button>
-
-<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas Bottom</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <div>
-            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-        </div>
-    </div>
-</div>
+<AdvertisementComponent Triggered="@TriggerAd">
+    
+</AdvertisementComponent>
