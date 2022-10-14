@@ -146,6 +146,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 SelectedNetwork = network;
                 Communication.ActiveNetwork = SelectedNetwork;
                 Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id);
+                Communication.LoadedTokens = Tokens;
                 StateHasChanged();
             });
         }
