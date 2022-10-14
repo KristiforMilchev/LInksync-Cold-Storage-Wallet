@@ -16,6 +16,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 {
     public class Communication : ICommunication
     {
+        public int TrackerOpenCounter { get; set; } = 0;
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public int RemainingAttempts { get; set; }

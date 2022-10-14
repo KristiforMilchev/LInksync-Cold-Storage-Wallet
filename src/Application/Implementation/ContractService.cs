@@ -684,6 +684,13 @@ namespace NFTLock.Data
               
                 if(getContract != null && CachedTokenContracts != null)
                 {
+                    var newCache = new List<TokenContract>();
+                    CachedTokenContracts.ForEach(x =>
+                    {
+                        if(x != null)
+                            newCache.Add(x);
+                    });
+                    CachedTokenContracts = newCache;
                     var contractData = CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress);
                     if (contractData != null)
                     {

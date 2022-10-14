@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Domain.Models;
 using LInksync_Cold_Storage_Wallet.Handlers;
 using Microsoft.AspNetCore.Components;
@@ -25,6 +26,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         public decimal SupplyDifference { get; set; }
         public decimal TokenPoolSupply { get; set; }
         public decimal PairPoolSupply { get; set; }
+        public bool TriggerAd { get; set; } = false;
  
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -44,8 +46,19 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication = ServiceHelper.GetService<ICommunication>();
             Utilities = ServiceHelper.GetService<IUtilities>();
             ContractService = ServiceHelper.GetService<IContractService>();
+            await CheckAdRequestModule();
             await CalculateCirculatingSupply();
             await GetPoolQuantities();
+        }
+
+        private async Task CheckAdRequestModule()
+        {
+
+            if (Communication.TrackerOpenCounter >= 3)
+            {
+                Communication.TrackerOpenCounter = 0;
+                TriggerAd = true;
+            }
         }
 
         private async Task CalculateCirculatingSupply()
