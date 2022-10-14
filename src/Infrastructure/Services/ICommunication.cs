@@ -18,6 +18,7 @@ namespace SYNCWallet.Services.Definitions
         public int TrackerOpenCounter { get; set; }
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
+        public List<Token> LoadedTokens { get; set; }
         public int RemainingAttempts { get; set; }
         public string DefaultPath { get; set; }
         public string ContractABI { get; set; }

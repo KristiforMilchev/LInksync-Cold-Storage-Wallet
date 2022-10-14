@@ -19,6 +19,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public int TrackerOpenCounter { get; set; } = 0;
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
+        public List<Token> LoadedTokens { get; set; }
         public int RemainingAttempts { get; set; }
         public string DefaultPath { get; set; }
         public string ContractABI { get; set; }
@@ -382,7 +383,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         {
             
             //    DataApiEndpoint = "http://data.uksouth.cloudapp.azure.com";
-            DataApiEndpoint = "https://localhost:7280";
+            DataApiEndpoint = "http://data.uksouth.cloudapp.azure.com";
             
             HideTokenList = "none";
             HideTokenSend = "none";

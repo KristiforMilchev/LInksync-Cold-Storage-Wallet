@@ -8,42 +8,21 @@
         <div class="card CardFluent">
             <div class="card-header TokenTimeline">
                 <div class="PromotedAssetContainer">
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    <div class="Promoteditem">
-                        <img src="https://linksync.tech/assets/PNG/Letermark_Color.png" class="PLogoSize"/>
-                        <span>Token</span>
-                        <span>Price</span>
-                    </div>
-                    
+                    @if (_Communication.LoadedTokens != null)
+                    {
+                        foreach (var tokenData in @_Communication.LoadedTokens)
+                        {
+                            var listedWithPrice = tokenData.Contracts.Where(x => x.CurrentPrice != 0).ToList();
+                            @foreach (var contract in @listedWithPrice)
+                            {
+                                <div class="Promoteditem">
+                                    <img src="@tokenData.Logo" class="PLogoSize"/>
+                                    <span>@tokenData.Name</span>
+                                    <span>@contract.CurrentPrice</span>
+                                </div>
+                            }
+                        }
+                    }
                 </div>
             </div>
             <div class="card-body">
