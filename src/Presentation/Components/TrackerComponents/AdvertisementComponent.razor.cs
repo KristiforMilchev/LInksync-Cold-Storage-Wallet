@@ -29,7 +29,7 @@ namespace SYNCWallet.Components.Advertisement
                 {
                     InvokeAsync(async () =>
                     {              
-                        ServedAds = await Utilities.GetRequest<List<IncomingAdRequest>>("https://localhost:5001/Advertisments/new");
+                        ServedAds = await Utilities.GetRequest<List<IncomingAdRequest>>("https://services.linksync.tech/Advertisments/new");
                         Task.Run(() => JS.InvokeVoidAsync("OpenAdModule"));
                         StateHasChanged();
                     });
