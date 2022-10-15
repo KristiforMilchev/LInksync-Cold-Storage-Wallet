@@ -96,6 +96,10 @@ namespace NFTLock.Data
         {
             try
             {
+                if (ownerAddress == "--")
+                    return 0;
+                
+                Console.WriteLine($"Calling Balance for owner for contract {contract}");
                 //Construct a balanceOf query and assign the current address as the owner
                 var balanceOfFunctionMessage = new BalanceOf()
                 {
@@ -109,6 +113,8 @@ namespace NFTLock.Data
                 var balanceHandler = web3.Eth.GetContractQueryHandler<BalanceOf>();
                 var balance = await balanceHandler.QueryAsync<BigInteger>(contract, balanceOfFunctionMessage);
                 var convert = Utilities.ConvertToBigIntDex(balance, decimals);
+                Console.WriteLine($"{convert} {contract}");
+
                 return convert;
             }
             catch (Exception e)
@@ -259,7 +265,7 @@ namespace NFTLock.Data
         //    return transactionReceipt;
         //}
 
-
+    
         public async Task<List<Token>> GetNetworkTokensIntial(int networkId)
         {
             //Define a local collection of token.
@@ -760,10 +766,10 @@ namespace NFTLock.Data
             //If transaction hash has been created, start monitoring for a receipt.
             if (transactionReceipt != null)
             {
+                
                 var txHash = string.Empty;
                 if (!logged)
                 {
-
                     txHash = transactionReceipt;
                     Communication.TxHash = txHash;
                 }

@@ -113,14 +113,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private async void AssetUpdatedHandler()
         {
-            await CalculateCirculatingSupply();
-            await GetPoolQuantities();
-
-            InvokeAsync(() =>
-            {
-                this.StateHasChanged();
-            });
-            TrackerHandler.NotifyChildren?.Invoke();
+            NavigationManager.NavigateTo("Tracker", forceLoad:true);
         }
     }
 }

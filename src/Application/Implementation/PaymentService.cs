@@ -185,6 +185,8 @@ namespace SYNCWallet.Data
                 TransactionDate = DateTime.UtcNow
             });
             
+            
+            
             Communication.TxHash = string.Empty;
 
             return true;

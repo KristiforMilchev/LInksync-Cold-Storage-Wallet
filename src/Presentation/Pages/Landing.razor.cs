@@ -105,10 +105,10 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         async void Callback(bool status)
         {
-            Communication.TriggerLoader.Invoke("none");
             if(status)
             {
                 var result = await PaymentService.BeginTransaction();
+                Communication.TriggerLoader.Invoke("none");
 
                 if (result != null)
                 {
@@ -292,7 +292,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.TriggerLoader.Invoke("flex");
             await InvokeAsync(() =>
             {
-                Communication.ShowLoader = "flex";
+
                 Communication.HideTokenList = "none";
                 Communication.HideTokenSend = "none";
                 Communication.ShowPinPanel = "none";
@@ -340,7 +340,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private async void CloseReceipt()
         {
-            await InvokeAsync(() =>
+            await InvokeAsync(async () =>
             {
                 Communication.ShowLoader = "none";
                 Communication.HideTokenList = "";
@@ -350,6 +350,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 SelectedContract.UserBalance -= TokensToSend;
                 TokensToSend = 0;
                 ReceiverAddress = "";
+                Task.Run(() => DefaultToToken());
                 StateHasChanged();
 
             });

@@ -206,5 +206,6 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         ///
         public Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to);
+ 
     }
 }

@@ -183,6 +183,7 @@
 		await JS.InvokeVoidAsync("ImportTokens");
 
 		var result = AuthenicationService.ImportToken(ContractAddress, Symbol, Decimals, TotalSupply, Communication.ActiveNetwork.Id);
+		
 		await TokenImported.InvokeAsync();
 
 	}
