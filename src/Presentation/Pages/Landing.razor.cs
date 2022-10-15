@@ -364,7 +364,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private void OpenTracker()
         {
             Communication.TrackerOpenCounter += 1;
-            NavigationManager.NavigateTo("Tracker");
+            NavigationManager.NavigateTo("Tracker", forceLoad:true);
         }
     }
 }

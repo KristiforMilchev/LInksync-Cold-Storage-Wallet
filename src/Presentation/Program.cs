@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseElectron(args);
 
-//Electron.ReadAuth();
+Electron.ReadAuth();
 
 try
 { 
