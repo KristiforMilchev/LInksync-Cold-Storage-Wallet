@@ -1,3 +1,4 @@
+using LInksync_Cold_Storage_Wallet.Services.Implementation;
 using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
 using SYNCWallet;
@@ -29,6 +30,15 @@ public class AuthenicationHandler : IAuthenicationService
         if (!File.Exists($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json"))
             File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json", "");
 
+        if (string.IsNullOrEmpty(networkName))
+            return false;
+        if (string.IsNullOrEmpty(networkSymbol))
+            return false;
+        if (string.IsNullOrEmpty(rpcUrl))
+            return false;
+        if (chainID == 0)
+            return false;
+        
         var filesContent = File.ReadAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/LocalNetworks.json");
 
         var convertedNetworkList = JsonConvert.DeserializeObject<List<NetworkSettings>>(filesContent);
@@ -69,6 +79,14 @@ public class AuthenicationHandler : IAuthenicationService
         //Create the collection in case it's empty
         if(tokenList == null)
             tokenList = new List<Token>();
+
+        if (string.IsNullOrEmpty(symbol))
+            return false;
+
+        if (delimiter == 0)
+            return false;
+        
+        
         
         if(tokenList.Any(x=>x.Symbol == symbol && x.Name == x.Name))
             return false;
