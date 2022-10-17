@@ -96,5 +96,13 @@ namespace SYNCWallet.Components.Navigation
         {
             NavigationManager.NavigateTo("Landing");
         }
+
+        private string BindLogo(string tokenDataLogo)
+        {
+            if (string.IsNullOrEmpty(tokenDataLogo))
+                return _Communication.ActiveNetwork.Logo;
+
+            return tokenDataLogo;
+        }
     }
 }

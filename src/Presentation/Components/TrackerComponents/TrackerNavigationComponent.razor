@@ -16,7 +16,7 @@
                             @foreach (var contract in @listedWithPrice)
                             {
                                 <div class="Promoteditem">
-                                    <img src="@tokenData.Logo" class="PLogoSize"/>
+                                    <img src="@BindLogo(@tokenData.Logo)" class="PLogoSize"/>
                                     <span>@tokenData.Name</span>
                                     <span>@Utilities.TruncateDecimals(@contract.CurrentPrice)</span>
                                 </div>
