@@ -127,6 +127,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             {
                 if(PassCode.Length < 8)
                 {
+                    Communication.PublishError("Lenght requirement violated.", "The pin code has to be equal to 8 characters!");
                     return;
                 }
 
