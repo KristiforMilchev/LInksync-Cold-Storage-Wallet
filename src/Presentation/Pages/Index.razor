@@ -22,7 +22,7 @@
                         justify-content: center;
                         margin: 10px;"></i>
                         <button @onclick="LoadHotWallet"   type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
-                            Hot Wallet
+                            Local Wallet
                         </button>
                     </div>
                 </div>
@@ -38,12 +38,15 @@
                         justify-content: center;
                         margin: 10px;"></i>
                         <button @onclick="LoadColdWallet"   type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
-                            Cold Storage Wallet
+                            Hardware wallet
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row" style="text-align: center;">
+        <p>Regarding the difference between local wallet and hardware wallet please reffer to the <span style="color: white;font-weight: bold; cursor: pointer;"  @onclick='() => Utilities.OpenBrowser("https://github.com/KristiforMilchev/LInksync-Cold-Storage-Wallet")'>documentaton</span>.</p>
     </div>
           
   </div>
