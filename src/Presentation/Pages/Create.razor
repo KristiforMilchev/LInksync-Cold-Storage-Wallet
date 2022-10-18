@@ -21,7 +21,7 @@
                         display: flex;
                         justify-content: center;
                         margin: 10px;"></i>
-                        <button @onclick="CreateNew" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                        <button @onclick="CreateNew" type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                             Create new
                         </button>
                     </div>
@@ -37,7 +37,7 @@
                         display: flex;
                         justify-content: center;
                         margin: 10px;"></i>
-                        <button @onclick="ImportAccountScreen" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                        <button @onclick="ImportAccountScreen"  type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                             Import Existing
                         </button>
                     </div>
@@ -78,7 +78,7 @@
                 </div>
           
 
-                <button @onclick="ConfirmWallet" style="width: 100%; margin-bottom:20px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                <button @onclick="ConfirmWallet"  type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                     Confirm
                 </button>
     
@@ -100,11 +100,19 @@
                                         justify-content: center;">
                     @if (Words != null)
                     {
-                        <div class="col-md-3" style="text-align: center;
+                        <div class="col-md-3" style="  text-align: center;
                                                         border: 1px solid #999999;
                                                         border-radius: 7px;
                                                         padding: 0;
-                                                        margin: 5px;">
+                                                        margin: 5px;
+                                                        width: 47%;
+                                                        text-align: center;
+                                                        display: flex;
+                                                        flex-direction: column;
+                                                        align-items: center;
+                                                        justify-content: center;
+                                                        align-content: center;
+                                                        ">
                             <input   type="text" @bind-value="Word"  class="form-control inputStyle" placeholder="Name of seed word at position">
 
                             <small class="text-muted">
@@ -115,7 +123,7 @@
                 </div>
 
 
-                <button @onclick="ConfirmWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                <button @onclick="ConfirmWallet"  type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                     Next
                 </button>
             </div>
@@ -154,7 +162,7 @@
                 </div>
 
 
-                <button @onclick="(() => CheckWallet())" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                <button @onclick="(() => CheckWallet())"  type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                     Import Seed
                 </button>
             </div>
@@ -179,7 +187,7 @@
                         <input type="text" @bind-value="PassCode" minlength="8" maxlength="8" class="form-control inputStyle" placeholder="Enter PIN">
                         </div>
                 </div>
-                <button @onclick="CreateWallet" style="width: 100%; " type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                <button @onclick="CreateWallet"   type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">
                     Next
                 </button>
             </div>
