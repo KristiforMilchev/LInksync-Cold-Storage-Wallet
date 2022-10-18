@@ -1,10 +1,13 @@
-![](https://linksync.tech/wallet/0.png)
+![](https://linksync.tech/wallet/1.png)
+
+Public taskboard:
+https://concoctcloud.com/Boards/PublicBoard?projectId=9026&iteration=7037&person=0
 
 ### **What is a SYNC Wallet ?**
 
 SYNC Wallet is a hot and cold stored wallet depending on your chosen configuratio, which is compatible with all EVM blockchains. It's easy to integrate and provides security and it’s built for privacy.  Using the SYNC wallet, users can move and trade coins/tokens in a safe environment, retaining access to their private key which are stored on either the computer or an external device see compatible devices for more information (Cold storage is currently only supported under Windows).   
 
-![](https://linksync.tech/wallet/1.png)
+
 
 ### Compatible devices ?
 
