@@ -68,7 +68,7 @@ namespace NFTLock.Data
 
                 wc.DownloadFile(
                 // Param1 = Link of file
-                new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/main/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
+                new System.Uri("https://raw.githubusercontent.com/KristiforMilchev/LInksync-Cold-Storage-Wallet/development/src/Application/HardwareCode/ColdStorage/wallet.ino.standard.hex"),
                 // Param2 = Path to save
                 @$"{Utilities.GetOsSavePath(Os)}\wallet.ino.standard.hex");
             }
