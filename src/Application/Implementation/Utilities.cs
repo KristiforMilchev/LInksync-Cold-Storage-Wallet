@@ -131,21 +131,26 @@ namespace SYNCWallet.Services.Implementation
         {
             var result = string.Empty;
             string userName = Environment.UserName;
+            
             switch (os)
             {
                 case 1:
-                    result = $@"C:\Users\{userName}\Documents";
+                    result = $@"C:\Users\{userName}\syncdata";
                     break;
 
                 case 2:
-                    result = $@"/home/{userName}/Downloads";
+                    result = $@"/home/{userName}/syncdata";
                     break;
 
                 case 3:
-                    result = $@"/home/{userName}/Downloads";
+                    result = $@"/home/{userName}/syncdata";
                     break;
             }
 
+            if (!Directory.Exists(result))
+                Directory.CreateDirectory(result);
+            
+            
             return result;
         }
 
