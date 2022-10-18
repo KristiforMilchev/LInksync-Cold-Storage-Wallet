@@ -266,6 +266,18 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void SendToken()
         {
+            if (string.IsNullOrEmpty(ReceiverAddress))
+            {
+                Communication.PublishError("Validation failed.", "Receiver address cannot be empty!");
+                return;
+            }
+            
+            if (TokensToSend <= 0)
+            {
+                Communication.PublishError("Validation failed.", "Tokens have to be greater then zero!");
+                return;
+            }
+            
             InvokeAsync(() =>
             {
                 Communication.Receipt = "none";
