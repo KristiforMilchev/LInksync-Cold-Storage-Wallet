@@ -6,6 +6,10 @@
  
 
 @code{
+    
+    [Parameter]
+    public EventCallback WalletDeletedEventCallback { get; set; }
+    
     ICommunication Communication { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -13,8 +17,23 @@
         Communication.ErrorCallback = TriggerLoader;
     }
 
-    public void TriggerLoader(string title, string message)
+    public async void TriggerLoader(string title, string message)
     {
         JS.InvokeVoidAsync("RiseError",title, message);
+        
+        if(message == "Self destruct activated, too many wrong pins, wallet removed!")
+            WalletDeletedEventCallback.InvokeAsync();
+        
+        
+        
+        await InvokeAsync(() =>
+        {
+
+            Communication.TriggerLoader.Invoke("none");
+
+
+            StateHasChanged();
+
+        });
     }
 }

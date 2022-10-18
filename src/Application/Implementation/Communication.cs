@@ -116,7 +116,9 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                         //Since we don't have a hardware to handle file deletion we delete the file from the software.
                         //Only if the password is wrong 3 times in a row.
                         File.Delete(file);
-
+                        ErrorCallback?.Invoke("Authentication Error!", $"Self destruct activated, too many wrong pins, wallet removed!");
+                        return;
+                        
                         // Application.Current.Dispatcher.Dispatch(() =>
                         // {
                         //     Application.Current.Windows.ToList().ForEach(y =>
@@ -125,7 +127,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                         //     });
                         // });
                     }
-                    ErrorCallback?.Invoke("Authenication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
+                    ErrorCallback?.Invoke("Authentication Error!",$"Wrong pin, {RemainingAttempts} attempts remaining");
 
  
                     return;
@@ -275,6 +277,8 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
                         RemainingAttempts -= 1;
                         if (RemainingAttempts <= 0)
                         {
+                            ErrorCallback?.Invoke("Authentication Error!", $"Self destruct activated, too many wrong pins, wallet removed!");
+                            return;
                             // Application.Current.Dispatcher.Dispatch(() =>
                             // {
                             //     Application.Current.Windows.ToList().ForEach(y =>

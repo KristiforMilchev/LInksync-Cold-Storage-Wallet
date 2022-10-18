@@ -62,5 +62,11 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.SoftwareType = ConfigMode.ColdWallet;
             NavigationManager.NavigateTo("HardwareSelect");
         }
+
+        private void WalletRemovedCallback()
+        {
+            NavigationManager.NavigateTo("/", forceLoad:true);
+
+        }
     }
 }

@@ -307,12 +307,21 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.Amount = TokensToSend;
             Communication.ReceiverAddress = ReceiverAddress;
 
-            Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+            switch(Communication.SoftwareType)
             {
-                Cmd = "Login",
-                Password = passwrod,
-                PrivateKey = "3"
-            }));
+                case Enums.ConfigMode.ColdWallet:
+                    Communication.WriteState(JsonConvert.SerializeObject(new HardwareWallet
+                    {
+                        Cmd = "Login",
+                        Password = passwrod,
+                        PrivateKey = "3"
+                    }));
+                    break;
+                case Enums.ConfigMode.HotWallet:
+                    Communication.ReadInternalStorage(passwrod, HardwareService.Os);
+                    break;
+            }
+            
 
             Communication.Pass = Password;
      
