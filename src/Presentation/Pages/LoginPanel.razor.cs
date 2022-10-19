@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components.Web;
+
 namespace LInksync_Cold_Storage_Wallet.Pages
 {
     using Microsoft.AspNetCore.Components;
@@ -87,6 +89,12 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                     break;
             }
 
+        }
+
+        private void KeyUpPressed(KeyboardEventArgs obj)
+        {
+            if(obj.Key == "Enter")
+                LoginPublic();
         }
     }
 }

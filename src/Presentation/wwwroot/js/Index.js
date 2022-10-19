@@ -258,3 +258,4 @@ function OpenAdModule()
 {
     document.getElementById("btnAdServe").click();
 }
+ 
