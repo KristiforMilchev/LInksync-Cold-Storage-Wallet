@@ -91,9 +91,16 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             TokenName = "SYNC";
 
             //Load Network Settings
-            Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
+            if(Communication.NetworkSettings == null)
+                Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
+            
             Networks = Communication.NetworkSettings.Where(x=> x.IsProduction == Communication.IsDevelopment).ToList();
-            SelectedNetwork = Networks.FirstOrDefault();
+            
+            if (Communication.ActiveNetwork == null)
+                SelectedNetwork = Networks.FirstOrDefault();
+            else
+                SelectedNetwork = Communication.ActiveNetwork;
+            
             Communication.ActiveNetwork = SelectedNetwork;
             WalletAddress = Communication.GetDefault();
             Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
@@ -175,8 +182,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             }
             catch (Exception)
             {
-
-                throw;
+                Console.WriteLine("Exception updating tokens.");
             }
 
 
