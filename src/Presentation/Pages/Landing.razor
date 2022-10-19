@@ -340,7 +340,7 @@
                                                 <div class="card-body">
                  
                                                     <div class="form-floating distanceTop">
-                                                        <input id="LPassword" @bind-value="Password" minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
+                                                        <input id="LPassword" @bind-value="Password"  @onkeyup="KeyUpPressed"  minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
                                                         <label>
                                                             <i class="me-2 mdi mdi-lock"></i>
                                                             <span class="border-start border-danger ps-3 ">Password</span>

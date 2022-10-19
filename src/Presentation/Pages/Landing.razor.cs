@@ -1,5 +1,6 @@
 using System.Drawing;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace LInksync_Cold_Storage_Wallet.Pages
@@ -393,6 +394,12 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             Communication.TrackerOpenCounter += 1;
             NavigationManager.NavigateTo("Tracker", forceLoad:true);
+        }
+
+        private void KeyUpPressed(KeyboardEventArgs obj)
+        {
+            if(obj.Key == "Enter")
+                EnterPin();
         }
     }
 }
