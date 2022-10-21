@@ -113,3 +113,6 @@ Mac OS is only supported by building from source OSX. No one on the team has Mac
 If you find my software beneficial, please consider buying me a coffee. Thanks! 
 
 0x09b26ff91DfB5b959908fd7f6cEe73e19FA75817 – Crypto
+
+SYNC Wallet © 2022 by Kristifor Milchev is licensed under CC BY-NC-SA 4.0 
+https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1
