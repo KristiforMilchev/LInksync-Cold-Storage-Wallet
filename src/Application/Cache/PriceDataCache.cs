@@ -3,7 +3,7 @@ using Domain.Models;
 using SQLite;
 using SYNCWallet.Services.Definitions;
 
-namespace Application.Implementation
+namespace Application.Cache
 {
     public class PriceDataCache : ICacheRepository<RangeBarModel>
     {

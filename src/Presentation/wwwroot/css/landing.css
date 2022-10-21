@@ -154,3 +154,8 @@
 
  
 }
+#chartdiv {
+    width: 100%;
+    height: 613px;
+    max-width: 100%;
+}

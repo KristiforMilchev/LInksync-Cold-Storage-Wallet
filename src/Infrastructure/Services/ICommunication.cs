@@ -7,6 +7,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Models;
 using static SYNCWallet.Models.Enums;
 using static SYNCWallet.Models.GithubTokensModel;
 
@@ -15,7 +16,6 @@ namespace SYNCWallet.Services.Definitions
 {
     public interface ICommunication
     {
-        public int TrackerOpenCounter { get; set; }
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public List<Token> LoadedTokens { get; set; }
@@ -47,8 +47,8 @@ namespace SYNCWallet.Services.Definitions
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
         public ErrorCallback ErrorCallback {get; set;}
-        public AdEnabled AdEnabled {get; set;}
-
+        public WidgetLoadedGeneric<List<UserAssetBalance>> ChartDataLoaded { get; set; }
+        
         public ConfigMode SoftwareType { get; set; }
         public string DataApiEndpoint { get; set; }
 

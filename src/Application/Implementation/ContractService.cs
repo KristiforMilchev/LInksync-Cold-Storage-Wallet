@@ -25,17 +25,20 @@ namespace NFTLock.Data
         public IHardwareService HardwareService { get; set; }
         public ICacheRepository<RangeBarModel> PriceCacheRepository { get; set; } 
         public ICacheRepository<CurrencyDataSetting> CurrencyCacheSettingRepository { get; set; }
+        public ICacheRepository<UserAssetBalance> UserBalanceCacheRepository { get; set; }
         List<TokenContract> CachedTokenContracts { get; set; }
         decimal USDPrice { get; set; }
         
         public ContractService(IUtilities utilities, ICommunication communication, IHardwareService hardwareService,
-            ICacheRepository<RangeBarModel> priceCacheRepository, ICacheRepository<CurrencyDataSetting> currencyCache)
+            ICacheRepository<RangeBarModel> priceCacheRepository, ICacheRepository<CurrencyDataSetting> currencyCache,
+            ICacheRepository<UserAssetBalance> userBalanceCacheRepository)
         {
             Utilities = utilities;
             Communication = communication;
             HardwareService = hardwareService;
             PriceCacheRepository = priceCacheRepository;
             CurrencyCacheSettingRepository = currencyCache;
+            UserBalanceCacheRepository = userBalanceCacheRepository;
 
         }
 
@@ -99,7 +102,7 @@ namespace NFTLock.Data
                 if (ownerAddress == "--")
                     return 0;
                 
-                Console.WriteLine($"Calling Balance for owner for contract {contract}");
+              //  Console.WriteLine($"Calling Balance for owner for contract {contract}");
                 //Construct a balanceOf query and assign the current address as the owner
                 var balanceOfFunctionMessage = new BalanceOf()
                 {
@@ -519,7 +522,23 @@ namespace NFTLock.Data
                                 {
                                     CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == contract));
                                 }
+                                
                                 CachedTokenContracts.Add(current.Contracts.FirstOrDefault(x => x.Network == networkId));
+                                UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+                                
+                                var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
+                                var currentUserAssetBalance = new UserAssetBalance();
+                                if (lastValue == null)
+                                    currentUserAssetBalance.PevBalance = 0;
+                                else
+                                    currentUserAssetBalance.PevBalance = lastValue.Balance;
+
+                                currentUserAssetBalance.Currency = getContract.ContractAddress;
+                                currentUserAssetBalance.Balance = getTokenPrice;
+                                currentUserAssetBalance.Date = DateTime.UtcNow;
+                                currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
+                                currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
+                                UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
                             }
 
                         }
@@ -685,6 +704,22 @@ namespace NFTLock.Data
                         if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress) != null)
                             CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
                         CachedTokenContracts.Add(getContract);
+                        
+                        UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+                                
+                        var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
+                        var currentUserAssetBalance = new UserAssetBalance();
+                        if (lastValue == null)
+                            currentUserAssetBalance.PevBalance = 0;
+                        else
+                            currentUserAssetBalance.PevBalance = lastValue.Balance;
+
+                        currentUserAssetBalance.Currency = getContract.ContractAddress;
+                        currentUserAssetBalance.Balance =   getContract.UserBalance * getTokenPrice;
+                        currentUserAssetBalance.Date = DateTime.UtcNow;
+                        currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
+                        currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
+                        UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
                     }
                 });
               
@@ -830,33 +865,56 @@ namespace NFTLock.Data
             return (lastDayPercentage, lastWeekPercentage, lastYearPercentage);
         }
 
-        public async Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to)
+        public List<UserAssetBalance> GetContractPriceData(string contractAddress)
         {
-            var cacheCombined = new List<RangeBarModel>();
+            var cacheData = new List<UserAssetBalance>();
+            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+            cacheData = UserBalanceCacheRepository.GetAllForAddress(contractAddress);
 
-            PriceCacheRepository.SelectDatabase(contractAddress);
-            CurrencyCacheSettingRepository.SelectDatabase(contractAddress);
-            var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
-            var settings = CurrencyCacheSettingRepository.GetEntity(contractAddress);
-            if (cacheResult != null && cacheResult.Count > 0)
+            return cacheData;
+        }
+
+        public List<UserAssetBalance> GetPortfolioBalance()
+        {
+            var cacheData = new List<UserAssetBalance>();
+            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+            CachedTokenContracts.ForEach(x =>
             {
-                if (settings != null && settings.LastUpdate.AddDays(1) < DateTime.UtcNow)
+                var prices = UserBalanceCacheRepository.GetAllForAddress(x.ContractAddress);
+                if (prices != null)
                 {
-                    cacheCombined = cacheResult;
+                    prices.ForEach(x =>
+                    {
+                        var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
+                        var exist = cacheData.FirstOrDefault(c => c.Date == newDate);
+        
+                        if (exist != null)
+                        {
+                            cacheData.FirstOrDefault(c => c.Date == newDate).Balance += x.Balance;
+                        }
+                        else
+                        {
+                            var prevBalance = default(decimal);
+                            var last = cacheData.LastOrDefault();
+                            if (last != null)
+                                prevBalance = last.Balance;
+                            else
+                                prevBalance = 0;
+                                
+                            cacheData.Add(new UserAssetBalance
+                            {
+                                Date = newDate,
+                                Balance = x.Balance,
+                                PevBalance = prevBalance,
+                                Currency = "Balance",
+                                WalletAddress = Communication.PublicAddress
+                            });
+                        }
+                    });
                 }
-                else if(settings != null)
-                {
-                    return cacheResult;
-                }
-            }
-            
-            var network = Communication.ActiveNetwork;
-            var result = await Utilities.GetRequest<List<RangeBarModel>>(
-                $"{Communication.DataApiEndpoint}/home/GetRangeGeneric?currency={contractAddress}&&from={from.Ticks}&&to={to.Ticks}&&resolution=1&&networkId={network.Id}");
+            });
 
-            AddCacheEntries(contractAddress, result, settings);
-            cacheCombined.AddRange(result);
-            return cacheCombined;
+            return cacheData;
         }
 
         private void AddCacheEntries(string contractAddress, List<RangeBarModel> result, CurrencyDataSetting settings)
