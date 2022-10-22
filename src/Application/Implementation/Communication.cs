@@ -51,6 +51,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
         public ErrorCallback ErrorCallback {get; set;}
+        public IncomingBlock IncomingBlockCallback { get; set; }
         public WidgetLoadedGeneric<List<UserAssetBalance>> ChartDataLoaded { get; set; }
         public ConfigMode SoftwareType { get; set; }
         public string DataApiEndpoint { get; set; }

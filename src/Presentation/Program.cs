@@ -41,6 +41,7 @@ builder.Services.AddScoped(typeof(IAuthenicationService), typeof(AuthenicationHa
 builder.Services.AddScoped(typeof(IContractService), typeof(ContractService));
 builder.Services.AddScoped(typeof(IPaymentService), typeof(PaymentService));
 builder.Services.AddScoped(typeof(ICommunication), typeof(Communication));
+builder.Services.AddScoped(typeof(IBlockProcessor), typeof(BlockProcessor));
 builder.Services.AddScoped(typeof(ITransactionRepository), typeof(TransactionRepository));
 builder.Services.AddScoped(typeof(ICacheRepository<RangeBarModel>), typeof(PriceDataCache));
 builder.Services.AddScoped(typeof(ICacheRepository<CurrencyDataSetting>), typeof(CurrencySettingCache));
