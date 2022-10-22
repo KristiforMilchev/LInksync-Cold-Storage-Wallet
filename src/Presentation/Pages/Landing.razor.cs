@@ -399,6 +399,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 SelectedContract.UserBalance -= TokensToSend;
                 TokensToSend = 0;
                 ReceiverAddress = "";
+                Communication.TxHash = "";
                 Task.Run(() => DefaultToToken());
                 StateHasChanged();
 
