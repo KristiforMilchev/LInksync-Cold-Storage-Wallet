@@ -11,6 +11,7 @@ using SYNCWallet.Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,14 +42,18 @@ namespace SYNCWallet.Data
 
         public async Task<TransactionResult> BeginTransaction()
         {
+            //Clear previous results.
+            TransactionResult = null;
+            
             var wallet = AuthenicationService.UnlockWallet(Communication.Pass,Communication.ActiveNetwork.Chainid); //One of decrypt the PK encoded on the device and open the wallet.
            
             //If wallet doesn't exist return null
             if(wallet == null)
-                return null; 
+                return null;
 
+            Console.WriteLine($"Sending {Communication.Amount} to {Communication.ReceiverAddress} on {Communication.ActiveNetwork.Name} in {Communication.SelectedToken.Name}");
             //Check if a contract exists (Native currencies don't have a contract) if false, send native chain token.
-            if (string.IsNullOrEmpty(Communication.SelectedContract.ContractAddress))
+            if (Communication.SelectedToken.IsChainCoin)
                 await ContractService.ExecuteNative(Communication.ReceiverAddress, Communication.Amount, wallet, Communication.ActiveNetwork.Endpoint, Communication.ActiveNetwork.Chainid);
             else
                 await ContractService.ExecutePayments(Communication.ReceiverAddress, Communication.SelectedContract, Communication.Amount, wallet, Communication.ActiveNetwork.Endpoint, Communication.ActiveNetwork.Chainid);
@@ -67,6 +72,8 @@ namespace SYNCWallet.Data
                 }
                 
             }
+            
+            
             Communication.ClearCredentials();
             return TransactionResult;
         }
@@ -184,8 +191,6 @@ namespace SYNCWallet.Data
                 Value = actualTransfer * Communication.SelectedContract.CurrentPrice,
                 TransactionDate = DateTime.UtcNow
             });
-            
-            
             
             Communication.TxHash = string.Empty;
 
