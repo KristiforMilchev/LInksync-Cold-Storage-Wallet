@@ -1,3 +1,4 @@
+using Application.Cache;
 using Application.Implementation;
 using Domain.Models;
 using SYNCWallet.Services.Definitions;
@@ -43,6 +44,7 @@ builder.Services.AddScoped(typeof(ICommunication), typeof(Communication));
 builder.Services.AddScoped(typeof(ITransactionRepository), typeof(TransactionRepository));
 builder.Services.AddScoped(typeof(ICacheRepository<RangeBarModel>), typeof(PriceDataCache));
 builder.Services.AddScoped(typeof(ICacheRepository<CurrencyDataSetting>), typeof(CurrencySettingCache));
+builder.Services.AddScoped(typeof(ICacheRepository<UserAssetBalance>), typeof(UserBalanceCache));
 
  
  

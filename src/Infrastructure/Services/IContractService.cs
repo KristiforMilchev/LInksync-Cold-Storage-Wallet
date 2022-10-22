@@ -205,7 +205,14 @@ namespace SYNCWallet.Services.Definitions
         /// <param name="symbol">Blockchain address of a token, must be on the whitelisted network.</param>
         /// </summary>
         ///
-        public Task<List<RangeBarModel>> GetContractPriceData(string contractAddress, string pairCurrency, DateTime from, DateTime to);
- 
+        public List<UserAssetBalance> GetContractPriceData(string contractAddress );
+
+        /// <summary>
+        /// Gets the portfolio chart of the active address
+        /// Parameters:
+        /// <param name="symbol">Blockchain address of a token, must be on the whitelisted network.</param>
+        /// </summary>
+        ///
+        public List<UserAssetBalance> GetPortfolioBalance();
     }
 }

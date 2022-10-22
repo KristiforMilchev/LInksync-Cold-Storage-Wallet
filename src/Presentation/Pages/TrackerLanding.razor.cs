@@ -35,8 +35,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "TwitterFeed", Communication.SelectedToken.TwitterFeed)); 
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "InstagramFeed", Communication.SelectedToken.InstagramFeed));
                 Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "YoutubeFeed", Communication.SelectedToken.YoutubeFeed));
-                Task.Run(() =>  CheckAdRequestModule());
 
+                
                 IsChartRendered = !IsChartRendered;
             }
 
@@ -50,17 +50,15 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             ContractService = ServiceHelper.GetService<IContractService>();
             await CalculateCirculatingSupply();
             await GetPoolQuantities();
+            GetAssetBalance();
         }
 
-        private async Task CheckAdRequestModule()
+        private void GetAssetBalance()
         {
-
-            if (Communication.TrackerOpenCounter >= 3)
-            {
-                Communication.TrackerOpenCounter = 0;
-                Communication.AdEnabled?.Invoke();
-            }
+            var data = ContractService.GetContractPriceData(Communication.SelectedContract.ContractAddress);
+            Communication.ChartDataLoaded?.Invoke(data, Communication.SelectedContract.ContractAddress, false);
         }
+
 
         private async Task CalculateCirculatingSupply()
         {

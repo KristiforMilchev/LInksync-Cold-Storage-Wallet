@@ -1,5 +1,6 @@
 ﻿@page "/Landing"
 @using SYNCWallet.Models
+@using SYNCWallet.Components.PriceChart
 
  
 
@@ -136,233 +137,253 @@
             </div>
 
         </div>
-        <div class="row" style="margin:0;">
+  
+        
+        <div class="row" style="margin:0; display: @TokenListPanel">
+      
+            
             <div class="col-md-12">
                 <div class="card">
-                        <div class="card-body contentCard">
-                            <div class="table-responsive" style="display:@Communication.HideTokenList" id="TokenList">
+                    <div class="card-body contentCard">
+                        <div class="table-responsive" style="display:@Communication.HideTokenList" id="TokenList">
+                            <div style="  width: 100%;  margin-top: 25px; display: flex; justify-content: space-between;">
+                               
                                 <button class="btn btn-outline-secondary" @onclick="ToggleTokenImport" type="button">
                                     <i class="fas fa-cog"></i>
                                     Import Custom
                                 </button>
-                                <table class="table stylish-table v-middle mb-0 no-wrap">
+                                                                
+                                <button style=" float: revert;" @onclick="OpenChart" type="button" class="btn btn-outline-secondary">
+                                    <i class="icon-chart"></i>
+                                    Portfolio Chart
+                                </button>
+                                                          
+                            </div>
+                        
+                            <table class="table stylish-table v-middle mb-0 no-wrap">
                                     
-                                    <thead>
+                                <thead>
                                 
-                                        <tr>
-                                            <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
-                                            <th class="border-0 text-muted fw-normal">Amount</th>
-                                            <th class="border-0 text-muted fw-normal">Price USDT</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="border-0 text-muted fw-normal" colspan="2">SYMBOL</th>
+                                        <th class="border-0 text-muted fw-normal">Amount</th>
+                                        <th class="border-0 text-muted fw-normal">Price USDT</th>
+                                    </tr>
 
-                                    </thead>
-                                    <tbody>
-                                        @if(Tokens != null)
+                                </thead>
+                                <tbody>
+                                @if(Tokens != null)
+                                {
+                                    @foreach (var token in Tokens)
+                                    {
+                                        var contract = default(TokenContract);
+                                        if (token.Contracts != null && token.Contracts.Count > 0)
                                         {
-                                            @foreach (var token in Tokens)
-                                            {
-                                                var contract = default(TokenContract);
-                                                if (token.Contracts != null && token.Contracts.Count > 0)
+                                            contract = token.Contracts.FirstOrDefault();
+                                        }
+                                        <tr @onclick="(() => SelectToken(contract, token))">
+                                            <td style="width:50px; text-align:left">
+                                                @if(string.IsNullOrEmpty(token.Logo))
                                                 {
-                                                    contract = token.Contracts.FirstOrDefault();
+                                                    <i class="mdi mdi-alert" style="font-size: 2rem;color: #f3bb2b;"></i>
                                                 }
-                                                <tr @onclick="(() => SelectToken(contract, token))">
-                                                    <td style="width:50px; text-align:left">
-                                                        @if(string.IsNullOrEmpty(token.Logo))
-                                                        {
-                                                        <i class="mdi mdi-alert" style="font-size: 2rem;color: #f3bb2b;"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
-                                                        }
-                                                    </td>
-                                                    <td style="text-align:left;">
-                                                        <h6 class="font-weight-medium mb-0">@token.Name</h6>
-                                                        <small class="text-muted">
-                                                            @token.Symbol
-                                                        </small>
-                                                    </td>
-                                                    @if (contract != null)
+                                                else
+                                                {
+                                                    <img style="width: 100%;border-radius: 50%" src="@token.Logo" />
+                                                }
+                                            </td>
+                                            <td style="text-align:left;">
+                                                <h6 class="font-weight-medium mb-0">@token.Name</h6>
+                                                <small class="text-muted">
+                                                    @token.Symbol
+                                                </small>
+                                            </td>
+                                            @if (contract != null)
+                                            {
+                                                <td class="text-muted">
+                                                    @Utilities.TruncateDecimals(contract.UserBalance)
+                                                </td>
+                                                <td class="text-muted">
+                                                    @if (contract.Price == null)
                                                     {
-                                                        <td class="text-muted">
-                                                            @Utilities.TruncateDecimals(contract.UserBalance)
-                                                        </td>
-                                                        <td class="text-muted">
-                                                            @if (contract.Price == null)
-                                                            {
-                                                                @: "--"
-                                                            }
-                                                            else
-                                                            {
-                                                               @Utilities.TruncateDecimals(contract.Price)
-                                                            }
-                                                        </td>
+                                                        @: "--"
                                                     }
                                                     else
                                                     {
-                                                        <td class="text-muted">
-                                                           --
-                                                        </td>
-                                                        <td class="text-muted">$ -- </td>
+                                                        @Utilities.TruncateDecimals(contract.Price)
                                                     }
-
-                                                </tr>
-
-
-                                            }
-                                        }
-                                   
-                                    
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if (SelectedToken != null)
-                            {
-                                <div id="SendToken" style="display:@Communication.HideTokenSend">
-                                    <div style="  width: 100%;  margin-top: 25px; display: flex;">
-                                        <a class="nav-link sidebartoggler waves-effect waves-light" @onclick="CancelSend" style="font-size: 25px;"><i class="icon-arrow-left-circle"></i> Return</a>
-                                        <button style="width: 300px; float: revert;" @onclick="OpenTracker" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
-                                            <i class="icon-wallet"></i>
-                                            Traker
-                                        </button>
-                                    </div>
-                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
-                                                                            display: flex;
-                                                                            flex-direction: row;
-                                                                            justify-content: center;">
-                                        
-                                    </div>
-                                    <div  class="flexInnerRow">
-                                        <h2 style="text-align:center">
-                                            @SelectedToken.Name
-                                        </h2>
-                                        
-                                    </div>
-                                    <div class="flexInnerRow">
-
-                                        <p style="width: 602px;">
-                                            @if(!string.IsNullOrEmpty(SelectedToken.Description))
-                                            {
-                                                @SelectedToken.Description
+                                                </td>
                                             }
                                             else
                                             {
-                                                @: This token, is not officially listed on the vetted token list, trading and transfering it may cause substancial damage to your entire portfolio!
+                                                <td class="text-muted">
+                                                    --
+                                                </td>
+                                                <td class="text-muted">$ -- </td>
                                             }
-                                        </p>
-                                    </div>
-                                    <div class="flexInnerRow">
-                                            <div style="display: flex;flex-direction: row;width: 510px;justify-content: space-evenly;">
-                                            @if (SelectedToken.Links != null)
-                                            {
-                                                @foreach (var link in SelectedToken.Links)
-                                                { 
-                                                    <button class="btn btn-linkedin waves-effect btn-circle waves-light" @onclick="(() => OpenLink(link))" type="button">
-                                                        @switch (link.Type)
-                                                        {
-                                                            case LinkTypes.Facebook:
-                                                                <i class="fab fa-facebook"></i>
-                                                                break;
-                                                            case LinkTypes.Telegram:
-                                                                <i class="fab fa-telegram"></i>
-                                                                break;
-                                                            case LinkTypes.Twitter:
-                                                                <i class="fab fa-twitter"></i>
-                                                                break;
-                                                            case LinkTypes.Website:
-                                                                <i class="mdi mdi-web"></i>
-                                                                break;
-                                                            case LinkTypes.Reddit:
-                                                                <i class="mdi mdi-reddit"></i>
-                                                                break;
-                                                            case LinkTypes.Exchange:
-                                                                <i class="fas fa-money-bill-alt"></i>
-                                                                break;
-                                                        }
-                                                        
-                                                    </button>
-                                                }
-                                            }
-                                                
+
+                                        </tr>
+
+
+                                    }
+                                }
+                                   
                                     
-                                            </div>
-                                        </div>
-                                        <div class="flexInnerRow">
-                                            <div class="form-floating distanceTop" style="    width: 600px;">
-                                                <input @bind-value="ReceiverAddress" class="form-control inputStyle">
-                                                <label>
-                                                    <i class="me-2 icon-wallet"></i>
-                                                    <span class="border-start border-danger ps-3 ">Wallet Address</span>
-                                                </label>
+                                </tbody>
+                            </table>
+                        </div>
+                      
+                        @if (SelectedToken != null)
+                        {
+                            <div id="SendToken" style="display:@Communication.HideTokenSend">
+                                <div style="  width: 100%;  margin-top: 25px; display: flex; justify-content: space-between;">
 
-                                            </div>
-                                        </div>
-                                        <div class="flexInnerRow">
-                                            <div class="form-floating distanceTop form-group" style="    width: 600px;     display: flex;">
-                                            <input @bind-value="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
-                                                <button @onclick="SetMaxAmount" class="btn btn-outline-secondary" type="button">MAX</button>
-                    
-                                                <label  >
-                                                    <i class="me-2 mdi mdi-lock"></i>
-                                                    <span class="border-start border-danger ps-3 ">Amount</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                    <button style=" float: revert;" @onclick="CancelSend" type="button" class="btn btn-outline-secondary">
+                                        <i class="icon-arrow-left-circle"></i>
+                                        Return
+                                    </button>
+                                    
+                                    <button style=" float: revert;" @onclick="OpenTracker" type="button" class="btn btn-outline-secondary">
+                                        <i class="icon-wallet"></i>
+                                        Traker
+                                    </button>
+                              
+                                </div>
+                                <div class="row" style="margin-top: 30px;margin-top: 30px;
                                                                         display: flex;
                                                                         flex-direction: row;
                                                                         justify-content: center;">
-                                            <button style="width: 300px;" @onclick="SendToken" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
-                                                <i class="icon-wallet"></i>
-                                                Send
-                                            </button>
-                                        </div>
-                            
+                                    
                                 </div>
-                            }
-                            @*TODO: Extract this as component*@
-                            <div style="display:@Communication.ShowPinPanel;flex-direction: column;
-                                    align-content: space-around;
-                                    flex-wrap: wrap;
-                                    height: 100%;
-                                    justify-content: center;
-                                    align-items: center;">
-                                <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
-                                    <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
-                                 
-                                        <div class="row"  >
-                                            <div class="card" style="padding: 0;overflow: hidden;">
-                                                <div class="card-header bg-light">
-                                                    <h4 class="mb-0 text-white" style="text-align:center">Login</h4>
-                                                </div>
-                                                <div class="card-body">
-                 
-                                                    <div class="form-floating distanceTop">
-                                                        <input id="LPassword" @bind-value="Password"  @onkeyup="KeyUpPressed"  minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
-                                                        <label>
-                                                            <i class="me-2 mdi mdi-lock"></i>
-                                                            <span class="border-start border-danger ps-3 ">Password</span>
-                                                        </label>
-                                                    </div>
+                                <div  class="flexInnerRow">
+                                    <h2 style="text-align:center">
+                                        @SelectedToken.Name
+                                    </h2>
+                                    
+                                </div>
+                                <div class="flexInnerRow">
 
-                                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
-                                                        display: flex;
-                                                        flex-direction: row;
-                                                        justify-content: center;">
-                                                        <button @onclick="EnterPin" style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
-                                                            <i class="icon-wallet"></i>
-                                                            Unlock
-                                                        </button>
-                                                    </div>
-                         
+                                    <p style="width: 602px;">
+                                        @if(!string.IsNullOrEmpty(SelectedToken.Description))
+                                        {
+                                            @SelectedToken.Description
+                                        }
+                                        else
+                                        {
+                                            @: This token, is not officially listed on the vetted token list, trading and transfering it may cause substancial damage to your entire portfolio!
+                                        }
+                                    </p>
+                                </div>
+                                <div class="flexInnerRow">
+                                        <div style="display: flex;flex-direction: row;width: 510px;justify-content: space-evenly;">
+                                        @if (SelectedToken.Links != null)
+                                        {
+                                            @foreach (var link in SelectedToken.Links)
+                                            { 
+                                                <button class="btn btn-linkedin waves-effect btn-circle waves-light" @onclick="(() => OpenLink(link))" type="button">
+                                                    @switch (link.Type)
+                                                    {
+                                                        case LinkTypes.Facebook:
+                                                            <i class="fab fa-facebook"></i>
+                                                            break;
+                                                        case LinkTypes.Telegram:
+                                                            <i class="fab fa-telegram"></i>
+                                                            break;
+                                                        case LinkTypes.Twitter:
+                                                            <i class="fab fa-twitter"></i>
+                                                            break;
+                                                        case LinkTypes.Website:
+                                                            <i class="mdi mdi-web"></i>
+                                                            break;
+                                                        case LinkTypes.Reddit:
+                                                            <i class="mdi mdi-reddit"></i>
+                                                            break;
+                                                        case LinkTypes.Exchange:
+                                                            <i class="fas fa-money-bill-alt"></i>
+                                                            break;
+                                                    }
+                                                    
+                                                </button>
+                                            }
+                                        }
+                                            
+                                
+                                        </div>
+                                    </div>
+                                    <div class="flexInnerRow">
+                                        <div class="form-floating distanceTop" style="    width: 600px;">
+                                            <input @bind-value="ReceiverAddress" class="form-control inputStyle">
+                                            <label>
+                                                <i class="me-2 icon-wallet"></i>
+                                                <span class="border-start border-danger ps-3 ">Wallet Address</span>
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                    <div class="flexInnerRow">
+                                        <div class="form-floating distanceTop form-group" style="    width: 600px;     display: flex;">
+                                        <input @bind-value="TokensToSend" type="text" class="form-control inputStyle" placeholder="test">
+                                            <button @onclick="SetMaxAmount" class="btn btn-outline-secondary" type="button">MAX</button>
+                
+                                            <label  >
+                                                <i class="me-2 mdi mdi-lock"></i>
+                                                <span class="border-start border-danger ps-3 ">Amount</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                                    display: flex;
+                                                                    flex-direction: row;
+                                                                    justify-content: center;">
+                                        <button style="width: 300px;" @onclick="SendToken" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                            <i class="icon-wallet"></i>
+                                            Send
+                                        </button>
+                                    </div>
+                            </div>
+                        }
+                        @*TODO: Extract this as component*@
+                        <div style="display:@Communication.ShowPinPanel;flex-direction: column;
+                                align-content: space-around;
+                                flex-wrap: wrap;
+                                height: 100%;
+                                justify-content: center;
+                                align-items: center;">
+                            <div class="row" style="width: 100%;display: flex;justify-content: center;align-items: center; padding:0; margin:0;">
+                                <div class="col-md-4 col-sm-12 " style="    min-width: 500px;">
+                             
+                                    <div class="row"  >
+                                        <div class="card" style="padding: 0;overflow: hidden;">
+                                            <div class="card-header bg-light">
+                                                <h4 class="mb-0 text-white" style="text-align:center">Login</h4>
+                                            </div>
+                                            <div class="card-body">
+             
+                                                <div class="form-floating distanceTop">
+                                                    <input id="LPassword" @bind-value="Password"  @onkeyup="KeyUpPressed"  minlength="8" maxlength="8" type="password" class="form-control inputStyle" placeholder="Test Password">
+                                                    <label>
+                                                        <i class="me-2 mdi mdi-lock"></i>
+                                                        <span class="border-start border-danger ps-3 ">Password</span>
+                                                    </label>
                                                 </div>
+
+                                                <div class="row" style="margin-top: 30px;margin-top: 30px;
+                                                    display: flex;
+                                                    flex-direction: row;
+                                                    justify-content: center;">
+                                                    <button @onclick="EnterPin" style="width: 300px;" type="button" class="btn waves-effect waves-light btn-rounded btn-info">
+                                                        <i class="icon-wallet"></i>
+                                                        Unlock
+                                                    </button>
+                                                </div>
+                     
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         
                         <Loader BindingData="@Communication.TxHash"></Loader>
                         <div style="display:@Communication.Receipt;flex-direction: column;align-content: space-around;flex-wrap: wrap;height: 100%;justify-content: center;">
@@ -408,6 +429,35 @@
                             </div>
                         </div>
                   
+                </div>
+            </div>
+        </div>
+              
+        <div class="row" style="margin:0; display: @Chart">
+      
+            
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body contentCard" style="    overflow: hidden;
+                                                                  margin-top: 0;
+                                                                  padding-top: 0;">  
+                        <div class="row">
+                            <button style="    width: 100%;
+                                                                      float: revert;
+                                                                      overflow: hidden;
+                                                                      border: navajowhite;" @onclick="HideChart" type="button" class="btn btn-outline-secondary">
+                                <i class="icon-arrow-left-circle"></i>
+                                Return
+                            </button>
+                        </div>
+                        
+                        <div class="row bg-white">
+                            <PriceChartComponent>
+                                                   
+                            </PriceChartComponent>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
         </div>

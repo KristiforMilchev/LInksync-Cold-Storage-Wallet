@@ -1,3 +1,6 @@
+
+
+
 var oneDelimiter = false;
 
 var isNotificationOpen = false;
@@ -98,10 +101,9 @@ function InitDropdown()
 
     });
 }
-
+var root;
 function InitBalanceChart(marketData)
 {
-
  
     var data = [];
     for(var item in marketData)
@@ -109,52 +111,23 @@ function InitBalanceChart(marketData)
         var x = marketData[item];
         data.push({
             date: new Date(x.date).getTime(),
-            value: x.close,
-            open: x.open,
-            low: x.low,
-            high: x.high
+            value: x.balance,
+            open: x.pevBalance,
+            low: x.pevBalance,
+            high: x.balance
         });
     }
-   var example = generateChartData();
-// Create root element
-// https://www.amcharts.com/docs/v5/getting-started/#Root_element
-    var root = am5.Root.new("chartdiv");
-    root.numberFormatter.set("numberFormat", "#,###.00000000000000000");
+ 
+  
+    if(root === undefined)
+    {
+        root = am5.Root.new("chartdiv");
+        root.numberFormatter.set("numberFormat", "#,###.00000000000000000");
+        root.setThemes([am5themes_Animated.new(root)]);
 
-// Set themes
-// https://www.amcharts.com/docs/v5/concepts/themes/
-    root.setThemes([am5themes_Animated.new(root)]);
-
-    function generateChartData() {
-        var chartData = [];
-        var firstDate = new Date();
-        firstDate.setDate(firstDate.getDate() - 1000);
-        firstDate.setHours(0, 0, 0, 0);
-        var value = 1200;
-        for (var i = 0; i < 5000; i++) {
-            var newDate = new Date(firstDate);
-            newDate.setDate(newDate.getDate() + i);
-
-            value += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-            var open = value + Math.round(Math.random() * 16 - 8);
-            var low = Math.min(value, open) - Math.round(Math.random() * 5);
-            var high = Math.max(value, open) + Math.round(Math.random() * 5);
-
-            chartData.push({
-                date: newDate.getTime(),
-                value: value,
-                open: open,
-                low: low,
-                high: high
-            });
-        }
-        return chartData;
+       
     }
 
-
-    
-// Create chart
-// https://www.amcharts.com/docs/v5/charts/xy-chart/
     var chart = root.container.children.push(
         am5xy.XYChart.new(root, {
             focusable: true,
@@ -164,18 +137,26 @@ function InitBalanceChart(marketData)
             wheelY: "zoomX"
         })
     );
+// Create chart
+// https://www.amcharts.com/docs/v5/charts/xy-chart/
  
+    
+
+
+    
 // Create axes
 // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-    var xAxis = chart.xAxes.push(
-        am5xy.DateAxis.new(root, {
-            groupData: true,
-            maxDeviation:0.1,
-            baseInterval: { timeUnit: "minute", count: 1 },
-            renderer: am5xy.AxisRendererX.new(root, {pan:"zoom"}),
-            tooltip: am5.Tooltip.new(root, {})
-        })
-    );
+   
+
+    let xAxis = chart.xAxes.push(am5xy.GaplessDateAxis.new(root, {
+        maxDeviation: 0,
+        baseInterval: {
+            timeUnit: "day",
+            count: 1
+        },
+        renderer: am5xy.AxisRendererX.new(root, {}),
+        tooltip: am5.Tooltip.new(root, {})
+    }));
 
     var yAxis = chart.yAxes.push(
         am5xy.ValueAxis.new(root, {
@@ -229,11 +210,6 @@ function InitBalanceChart(marketData)
 // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/#Stacked_axes
     chart.leftAxesContainer.set("layout", root.verticalLayout);
 
- 
-
-    
-    
-// set data
     series.data.setAll(data);
 
     
@@ -248,14 +224,5 @@ function LoadSocialMediaFeed(key, feedData)
 {
     $("#"+key).html(feedData);
 }
-
-function  TrackerCurrencyChanged(args)
-{
-    console.log(args);
-}
-
-function OpenAdModule()
-{
-    document.getElementById("btnAdServe").click();
-}
+ 
  

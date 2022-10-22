@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
 using System.Net.Http.Headers;
+using Application.Cache;
 using ArduinoUploader.Hardware;
+using Domain.Models;
 using Newtonsoft.Json;
 using NFTLock.Data;
 using NFTLock.Models;
@@ -16,7 +18,6 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
 {
     public class Communication : ICommunication
     {
-        public int TrackerOpenCounter { get; set; } = 0;
         public ArduinoModel DeviceType { get; set; }
         public List<ListedToken> ListedTokens { get; set; }
         public List<Token> LoadedTokens { get; set; }
@@ -50,7 +51,7 @@ namespace LInksync_Cold_Storage_Wallet.Services.Implementation
         public LoginCallback LoginAttempt { get; set; }
         public TriggerLoader TriggerLoader { get; set; }
         public ErrorCallback ErrorCallback {get; set;}
-        public AdEnabled AdEnabled { get; set; }
+        public WidgetLoadedGeneric<List<UserAssetBalance>> ChartDataLoaded { get; set; }
         public ConfigMode SoftwareType { get; set; }
         public string DataApiEndpoint { get; set; }
 

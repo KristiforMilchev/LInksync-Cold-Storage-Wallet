@@ -5,7 +5,6 @@
 @using SYNCWallet.Components.Transactions
 @using SYNCWallet.Components.PriceChanges
 @using SYNCWallet.Components.PriceChart
-@using SYNCWallet.Components.Advertisement
 
 <link href="/css/Tracker.css" rel="stylesheet">
  
@@ -18,7 +17,12 @@
 <div class="container ">
     <div class="row">
         <div class="col-lg-12">
-            <PriceChartComponent ContractAddress="@Communication.SelectedContract.ContractAddress"></PriceChartComponent>
+            
+            <div class="card">
+                <div class="card-body bg-white">
+                    <PriceChartComponent ContractAddress="@Communication.SelectedContract.ContractAddress"></PriceChartComponent>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Row -->
@@ -351,6 +355,3 @@
     </div>
 </div>
 
-<AdvertisementComponent>
-    
-</AdvertisementComponent>

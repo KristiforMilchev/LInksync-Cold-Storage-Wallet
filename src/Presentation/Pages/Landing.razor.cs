@@ -48,6 +48,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         IHardwareService HardwareService { get; set; }
         ICommunication Communication { get; set; }
         IContractService ContractService { get; set; }
+        public string Chart { get; set; }
+        public string TokenListPanel { get; set; }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -80,6 +82,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.ShowPinPanel = "none";
             Communication.ShowLoader = "none";
             Communication.Receipt = "none";
+            TokenListPanel = "";
+            Chart = "none";
 
 
             BalanceCheck = new System.Timers.Timer();
@@ -107,6 +111,14 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
             Task.Run(() => DefaultToToken());
             NextCheck = DateTime.UtcNow.AddSeconds(20);
+            Task.Run(() => GetAssetBalance());
+
+        }
+        
+        private void GetAssetBalance()
+        {
+            var data = ContractService.GetPortfolioBalance();
+            Communication.ChartDataLoaded?.Invoke(data, string.Empty, true);
         }
 
 
@@ -127,6 +139,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                         Communication.HideTokenSend = "none";
                         Communication.ShowPinPanel = "none";
                         Communication.Receipt = "flex";
+                        TokenListPanel = "";
+                        Chart = "none";
                         Receipt = result;
                         StateHasChanged();
 
@@ -141,22 +155,21 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                     Communication.HideTokenSend = "none";
                     Communication.ShowPinPanel = "none";
                     Communication.Receipt = "none";
-
+                    TokenListPanel = "";
+                    Chart = "none";
                     StateHasChanged();
 
                 });
 
         }
 
-        private void NetworkChanged(NetworkSettings network)
+        private async void NetworkChanged(NetworkSettings network)
         {
-            InvokeAsync(async () =>{
-                SelectedNetwork = network;
-                Communication.ActiveNetwork = SelectedNetwork;
-                Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id);
-                Communication.LoadedTokens = Tokens;
-                StateHasChanged();
-            });
+            
+            SelectedNetwork = network;
+            Communication.ActiveNetwork = SelectedNetwork;
+            NavigationManager.NavigateTo("Landing", forceLoad:true);
+
         }
 
 
@@ -204,7 +217,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.ShowPinPanel = "none";
                 Communication.ShowLoader = "none";
                 Communication.HideTokenSend = "";
-
+                TokenListPanel = "";
+                Chart = "none";
                 StateHasChanged();
             });
         }
@@ -227,7 +241,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.ShowPinPanel = "none";
                 Communication.ShowLoader = "none";
                 Communication.Receipt = "none";
-
+                TokenListPanel = "";
+                Chart = "none";
 
                 StateHasChanged();
             });
@@ -292,6 +307,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.HideTokenSend = "none";
                 Communication.ShowLoader = "none";
                 Communication.ShowPinPanel = "flex";
+                TokenListPanel = "";
+                Chart = "none";
                 StateHasChanged();
 
             });
@@ -316,6 +333,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.HideTokenSend = "none";
                 Communication.ShowPinPanel = "none";
                 Communication.Receipt = "none";
+                TokenListPanel = "";
+                Chart = "none";
 
                 StateHasChanged();
 
@@ -375,6 +394,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.HideTokenSend = "none";
                 Communication.ShowPinPanel = "none";
                 Communication.Receipt = "none";
+                TokenListPanel = "";
+                Chart = "none";
                 SelectedContract.UserBalance -= TokensToSend;
                 TokensToSend = 0;
                 ReceiverAddress = "";
@@ -392,14 +413,37 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void OpenTracker()
         {
-            Communication.TrackerOpenCounter += 1;
-            NavigationManager.NavigateTo("Tracker", forceLoad:true);
+             NavigationManager.NavigateTo("Tracker", forceLoad:true);
         }
 
         private void KeyUpPressed(KeyboardEventArgs obj)
         {
             if(obj.Key == "Enter")
                 EnterPin();
+        }
+
+        private void OpenChart()
+        {
+            InvokeAsync(() =>
+            {
+ 
+                Chart = "";
+                TokenListPanel = "none";
+
+                StateHasChanged();
+            });
+        }
+
+        private void HideChart()
+        {
+            InvokeAsync(() =>
+            {
+  
+                Chart = "none";
+                TokenListPanel = "";
+
+                StateHasChanged();
+            });
         }
     }
 }

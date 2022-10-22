@@ -7,7 +7,7 @@ using NFTLock.Data;
 using SQLite;
 using SYNCWallet.Services.Definitions;
 
-namespace Application.Implementation
+namespace Application.Cache
 {
     public class TransactionRepository : SYNCWallet.Services.Definitions.ITransactionRepository
     {
