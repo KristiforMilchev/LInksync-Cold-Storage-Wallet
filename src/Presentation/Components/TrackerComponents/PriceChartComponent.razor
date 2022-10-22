@@ -1,6 +1,15 @@
 @namespace SYNCWallet.Components.PriceChart
 
-        <div id="chartdiv"></div>
+@if (!IsEmpty)
+{
+    <div id="chartdiv"></div>
+}
+else
+{
+    <p class="TrackerSocialError" style="height:  30vh;">
+        No Data found
+    </p>
+}
 
 
 

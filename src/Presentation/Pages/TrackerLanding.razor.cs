@@ -27,20 +27,60 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         public decimal TokenPoolSupply { get; set; }
         public decimal PairPoolSupply { get; set; }
         public bool TriggerAd { get; set; } = false;
- 
+        public bool TwitterFeedEmpty { get; set; } = true;
+        public bool InstagramFeedEmpty { get; set; } = true;
+        public bool YoutubeFeedEmpty { get; set; } = true;
+        public string EmptySocialError { get; set; }
+        public decimal TotalBinding { get; set; }
+        
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (!IsChartRendered)
             {
-                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "TwitterFeed", Communication.SelectedToken.TwitterFeed)); 
-                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "InstagramFeed", Communication.SelectedToken.InstagramFeed));
-                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "YoutubeFeed", Communication.SelectedToken.YoutubeFeed));
-
-                
+                LoadSocialData();
                 IsChartRendered = !IsChartRendered;
             }
 
             return base.OnAfterRenderAsync(firstRender);
+        }
+
+        private void LoadSocialData()
+        {
+            var anyExist = false;
+            if (!string.IsNullOrEmpty(Communication.SelectedToken.TwitterFeed))
+            {
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "TwitterFeed", 
+                    Communication.SelectedToken.TwitterFeed));
+                TwitterFeedEmpty = false;
+                anyExist = true;
+            }
+
+            if (!string.IsNullOrEmpty(Communication.SelectedToken.InstagramFeed))
+            {
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "InstagramFeed",
+                    Communication.SelectedToken.InstagramFeed));
+                InstagramFeedEmpty = false;
+                anyExist = true;
+            }
+
+            if (!string.IsNullOrEmpty(Communication.SelectedToken.YoutubeFeed))
+            {
+                Task.Run(() => JS.InvokeVoidAsync("LoadSocialMediaFeed", "YoutubeFeed",
+                    Communication.SelectedToken.YoutubeFeed));
+                YoutubeFeedEmpty = false;
+                anyExist = true;
+            }
+
+            InvokeAsync(() =>
+            {
+                if (anyExist)
+                    EmptySocialError = "There is no data provided.";
+                else
+                    EmptySocialError = " Feed is only enabled for whitelisted assets.";
+                
+                StateHasChanged();
+            });
+
         }
 
         protected override async Task OnInitializedAsync()
@@ -113,6 +153,15 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private async void AssetUpdatedHandler()
         {
             NavigationManager.NavigateTo("Tracker", forceLoad:true);
+        }
+
+        private void TotalCalculated(decimal total)
+        {
+            InvokeAsync(() =>
+            {
+                TotalBinding = total;
+                StateHasChanged();
+            });
         }
     }
 }
