@@ -156,6 +156,10 @@
 }
 #chartdiv {
     width: 100%;
-    height: 613px;
+    height: 615px;
     max-width: 100%;
+}
+
+.btn-outline-secondary{
+    width: 167.39px;
 }

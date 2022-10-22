@@ -885,31 +885,39 @@ namespace NFTLock.Data
                 {
                     prices.ForEach(x =>
                     {
-                        var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
-                        var exist = cacheData.FirstOrDefault(c => c.Date == newDate);
+                        if (x.Balance > 0)
+                        {
+                            var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
+                            var exist = cacheData.FirstOrDefault(c => c.Date == newDate);
         
-                        if (exist != null)
-                        {
-                            cacheData.FirstOrDefault(c => c.Date == newDate).Balance += x.Balance;
-                        }
-                        else
-                        {
-                            var prevBalance = default(decimal);
-                            var last = cacheData.LastOrDefault();
-                            if (last != null)
-                                prevBalance = last.Balance;
-                            else
-                                prevBalance = 0;
-                                
-                            cacheData.Add(new UserAssetBalance
+                            if (exist != null)
                             {
-                                Date = newDate,
-                                Balance = x.Balance,
-                                PevBalance = prevBalance,
-                                Currency = "Balance",
-                                WalletAddress = Communication.PublicAddress
-                            });
+                                var diff = exist.Balance - x.Balance;
+                                if (diff > 0 || diff < 0)
+                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance += diff;
+                                
+
+                            }
+                            else
+                            {
+                                var prevBalance = default(decimal);
+                                var last = cacheData.LastOrDefault();
+                                if (last != null)
+                                    prevBalance = last.Balance;
+                                else
+                                    prevBalance = 0;
+                                
+                                cacheData.Add(new UserAssetBalance
+                                {
+                                    Date = newDate,
+                                    Balance = x.Balance,
+                                    PevBalance = prevBalance,
+                                    Currency = "Balance",
+                                    WalletAddress = Communication.PublicAddress
+                                });
+                            }
                         }
+                       
                     });
                 }
             });

@@ -137,31 +137,8 @@
             </div>
 
         </div>
-        <div class="row" style="display: @Chart">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body contentCard" style="    padding: 0;
-                                                                  margin: 0;
-                                                                  overflow: hidden;">
-                        <div class="row">
-                            <button style="    width: 100%;
-                                               float: revert;
-                                               overflow: hidden;
-                                               border: navajowhite;" @onclick="HideChart" type="button" class="btn btn-outline-secondary">
-                                <i class="icon-arrow-left-circle"></i>
-                                Return
-                            </button>
-                        </div>
-                        <div class="row bg-white">
-                            <PriceChartComponent>
-                            
-                            </PriceChartComponent>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-            
+  
+        
         <div class="row" style="margin:0; display: @TokenListPanel">
       
             
@@ -176,9 +153,9 @@
                                     Import Custom
                                 </button>
                                                                 
-                                <button style="width: 300px; float: revert;" @onclick="OpenChart" type="button" class="btn btn-outline-secondary">
+                                <button style=" float: revert;" @onclick="OpenChart" type="button" class="btn btn-outline-secondary">
                                     <i class="icon-chart"></i>
-                                    Traker
+                                    Portfolio Chart
                                 </button>
                                                           
                             </div>
@@ -261,12 +238,12 @@
                             <div id="SendToken" style="display:@Communication.HideTokenSend">
                                 <div style="  width: 100%;  margin-top: 25px; display: flex; justify-content: space-between;">
 
-                                    <button style="width: 300px; float: revert;" @onclick="CancelSend" type="button" class="btn btn-outline-secondary">
+                                    <button style=" float: revert;" @onclick="CancelSend" type="button" class="btn btn-outline-secondary">
                                         <i class="icon-arrow-left-circle"></i>
                                         Return
                                     </button>
                                     
-                                    <button style="width: 300px; float: revert;" @onclick="OpenTracker" type="button" class="btn btn-outline-secondary">
+                                    <button style=" float: revert;" @onclick="OpenTracker" type="button" class="btn btn-outline-secondary">
                                         <i class="icon-wallet"></i>
                                         Traker
                                     </button>
@@ -452,6 +429,35 @@
                             </div>
                         </div>
                   
+                </div>
+            </div>
+        </div>
+              
+        <div class="row" style="margin:0; display: @Chart">
+      
+            
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body contentCard" style="    overflow: hidden;
+                                                                  margin-top: 0;
+                                                                  padding-top: 0;">  
+                        <div class="row">
+                            <button style="    width: 100%;
+                                                                      float: revert;
+                                                                      overflow: hidden;
+                                                                      border: navajowhite;" @onclick="HideChart" type="button" class="btn btn-outline-secondary">
+                                <i class="icon-arrow-left-circle"></i>
+                                Return
+                            </button>
+                        </div>
+                        
+                        <div class="row bg-white">
+                            <PriceChartComponent>
+                                                   
+                            </PriceChartComponent>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
         </div>
