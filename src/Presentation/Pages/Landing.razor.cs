@@ -2,6 +2,7 @@ using System.Drawing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Nethereum.BlockchainProcessing.BlockStorage.Entities;
 
 namespace LInksync_Cold_Storage_Wallet.Pages
 {
@@ -41,13 +42,13 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private string Password { get; set; }
         TransactionResult Receipt { get; set; }
         System.Timers.Timer BalanceCheck { get; set; }
-        DateTime NextCheck { get; set; }
-        IUtilities Utilities { get; set; }
+         IUtilities Utilities { get; set; }
         IAuthenicationService AuthenicationService { get; set; }
         IPaymentService PaymentService { get; set; }
         IHardwareService HardwareService { get; set; }
         ICommunication Communication { get; set; }
         IContractService ContractService { get; set; }
+        private IBlockProcessor BlockProcessor { get; set; }
         public string Chart { get; set; }
         public string TokenListPanel { get; set; }
 
@@ -74,9 +75,16 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             HardwareService = ServiceHelper.GetService<IHardwareService>();
             ContractService = ServiceHelper.GetService<IContractService>();
             Communication = ServiceHelper.GetService<ICommunication>();
+            BlockProcessor = ServiceHelper.GetService<IBlockProcessor>();
+            
+            //Register callbcaks
             Communication.LoginAttempt = Callback;
-
-            NextCheck = NextCheck.AddMinutes(1);
+            Communication.IncomingBlockCallback = BlockCallback;
+            
+            //TODO Remove dependency on time, default to data on new blocks
+             
+            //Hide stuff that has to be hidden 
+            //TODO Move out to a handler to make code more readable
             Communication.HideTokenList = "";
             Communication.HideTokenSend = "none";
             Communication.ShowPinPanel = "none";
@@ -84,15 +92,6 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.Receipt = "none";
             TokenListPanel = "";
             Chart = "none";
-
-
-            BalanceCheck = new System.Timers.Timer();
-            BalanceCheck= new System.Timers.Timer();
-            BalanceCheck.Elapsed += new ElapsedEventHandler(OnBalanceUpdate);
-            BalanceCheck.Interval = 5000;
-            BalanceCheck.Start();
-
-
             TokenName = "SYNC";
 
             //Load Network Settings
@@ -110,18 +109,21 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             WalletAddress = Communication.GetDefault();
             Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
             Task.Run(() => DefaultToToken());
-            NextCheck = DateTime.UtcNow.AddSeconds(20);
-            Task.Run(() => GetAssetBalance());
-
+             Task.Run(() => GetAssetBalance());
+            
+            BlockProcessor.BeginProcessing();
         }
-        
+
+        private void BlockCallback()
+        {
+            Task.Run(() => DefaultToToken());
+        }
+
         private void GetAssetBalance()
         {
             var data = ContractService.GetPortfolioBalance();
             Communication.ChartDataLoaded?.Invoke(data, string.Empty, true);
         }
-
-
 
         async void Callback(bool status)
         {
@@ -168,6 +170,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             
             SelectedNetwork = network;
             Communication.ActiveNetwork = SelectedNetwork;
+            BlockProcessor.Dispose();
             NavigationManager.NavigateTo("Landing", forceLoad:true);
 
         }
@@ -188,8 +191,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                             Tokens = updateTokens;
 
                         
-                        NextCheck = DateTime.UtcNow.AddSeconds(20);
-                        StateHasChanged();
+                         StateHasChanged();
                     }
 
                 });
@@ -373,16 +375,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
        
 
-        private void OnBalanceUpdate(object source, ElapsedEventArgs e)
-        {
-
-            if (DateTime.UtcNow > NextCheck)
-            {
-                Task.Run(() => DefaultToToken());
-                NextCheck = DateTime.UtcNow.AddSeconds(20);
-            }
-
-        }
+     
 
 
         private async void CloseReceipt()
