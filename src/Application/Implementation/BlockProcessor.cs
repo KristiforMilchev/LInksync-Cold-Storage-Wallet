@@ -24,7 +24,8 @@ namespace Application.Implementation
         
         public async void BeginProcessing()
         {
-            NextCheck = NextCheck.AddMinutes(3);
+            NextCheck = DateTime.UtcNow;
+            NextCheck = NextCheck.AddMinutes(1);
             //TODO Remove dependency on time, default to data on new blocks
             BalanceCheck = new System.Timers.Timer();
             BalanceCheck= new System.Timers.Timer();
@@ -38,7 +39,7 @@ namespace Application.Implementation
             if (DateTime.UtcNow > NextCheck)
             {
                 Communication.IncomingBlockCallback?.Invoke();
-                NextCheck = NextCheck.AddMinutes(3);
+                NextCheck = NextCheck.AddMinutes(1);
             }
         }
         

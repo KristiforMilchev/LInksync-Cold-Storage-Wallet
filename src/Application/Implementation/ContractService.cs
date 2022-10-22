@@ -672,54 +672,63 @@ namespace NFTLock.Data
 
                     if (getContract != null)
                     {
-                        //Check the user balance of the given contract
-                        getContract.UserBalance = await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                        //Get the contract native price
-                        var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
-
-                        //Construct a query to conver the price to USD
-                        var pairs = new string[2];
-                        pairs[0] = getContract.PairTokenAddress;
-                        pairs[1] = network.PairCurrency;
-                        //Convert the price to USD
-                        getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
-
-                        //Bind the price values
-                        if (getContract.UserBalance > 0)
-                        {
-                            getContract.Price = getContract.UserBalance * getTokenPrice;
-                            getContract.CurrentPrice = getTokenPrice;
-                        }
-                        else
-                        {
-                            getContract.Price = 0;
-                            getContract.CurrentPrice = getTokenPrice;
-                        }
-
-                        //Get contract market cap, and circulating supply
-                        (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
-                        getContract.MarketCap = tokenMarketData.mCap;
-                        getContract.CirculatingSupply = tokenMarketData.circulating;
+                       
                         
-                        if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress) != null)
-                            CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
-                        CachedTokenContracts.Add(getContract);
-                        
-                        UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
-                                
-                        var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
-                        var currentUserAssetBalance = new UserAssetBalance();
-                        if (lastValue == null)
-                            currentUserAssetBalance.PevBalance = 0;
-                        else
-                            currentUserAssetBalance.PevBalance = lastValue.Balance;
+                            var deb = "test";
+            
+                            //Check the user balance of the given contract
+                            getContract.UserBalance = await CheckUserBalanceForContract(Communication.PublicAddress, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                            //Get the contract native price
+                            var getTokenPrice = await CheckContractPrice(getContract.MainLiquidityPool, getContract.ContractAddress, getContract.PairTokenAddress, getContract.Decimals, 18, network.Endpoint);
+                            
+                            //Construct a query to convert the price to USD
+                            var pairs = new string[2];
+                            pairs[0] = getContract.PairTokenAddress;
+                            pairs[1] = network.PairCurrency;
+                            //Convert the price to USD
+                            getTokenPrice = await ConvertTokenToUsd(getTokenPrice, pairs, network.Endpoint, getContract.ListedExchangeRouter); //Convert to USDT
 
-                        currentUserAssetBalance.Currency = getContract.ContractAddress;
-                        currentUserAssetBalance.Balance =   getContract.UserBalance * getTokenPrice;
-                        currentUserAssetBalance.Date = DateTime.UtcNow;
-                        currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
-                        currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
-                        UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
+                            //Override if listed as stablecoin
+                            if (getContract.MainLiquidityPool == "--")
+                                getTokenPrice = 1;
+                            
+                            //Bind the price values
+                            if (getContract.UserBalance > 0)
+                            {
+                                getContract.Price = getContract.UserBalance * getTokenPrice;
+                                getContract.CurrentPrice = getTokenPrice;
+                            }
+                            else
+                            {
+                                getContract.Price = 0;
+                                getContract.CurrentPrice = getTokenPrice;
+                            }
+
+                            //Get contract market cap, and circulating supply
+                            (decimal circulating, decimal mCap) tokenMarketData = await GetContractMarketCap(getContract.Supply, getTokenPrice, getContract.ContractAddress, network.Endpoint, getContract.Decimals);
+                            getContract.MarketCap = tokenMarketData.mCap;
+                            getContract.CirculatingSupply = tokenMarketData.circulating;
+                            
+                            if (CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress) != null)
+                                CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
+                            CachedTokenContracts.Add(getContract);
+                            
+                            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+                                    
+                            var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
+                            var currentUserAssetBalance = new UserAssetBalance();
+                            if (lastValue == null)
+                                currentUserAssetBalance.PevBalance = 0;
+                            else
+                                currentUserAssetBalance.PevBalance = lastValue.Balance;
+
+                            currentUserAssetBalance.Currency = getContract.ContractAddress;
+                            currentUserAssetBalance.Balance =   getContract.UserBalance * getTokenPrice;
+                            currentUserAssetBalance.Date = DateTime.UtcNow;
+                            currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
+                            currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
+                            UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
+                        
                     }
                 });
               
