@@ -11,7 +11,9 @@ namespace SYNCWallet.Components.Transactions
     {
         [Parameter]
         public string Contract { get; set; }
- 
+        [Parameter]
+        public EventCallback<decimal> TotalSpendingCalculated { get; set; }
+
         
         private ICommunication Communication { get; set; }
         private SYNCWallet.Services.Definitions.ITransactionRepository Repository { get; set; }
@@ -35,9 +37,14 @@ namespace SYNCWallet.Components.Transactions
             });
         }
 
-        private void GetAllTransactions()
+        private async void GetAllTransactions()
         {
             Transactions = Repository.GetAllTransactionsForAsset(Contract);
+            if (Transactions != null && Transactions.Count > 0)
+            {
+                
+                await TotalSpendingCalculated.InvokeAsync(Transactions.Sum(x=>x.Value));
+            }
         }
     }
 }

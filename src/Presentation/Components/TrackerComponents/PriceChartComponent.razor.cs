@@ -21,6 +21,7 @@ namespace SYNCWallet.Components.PriceChart
         
         [Parameter]
         public string ContractAddress { get; set; }
+        public  bool IsEmpty { get; set; } = true;
 
 
         protected override async Task OnInitializedAsync()
@@ -90,7 +91,23 @@ namespace SYNCWallet.Components.PriceChart
 
                 iterationIndex++;
             });
-            Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart", bindingData));
+            
+            InvokeAsync(() =>
+            {
+
+                if (bindingData.Count > 0 && bindingData.Any(x => x.Balance > 0))
+                {
+                    IsEmpty = false;
+                    StateHasChanged();
+                    Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart", bindingData));
+                }
+                else
+                {
+                    IsEmpty = true;
+                    StateHasChanged();
+                }
+            });
+        
         }
     }
 }

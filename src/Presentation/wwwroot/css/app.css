@@ -332,3 +332,10 @@ a {
     color: #fff;
     font-size: 1.0625em;
 }
+.TrackerSocialError{
+    height: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
