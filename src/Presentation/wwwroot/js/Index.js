@@ -112,9 +112,6 @@ function InitBalanceChart(marketData)
         data.push({
             date: new Date(x.date).getTime(),
             value: x.balance,
-            open: x.pevBalance,
-            low: x.pevBalance,
-            high: x.balance
         });
     }
  
@@ -123,11 +120,11 @@ function InitBalanceChart(marketData)
     {
         root = am5.Root.new("chartdiv");
         root.numberFormatter.set("numberFormat", "#,###.00000000000000000");
-        root.setThemes([am5themes_Animated.new(root)]);
+        root.setThemes([am5themes_Animated.new(root),   am5themes_Dark.new(root)]);
 
        
     }
-
+ 
     var chart = root.container.children.push(
         am5xy.XYChart.new(root, {
             focusable: true,
@@ -137,6 +134,7 @@ function InitBalanceChart(marketData)
             wheelY: "zoomX"
         })
     );
+  
 // Create chart
 // https://www.amcharts.com/docs/v5/charts/xy-chart/
  
@@ -146,55 +144,32 @@ function InitBalanceChart(marketData)
     
 // Create axes
 // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-   
 
-    let xAxis = chart.xAxes.push(am5xy.GaplessDateAxis.new(root, {
-        maxDeviation: 0,
-        baseInterval: {
-            timeUnit: "day",
-            count: 1
-        },
+// Create axes
+// https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+        baseInterval: { timeUnit: "day", count: 1 },
         renderer: am5xy.AxisRendererX.new(root, {}),
         tooltip: am5.Tooltip.new(root, {})
     }));
 
-    var yAxis = chart.yAxes.push(
-        am5xy.ValueAxis.new(root, {
-            maxDeviation:1,
-            renderer: am5xy.AxisRendererY.new(root, {pan:"zoom"})
-        })
-    );
+    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+        renderer: am5xy.AxisRendererY.new(root, {})
+    }));
 
     var color = root.interfaceColors.get("background");
 
-// Add series
-// https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-    var series = chart.series.push(
-        am5xy.CandlestickSeries.new(root, {
-            fill: color,
-            calculateAggregates: true,
-            stroke: color,
-            name: "MDXI",
-            xAxis: xAxis,
-            yAxis: yAxis,
-            valueYField: "value",
-            openValueYField: "open",
-            lowValueYField: "low",
-            highValueYField: "high",
-            valueXField: "date",
-            lowValueYGrouped: "low",
-            highValueYGrouped: "high",
-            openValueYGrouped: "open",
-            valueYGrouped: "close",
-            legendValueText:
-                "open: {openValueY} low: {lowValueY} high: {highValueY} close: {valueY}",
-            legendRangeValueText: "{valueYClose}",
-            tooltip: am5.Tooltip.new(root, {
-                pointerOrientation: "horizontal",
-                labelText: "open: {openValueY}\nlow: {lowValueY}\nhigh: {highValueY}\nclose: {valueY}"
-            })
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    var series = chart.series.push(am5xy.LineSeries.new(root, {
+        name: "Series",
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: "value",
+        valueXField: "date",
+        tooltip: am5.Tooltip.new(root, {
+            labelText: "{valueY}"
         })
-    );
+    }));
 
 // Add cursor
 // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/

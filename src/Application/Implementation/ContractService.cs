@@ -295,7 +295,7 @@ namespace NFTLock.Data
                
 
                 //Check if the selected network exists
-                var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
+                var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction != Communication.IsDevelopment);
 
                 //In case it exists we add the native token to the list and run a query to get the user balance of the token.
                 if (getNetworkData != null)
@@ -411,7 +411,7 @@ namespace NFTLock.Data
             var tokens = new List<Token>();
 
             //Check if the selected network exists
-            var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction == Communication.IsDevelopment);
+            var getNetworkData = Communication.NetworkSettings.FirstOrDefault(x => x.Id == networkId && x.IsProduction != Communication.IsDevelopment);
 
             //In case it exists we add the native token to the list and run a query to get the user balance of the token.
             if(getNetworkData != null)
@@ -887,7 +887,7 @@ namespace NFTLock.Data
         {
             var cacheData = new List<UserAssetBalance>();
             UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
-            CachedTokenContracts.ForEach(x =>
+            CachedTokenContracts.Where(x=> x.Network == Communication.ActiveNetwork.Id).ToList().ForEach(x =>
             {
                 var prices = UserBalanceCacheRepository.GetAllForAddress(x.ContractAddress);
                 if (prices != null)
@@ -897,14 +897,15 @@ namespace NFTLock.Data
                         if (x.Balance > 0)
                         {
                             var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
-                            var exist = cacheData.FirstOrDefault(c => c.Date == newDate);
+                            var exist = cacheData.FirstOrDefault(c => c.Date == newDate && c.Currency == x.Currency);
         
                             if (exist != null)
                             {
-                                var diff = exist.Balance - x.Balance;
-                                if (diff > 0 || diff < 0)
-                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance += diff;
-                                
+                                if (exist.Balance > x.Balance)
+                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance = exist.Balance;
+                                else
+                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance = x.Balance;
+
 
                             }
                             else
@@ -921,7 +922,7 @@ namespace NFTLock.Data
                                     Date = newDate,
                                     Balance = x.Balance,
                                     PevBalance = prevBalance,
-                                    Currency = "Balance",
+                                    Currency = x.Currency,
                                     WalletAddress = Communication.PublicAddress
                                 });
                             }
@@ -930,8 +931,31 @@ namespace NFTLock.Data
                     });
                 }
             });
+            
+            var result = new List<UserAssetBalance>();
+            cacheData.ForEach(x =>
+            {
+                var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
 
-            return cacheData;
+                var exist = result.FirstOrDefault(c => c.Date == newDate && c.Currency == x.Currency);
+
+                if (exist != null)
+                {
+                    result.FirstOrDefault(c => c.Date == newDate).Balance += exist.Balance;
+                }
+                else
+                {
+                    result.Add(new UserAssetBalance
+                    {
+                        Date = newDate,
+                        Balance = x.Balance,
+                        Currency = "UserBalance",
+                        WalletAddress = Communication.PublicAddress
+                    });
+                }
+            });
+            
+            return result;
         }
 
         private void AddCacheEntries(string contractAddress, List<RangeBarModel> result, CurrencyDataSetting settings)
@@ -960,19 +984,18 @@ namespace NFTLock.Data
             }
         }
 
-        private async Task<decimal> GetChangeForPeriod(DateTime from, DateTime to, string symbol)
+        private async Task<decimal> GetChangeForPeriod(DateTime from, DateTime to, string contract)
         {
-            PriceCacheRepository.SelectDatabase(symbol);
-            CurrencyCacheSettingRepository.SelectDatabase(symbol);
-            var cacheResult = PriceCacheRepository.GetAllRange("", from, to);
-            var settings = CurrencyCacheSettingRepository.GetEntity(symbol);
+            UserBalanceCacheRepository.SelectDatabase(contract);
+            var prices = UserBalanceCacheRepository.GetAllRange(contract, from, to);
+
             var diff = default(decimal);
-            if (cacheResult != null && cacheResult.Count > 0)
+            if (prices != null && prices.Count > 0)
             {
-                var lastWeekData = cacheResult.FirstOrDefault().Close;
-                var currentPrice = cacheResult.LastOrDefault().Close;
+                var lastWeekData = prices.FirstOrDefault().Balance;
+                var currentPrice = prices.LastOrDefault().Balance;
                 var sevenDaysPriceChange = (currentPrice - lastWeekData);
-                diff = (sevenDaysPriceChange.Value / lastWeekData.Value) * 100;
+                diff = (sevenDaysPriceChange / lastWeekData) * 100;
             }
             
             return diff;
