@@ -51,6 +51,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private IBlockProcessor BlockProcessor { get; set; }
         public string Chart { get; set; }
         public string TokenListPanel { get; set; }
+        public int TmpInit { get; set; } = 0;
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -112,6 +113,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
              Task.Run(() => GetAssetBalance());
             
             BlockProcessor.BeginProcessing();
+            Console.WriteLine($"Initializer called: {TmpInit++} {DateTime.UtcNow}");
         }
 
         private void BlockCallback()
