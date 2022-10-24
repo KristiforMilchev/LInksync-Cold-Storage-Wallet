@@ -42,7 +42,7 @@ namespace Application.Cache
                 var listTDTO = default(List<UserAssetBalance>);
                 using (SQLiteConnection c = new SQLiteConnection(DB))
                 {
-                    listTDTO = c.Table<UserAssetBalance>().Where(x=>x.WalletAddress == Communication.PublicAddress && x.NetworkId == Communication.ActiveNetwork.Id).ToList();
+                    listTDTO = c.Table<UserAssetBalance>().Where(x=>x.WalletAddress == Communication.PublicAddress && x.NetworkId == Communication.ActiveNetwork.Id && x.Balance > 0).ToList();
 
                 }
            

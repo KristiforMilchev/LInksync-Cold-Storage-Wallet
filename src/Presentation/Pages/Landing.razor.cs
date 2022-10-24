@@ -2,6 +2,7 @@ using System.Drawing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using NBitcoin.Protocol.Behaviors;
 using Nethereum.BlockchainProcessing.BlockStorage.Entities;
 
 namespace LInksync_Cold_Storage_Wallet.Pages
@@ -51,8 +52,11 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private IBlockProcessor BlockProcessor { get; set; }
         public string Chart { get; set; }
         public string TokenListPanel { get; set; }
-        public int TmpInit { get; set; } = 0;
-
+        public string PortfolioBaseInfo { get; set; } = string.Empty;
+        public string TokenBaseInfo { get; set; } = "none";
+        public decimal PortfolioDailyChange { get; set; } = 0;
+        public decimal PortfolioCurrentTotal { get; set; }
+    
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (!IsChartRendered)
@@ -68,8 +72,6 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         protected override async Task OnInitializedAsync()
         {
-
-
             Utilities = ServiceHelper.GetService<IUtilities>();
             AuthenicationService = ServiceHelper.GetService<IAuthenicationService>();
             PaymentService = ServiceHelper.GetService<IPaymentService>();
@@ -113,8 +115,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Task.Run(() => GetAssetBalance());
             
             BlockProcessor.BeginProcessing();
-            Console.WriteLine($"Initializer called: {TmpInit++} {DateTime.UtcNow}");
-        }
+         }
 
         private void BlockCallback()
         {
@@ -124,6 +125,34 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private void GetAssetBalance()
         {
             var data = ContractService.GetPortfolioBalance();
+            data = data.OrderBy(x => x.Date).ToList();
+            var lastBalance = data.LastOrDefault();
+            
+            try
+            {
+                if (lastBalance != null)
+                {
+                    InvokeAsync(() =>
+                    {
+                        PortfolioCurrentTotal = lastBalance.Balance;
+                        var prev = data.IndexOf(lastBalance);
+                        var prevDay = data.ElementAt(prev - 1);
+                        if (prevDay != null && prevDay.Balance != lastBalance.Balance)
+                            PortfolioDailyChange =
+                                ((decimal) lastBalance.Balance / prevDay.Balance) * 100;
+                        else
+                            PortfolioDailyChange = 0;
+                    
+                        StateHasChanged();
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
+            // Bind to chart
             Communication.ChartDataLoaded?.Invoke(data, string.Empty, true);
         }
 
@@ -223,6 +252,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.HideTokenSend = "";
                 TokenListPanel = "";
                 Chart = "none";
+                PortfolioBaseInfo = "none";
+                TokenBaseInfo = "";
                 StateHasChanged();
             });
         }
@@ -247,6 +278,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Communication.Receipt = "none";
                 TokenListPanel = "";
                 Chart = "none";
+                PortfolioBaseInfo = "";
+                TokenBaseInfo = "none";
 
                 StateHasChanged();
             });

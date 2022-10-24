@@ -71,9 +71,67 @@
         </div>
         
         <div class="row" style="margin:0;">
+    <!-- Column -->
+            <div class="col-lg-4 col-md-6" style="display: @PortfolioBaseInfo">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div >
+                            <div >
+                                <span class="display-6">
+                                    @if (Tokens != null)
+                                    {
+                                        @Tokens.Count
+                                    }
+                                    else
+                                    {
+                                       @: 0
+                                    }
+                                 </span>
+                                <h6>Asset Count</h6>
+                            </div>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Column -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6" style="display: @PortfolioBaseInfo">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div >
+                            <div >
+                                <span class="display-6">
+                                     @PortfolioDailyChange.ToString("F") %
+                                 </span>
+                                <h6>Daily Change</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6" style="display: @PortfolioBaseInfo">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Row -->
+                        <div >
+                            <div >
+                                <span class="display-6">
+                                    @if(PortfolioCurrentTotal != null)
+                                    {
+                                        @PortfolioCurrentTotal.ToString("C2")
+                                    }                                
+                                 </span>
+                                <h6>Total Balance</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-6" style="display: @TokenBaseInfo">
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
@@ -95,7 +153,7 @@
                 </div>
             </div>
             <!-- Column -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6" style="display: @TokenBaseInfo">
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
@@ -116,7 +174,7 @@
                 </div>
             </div>
             <!-- Column -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6" style="display: @TokenBaseInfo">
                 <div class="card">
                     <div class="card-body">
                         <!-- Row -->
