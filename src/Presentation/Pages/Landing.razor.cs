@@ -99,7 +99,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             if(Communication.NetworkSettings == null)
                 Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
             
-            Networks = Communication.NetworkSettings.Where(x=> x.IsProduction == Communication.IsDevelopment).ToList();
+            Networks = Communication.NetworkSettings.Where(x=> x.IsProduction != Communication.IsDevelopment).ToList();
             
             if (Communication.ActiveNetwork == null)
                 SelectedNetwork = Networks.FirstOrDefault();
@@ -110,7 +110,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             WalletAddress = Communication.GetDefault();
             Tokens = await ContractService.GetNetworkTokensIntial(SelectedNetwork.Id); //Get All tokens and their balance
             Task.Run(() => DefaultToToken());
-             Task.Run(() => GetAssetBalance());
+            Task.Run(() => GetAssetBalance());
             
             BlockProcessor.BeginProcessing();
             Console.WriteLine($"Initializer called: {TmpInit++} {DateTime.UtcNow}");
@@ -272,7 +272,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             {
               
                 Communication.NetworkSettings = await Utilities.SetupNetworks(HardwareService.Os);
-                Networks = Communication.NetworkSettings.Where(x => x.IsProduction == Communication.IsDevelopment).ToList();
+                Networks = Communication.NetworkSettings.Where(x => x.IsProduction != Communication.IsDevelopment).ToList();
                 StateHasChanged();
 
             });
