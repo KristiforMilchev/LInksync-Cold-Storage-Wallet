@@ -419,6 +419,16 @@ namespace NFTLock.Data
                 var pairExists = await CheckExchangelisting(getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, getNetworkData.Endpoint, getNetworkData.Factory);
                 var tokenPrice = await CheckContractPrice(pairExists, getNetworkData.CurrencyAddress, getNetworkData.PairCurrency, 18, 18, getNetworkData.Endpoint);
                 USDPrice = tokenPrice;
+                var userBalance = await GetAccountBalance(getNetworkData.Endpoint);
+                var tokenContract = new TokenContract
+                {
+                    ContractAddress = getNetworkData.CurrencyAddress,
+                    UserBalance = userBalance,
+                    Network = networkId,
+                    CurrentPrice = tokenPrice,
+                    Price = userBalance * tokenPrice
+                };
+                
                 tokens.Add(new Token
                 {
                     Symbol = getNetworkData.TokenSylmbol,
@@ -427,15 +437,10 @@ namespace NFTLock.Data
                     IsChainCoin = true,
                     Contracts = new List<TokenContract>
                         {
-                            new TokenContract
-                            {
-                                ContractAddress = getNetworkData.CurrencyAddress,
-                                UserBalance = await GetAccountBalance(getNetworkData.Endpoint),
-                                Network = networkId,
-                                CurrentPrice = tokenPrice,
-                            }
+                            tokenContract          
                         }
                 });
+                AddTokenUserBalanceHistory(tokenContract, tokenPrice);
             }
             
             //Gets the list of officially supported tokens on the selected network, as it binds user balance, market cap, price, and circulating supply for each token.
@@ -713,22 +718,7 @@ namespace NFTLock.Data
                                 CachedTokenContracts.Remove(CachedTokenContracts.FirstOrDefault(x => x.ContractAddress == getContract.ContractAddress));
                             CachedTokenContracts.Add(getContract);
                             
-                            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
-                                    
-                            var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
-                            var currentUserAssetBalance = new UserAssetBalance();
-                            if (lastValue == null)
-                                currentUserAssetBalance.PevBalance = 0;
-                            else
-                                currentUserAssetBalance.PevBalance = lastValue.Balance;
-
-                            currentUserAssetBalance.Currency = getContract.ContractAddress;
-                            currentUserAssetBalance.Balance =   getContract.UserBalance * getTokenPrice;
-                            currentUserAssetBalance.Date = DateTime.UtcNow;
-                            currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
-                            currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
-                            UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
-                        
+                            AddTokenUserBalanceHistory(getContract, getTokenPrice);
                     }
                 });
               
@@ -761,6 +751,25 @@ namespace NFTLock.Data
             File.WriteAllText($"{Utilities.GetOsSavePath(HardwareService.Os)}/CachePrices.json", JsonConvert.SerializeObject(CachedTokenContracts));
 
             return tokens;
+        }
+
+        private void AddTokenUserBalanceHistory(TokenContract getContract, decimal getTokenPrice)
+        {
+            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+
+            var lastValue = UserBalanceCacheRepository.GetEntity(getContract.ContractAddress);
+            var currentUserAssetBalance = new UserAssetBalance();
+            if (lastValue == null)
+                currentUserAssetBalance.PevBalance = 0;
+            else
+                currentUserAssetBalance.PevBalance = lastValue.Balance;
+
+            currentUserAssetBalance.Currency = getContract.ContractAddress;
+            currentUserAssetBalance.Balance = getContract.UserBalance * getTokenPrice;
+            currentUserAssetBalance.Date = DateTime.UtcNow;
+            currentUserAssetBalance.WalletAddress = Communication.PublicAddress;
+            currentUserAssetBalance.NetworkId = Communication.ActiveNetwork.Id;
+            UserBalanceCacheRepository.CreateEntity(currentUserAssetBalance);
         }
 
         public async Task<bool> ExecutePayments(string receiver, TokenContract token, decimal amountToSend, Nethereum.Web3.Accounts.Account account, string endpoint, int chainId)
@@ -886,75 +895,64 @@ namespace NFTLock.Data
         public List<UserAssetBalance> GetPortfolioBalance()
         {
             var cacheData = new List<UserAssetBalance>();
-            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
-            CachedTokenContracts.Where(x=> x.Network == Communication.ActiveNetwork.Id).ToList().ForEach(x =>
-            {
-                var prices = UserBalanceCacheRepository.GetAllForAddress(x.ContractAddress);
-                if (prices != null)
-                {
-                    prices.ForEach(x =>
-                    {
-                        if (x.Balance > 0)
-                        {
-                            var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
-                            var exist = cacheData.FirstOrDefault(c => c.Date == newDate && c.Currency == x.Currency);
-        
-                            if (exist != null)
-                            {
-                                if (exist.Balance > x.Balance)
-                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance = exist.Balance;
-                                else
-                                    cacheData.FirstOrDefault(c => c.Date == newDate).Balance = x.Balance;
-
-
-                            }
-                            else
-                            {
-                                var prevBalance = default(decimal);
-                                var last = cacheData.LastOrDefault();
-                                if (last != null)
-                                    prevBalance = last.Balance;
-                                else
-                                    prevBalance = 0;
-                                
-                                cacheData.Add(new UserAssetBalance
-                                {
-                                    Date = newDate,
-                                    Balance = x.Balance,
-                                    PevBalance = prevBalance,
-                                    Currency = x.Currency,
-                                    WalletAddress = Communication.PublicAddress
-                                });
-                            }
-                        }
-                       
-                    });
-                }
-            });
-            
             var result = new List<UserAssetBalance>();
-            cacheData.ForEach(x =>
+            UserBalanceCacheRepository.SelectDatabase("UserBalanceHistory");
+
+            var all = UserBalanceCacheRepository.GetAll();
+            var contracts = all.GroupBy(x => x.Currency).ToList();
+            contracts.ForEach(x =>
             {
-                var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
-
-                var exist = result.FirstOrDefault(c => c.Date == newDate && c.Currency == x.Currency);
-
-                if (exist != null)
+                cacheData = new List<UserAssetBalance>();
+                x.ToList().ForEach(x =>
                 {
-                    result.FirstOrDefault(c => c.Date == newDate).Balance += exist.Balance;
-                }
-                else
-                {
-                    result.Add(new UserAssetBalance
+                    if (x.Balance > 0)
                     {
-                        Date = newDate,
-                        Balance = x.Balance,
-                        Currency = "UserBalance",
-                        WalletAddress = Communication.PublicAddress
-                    });
-                }
+                        var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
+                        var exist = cacheData.FirstOrDefault(c => c.Date == newDate);
+        
+                        if (exist != null)
+                        {
+                            cacheData.FirstOrDefault(c => c.Date == newDate).Balance = x.Balance;
+                        }
+                        else
+                        {
+                            var last = cacheData.LastOrDefault();
+                            cacheData.Add(new UserAssetBalance
+                            {
+                                Date = newDate,
+                                Balance = x.Balance,
+                                Currency = "UserBalance",
+                                WalletAddress = Communication.PublicAddress
+                            });
+                        }
+                    }
+                });
+                
+                cacheData.ForEach(x =>
+                {
+                    var newDate = new DateTime(x.Date.Year, x.Date.Month, x.Date.Day);
+                    var exist = result.FirstOrDefault(c => c.Date == newDate);
+        
+                    if (exist != null)
+                    {
+                     
+                        result.FirstOrDefault(c => c.Date == newDate).Balance += x.Balance;
+                    }
+                    else
+                    {
+                        var last = result.LastOrDefault();
+                        result.Add(new UserAssetBalance
+                        {
+                            Date = newDate,
+                            Balance = x.Balance,
+                            Currency = "UserBalance",
+                            WalletAddress = Communication.PublicAddress
+                        });
+                    }
+                });
             });
-            
+   
+          
             return result;
         }
 
