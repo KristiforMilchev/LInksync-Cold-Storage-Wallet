@@ -1,9 +1,9 @@
 {
-  "executable": "LInksync-Cold-Storage-Wallet",
+  "executable": "SYCNWAllet",
   "splashscreen": {
     "imageFile": ""
   },
-  "name": "LInksync-Cold-Storage-Wallet",
+  "name": "SYNCWallet",
   "author": "Collaborativesoft LTD",
   "singleInstance": false,
   "environment": "Production",
@@ -11,7 +11,7 @@
     "appId": "com.LInksync-Cold-Storage-Wallet.app",
     "productName": "LInksync-Cold-Storage-Wallet",
     "copyright": "Copyright © 2019-2022",
-    "buildVersion": "1.0.2",
+    "buildVersion": "1.0.3",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
