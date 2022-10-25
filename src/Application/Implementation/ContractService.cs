@@ -815,6 +815,7 @@ namespace NFTLock.Data
                 Console.WriteLine(e);
                 logged = true;
                 Communication.TxHash = "-";
+                Communication.PublishError("Transaction failed", e.Message);
             }
 
             //If transaction hash has been created, start monitoring for a receipt.
@@ -855,6 +856,8 @@ namespace NFTLock.Data
             {
                 Communication.TxHash = "-";
                 Console.WriteLine(e);
+                Communication.PublishError("Transaction failed", e.Message);
+
                 return false;
             }
            

@@ -390,7 +390,8 @@ namespace LInksync_Cold_Storage_Wallet.Pages
             Communication.KeepPrivateSingle = true;
             Communication.Amount = TokensToSend;
             Communication.ReceiverAddress = ReceiverAddress;
-
+            Communication.Pass = Password;
+            
             switch(Communication.SoftwareType)
             {
                 case Enums.ConfigMode.ColdWallet:
