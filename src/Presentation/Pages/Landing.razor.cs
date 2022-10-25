@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -56,6 +57,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         public string TokenBaseInfo { get; set; } = "none";
         public decimal PortfolioDailyChange { get; set; } = 0;
         public decimal PortfolioCurrentTotal { get; set; }
+        public decimal EstiamtedGas { get; set; }
     
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -244,8 +246,9 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         private void SelectToken(TokenContract contract, Token token)
         {
             
-            InvokeAsync(() =>
+            InvokeAsync(async () =>
             {
+                EstiamtedGas = await ContractService.EstimateGas(contract, Communication.PublicAddress);
                 SelectedToken = token;
                 SelectedContract = contract;
                 Communication.SelectedToken = token;
@@ -259,6 +262,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 Chart = "none";
                 PortfolioBaseInfo = "none";
                 TokenBaseInfo = "";
+                
                 StateHasChanged();
             });
         }
@@ -420,23 +424,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private async void CloseReceipt()
         {
-            await InvokeAsync(async () =>
-            {
-                Communication.ShowLoader = "none";
-                Communication.HideTokenList = "";
-                Communication.HideTokenSend = "none";
-                Communication.ShowPinPanel = "none";
-                Communication.Receipt = "none";
-                TokenListPanel = "";
-                Chart = "none";
-                SelectedContract.UserBalance -= TokensToSend;
-                TokensToSend = 0;
-                ReceiverAddress = "";
-                Communication.TxHash = "";
-                Task.Run(() => DefaultToToken());
-                StateHasChanged();
-
-            });
+            NavigationManager.NavigateTo("Landing", forceLoad:true);
         }
 
         private async void OpenLink(TokenLink link)

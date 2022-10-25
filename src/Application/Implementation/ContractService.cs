@@ -11,6 +11,7 @@ using SYNCWallet.Services.Definitions;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Reactive.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using Domain.Models;
 using static SYNCWallet.Models.GithubTokensModel;
@@ -954,6 +955,20 @@ namespace NFTLock.Data
    
           
             return result;
+        }
+
+        public async Task<decimal> EstimateGas(TokenContract tokenContract, string receiver)
+        {
+            if (string.IsNullOrEmpty(receiver))
+                receiver = Communication.PublicAddress;
+            
+            //Instantiate web3 and generate a transfer event.
+            var web3 = new Web3(Communication.ActiveNetwork.Endpoint);
+
+            var transaction = web3.Eth.GetEtherTransferService();
+            //Estimates the gas for a transaction based on 1 ether
+            var gas = await transaction.EstimateGasAsync(receiver, 1);
+            return (decimal)gas;
         }
 
         private void AddCacheEntries(string contractAddress, List<RangeBarModel> result, CurrencyDataSetting settings)

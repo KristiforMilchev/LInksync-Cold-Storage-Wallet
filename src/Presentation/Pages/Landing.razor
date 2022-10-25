@@ -369,6 +369,21 @@
                                         </div>
                                     </div>
                                     <div class="flexInnerRow">
+                                        <p style="text-align: center">
+                                            Estimated Gas
+                                            @if (EstiamtedGas == null)
+                                            {
+                                              @:  0
+                                            }
+                                            else
+                                            {
+                                                @EstiamtedGas
+                                            }
+                                            WEI
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="flexInnerRow">
                                         <div class="form-floating distanceTop" style="    width: 600px;">
                                             <input @bind-value="ReceiverAddress" class="form-control inputStyle">
                                             <label>

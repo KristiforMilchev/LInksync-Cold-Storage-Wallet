@@ -214,5 +214,14 @@ namespace SYNCWallet.Services.Definitions
         /// </summary>
         ///
         public List<UserAssetBalance> GetPortfolioBalance();
+
+        /// <summary>
+        /// Estimates the gas for an asset
+        /// Parameters:
+        /// <param name="tokenContract">TokenContract object from the wallet list</param>
+        /// <param name="receiver">string address of the receiver</param>
+        /// </summary>
+        ///
+        public Task<decimal> EstimateGas(TokenContract tokenContract, string receiver);
     }
 }
