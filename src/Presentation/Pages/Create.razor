@@ -113,7 +113,7 @@
                                                         justify-content: center;
                                                         align-content: center;
                                                         ">
-                            <input   type="text" @bind-value="Word"  class="form-control inputStyle" placeholder="Name of seed word at position">
+                            <input   type="text" @bind-value="Word"  @onkeyup="KeyUpPressed" class="form-control inputStyle" placeholder="Name of seed word at position">
 
                             <small class="text-muted">
                                 @WordNum
@@ -184,7 +184,7 @@
                                                         border-radius: 7px;
                                                         padding: 0;
                                                         margin: 5px;">
-                        <input type="text" @bind-value="PassCode" minlength="8" maxlength="8" class="form-control inputStyle" placeholder="Enter PIN">
+                        <input type="text" @bind-value="PassCode" @onkeyup="KeyUpPressedPin" minlength="8" maxlength="8" class="form-control inputStyle" placeholder="Enter PIN">
                         </div>
                 </div>
                 <button @onclick="CreateWallet"   type="button" class="btn waves-effect waves-light btn-rounded btn-info btnWidth">

@@ -36,8 +36,7 @@ namespace SYNCWallet.Components.Navigation
         {
             if (!IsChartRendered)
             {
-                Task.Run(() => JS.InvokeAsync<string>("InitDropdown"));
-                IsChartRendered = !IsChartRendered;
+                 IsChartRendered = !IsChartRendered;
             }
 
             return base.OnAfterRenderAsync(firstRender);
@@ -47,13 +46,20 @@ namespace SYNCWallet.Components.Navigation
 
         protected override async Task OnInitializedAsync()
         {
-            ListedTokens = new List<NetworkTokenGroup>();
-            _contractService = ServiceHelper.GetService<IContractService>();
-            _Communication = ServiceHelper.GetService<ICommunication>();
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            Initializer.DateTimePicker += RegisterPickerCallback;
-            LoadAllNetworkTokens();
-          
+            try
+            {
+                ListedTokens = new List<NetworkTokenGroup>();
+                _contractService = ServiceHelper.GetService<IContractService>();
+                _Communication = ServiceHelper.GetService<ICommunication>();
+                Utilities = ServiceHelper.GetService<IUtilities>();
+                Initializer.DateTimePicker += RegisterPickerCallback;
+                Task.Run(() => LoadAllNetworkTokens());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                 
+            }
         }
 
         private async void RegisterPickerCallback(string token)
@@ -94,7 +100,7 @@ namespace SYNCWallet.Components.Navigation
 
         private void ReturnToLanding()
         {
-            NavigationManager.NavigateTo("Landing");
+            NavigationManager.NavigateTo("Landing", forceLoad:true);
         }
 
         private string BindLogo(string tokenDataLogo)

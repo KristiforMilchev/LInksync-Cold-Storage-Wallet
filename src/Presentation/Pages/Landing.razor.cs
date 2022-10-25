@@ -136,10 +136,15 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                     {
                         PortfolioCurrentTotal = lastBalance.Balance;
                         var prev = data.IndexOf(lastBalance);
-                        var prevDay = data.ElementAt(prev - 1);
-                        if (prevDay != null && prevDay.Balance != lastBalance.Balance)
-                            PortfolioDailyChange =
-                                ((decimal) lastBalance.Balance / prevDay.Balance) * 100;
+                        if (prev - 1 >= 0)
+                        {
+                            var prevDay = data.ElementAt(prev - 1);
+                            if (prevDay != null && prevDay.Balance != lastBalance.Balance)
+                                PortfolioDailyChange =
+                                    ((decimal)lastBalance.Balance / prevDay.Balance) * 100;
+                            else
+                                PortfolioDailyChange = 0;
+                        }
                         else
                             PortfolioDailyChange = 0;
                     

@@ -1,5 +1,7 @@
 
 
+using Microsoft.AspNetCore.Components.Web;
+
 namespace LInksync_Cold_Storage_Wallet.Pages
 {
     using Microsoft.AspNetCore.Components;
@@ -167,6 +169,18 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 
             }
 
+        }
+
+        private void KeyUpPressed(KeyboardEventArgs obj)
+        {
+            if(obj.Key == "Enter")
+                ConfirmWallet();
+        }
+
+        private void KeyUpPressedPin(KeyboardEventArgs obj)
+        {
+            if(obj.Key == "Enter")
+                CreateWallet();
         }
     }
 }

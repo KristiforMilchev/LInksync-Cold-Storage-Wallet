@@ -60,35 +60,37 @@ namespace SYNCWallet.Components.PriceChart
             var iterationIndex = 0;
             data.ForEach(x =>
             {
-                var currentActiveDate = x.Date;
-                var nextEntry = data.ElementAt(iterationIndex);
-                while (currentActiveDate <= nextEntry.Date && currentActiveDate <= DateTime.UtcNow)
+                if (x.Balance > 0)
                 {
-                    currentActiveDate = currentActiveDate.AddMinutes(5);
-                    if (currentActiveDate <= DateTime.Now)
+                    var currentActiveDate = x.Date;
+                    var nextEntry = data.ElementAt(iterationIndex);
+                    while (currentActiveDate <= nextEntry.Date && currentActiveDate <= DateTime.UtcNow)
                     {
-                        var newEntity = new UserAssetBalance
+                        currentActiveDate = currentActiveDate.AddMinutes(5);
+                        if (currentActiveDate <= DateTime.Now)
                         {
-                            Balance = x.Balance,
-                            PevBalance = x.Balance,
-                            Currency = contract,
-                            Date = currentActiveDate,
-                            WalletAddress = Communication.PublicAddress
-                        };
-                        bindingData.Add(newEntity);
-                        if (!string.IsNullOrEmpty(contract))
-                        {
-                            BalanceRepository.SelectDatabase("UserBalanceHistory");
-                            BalanceRepository.CreateEntity(newEntity);
+                            var newEntity = new UserAssetBalance
+                            {
+                                Balance = x.Balance,
+                                PevBalance = x.Balance,
+                                Currency = contract,
+                                Date = currentActiveDate,
+                                WalletAddress = Communication.PublicAddress
+                            };
+                            bindingData.Add(newEntity);
+                            if (!string.IsNullOrEmpty(contract))
+                            {
+                                BalanceRepository.SelectDatabase("UserBalanceHistory");
+                                BalanceRepository.CreateEntity(newEntity);
+                            }
                         }
-                    }
-                    else
-                    {
-                        bindingData.Add(x);
-                    }
+                        else
+                        {
+                            bindingData.Add(x);
+                        }
                     
+                    }
                 }
-
                 iterationIndex++;
             });
             

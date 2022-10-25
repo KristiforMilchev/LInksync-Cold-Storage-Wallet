@@ -63,7 +63,7 @@ namespace LInksync_Cold_Storage_Wallet.Pages
 
         private void LoginPublic()
         {
-            if (Password.Length < 8)
+            if (Password.Length < 8  || string.IsNullOrEmpty(Password))
             {
                 Communication.PublishError("Requirements not met", "Password cannot be less then 8 characters");
                 return;

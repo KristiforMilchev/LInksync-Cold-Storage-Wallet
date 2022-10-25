@@ -29,10 +29,18 @@ namespace SYNCWallet.Components.PriceChanges
 
         protected override async Task OnInitializedAsync()
         {
-            ContractService = ServiceHelper.GetService<IContractService>();
-            Communication = ServiceHelper.GetService<ICommunication>();
-            TrackerHandler.NotifyChildren += ParentUpdated;
-            await LoadContractPriceChanges();
+            try
+            {
+                ContractService = ServiceHelper.GetService<IContractService>();
+                Communication = ServiceHelper.GetService<ICommunication>();
+                TrackerHandler.NotifyChildren += ParentUpdated;
+                await LoadContractPriceChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                
+            }
         }
 
         private async void ParentUpdated()

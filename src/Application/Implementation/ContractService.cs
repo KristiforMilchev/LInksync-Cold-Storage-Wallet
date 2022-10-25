@@ -993,6 +993,9 @@ namespace NFTLock.Data
                 var lastWeekData = prices.FirstOrDefault().Balance;
                 var currentPrice = prices.LastOrDefault().Balance;
                 var sevenDaysPriceChange = (currentPrice - lastWeekData);
+                if (sevenDaysPriceChange == 0 || lastWeekData == 0)
+                    return 0;
+                
                 diff = (sevenDaysPriceChange / lastWeekData) * 100;
             }
             

@@ -21,11 +21,20 @@ namespace SYNCWallet.Components.Transactions
         public List<TranscationRecordDTO> Transactions { get; set; }
         protected override async Task OnInitializedAsync()
         {
-            Communication = ServiceHelper.GetService<ICommunication>();
-            Repository = ServiceHelper.GetService<SYNCWallet.Services.Definitions.ITransactionRepository>();;
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            GetAllTransactions();
-            TrackerHandler.NotifyChildren += ParentUpdated;
+            try
+            {
+                Communication = ServiceHelper.GetService<ICommunication>();
+                Repository = ServiceHelper.GetService<SYNCWallet.Services.Definitions.ITransactionRepository>();;
+                Utilities = ServiceHelper.GetService<IUtilities>();
+                Task.Run(() => GetAllTransactions());
+                TrackerHandler.NotifyChildren += ParentUpdated;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                
+            }
+
         }
 
         private void ParentUpdated()

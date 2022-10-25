@@ -37,7 +37,16 @@ namespace LInksync_Cold_Storage_Wallet.Pages
         {
             if (!IsChartRendered)
             {
-                LoadSocialData();
+                try
+                {
+                    LoadSocialData();
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                     
+                }
                 IsChartRendered = !IsChartRendered;
             }
 
@@ -71,26 +80,35 @@ namespace LInksync_Cold_Storage_Wallet.Pages
                 anyExist = true;
             }
 
-            InvokeAsync(() =>
+            if (!anyExist)
             {
-                if (anyExist)
-                    EmptySocialError = "There is no data provided.";
-                else
+                InvokeAsync(() =>
+                {
                     EmptySocialError = " Feed is only enabled for whitelisted assets.";
-                
-                StateHasChanged();
-            });
+                    StateHasChanged();
+                });
+            }
+           
 
         }
 
         protected override async Task OnInitializedAsync()
         {
-            Communication = ServiceHelper.GetService<ICommunication>();
-            Utilities = ServiceHelper.GetService<IUtilities>();
-            ContractService = ServiceHelper.GetService<IContractService>();
-            await CalculateCirculatingSupply();
-            await GetPoolQuantities();
-            GetAssetBalance();
+            try
+            {
+                Communication = ServiceHelper.GetService<ICommunication>();
+                Utilities = ServiceHelper.GetService<IUtilities>();
+                ContractService = ServiceHelper.GetService<IContractService>();
+                await CalculateCirculatingSupply();
+                await GetPoolQuantities();
+                GetAssetBalance();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+          
         }
 
         private void GetAssetBalance()

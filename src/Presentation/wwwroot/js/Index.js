@@ -197,7 +197,14 @@ function InitBalanceChart(marketData)
 
 function LoadSocialMediaFeed(key, feedData)
 {
-    $("#"+key).html(feedData);
+    try {
+        $("#"+key).html(feedData);
+    }
+    catch (e)
+    {
+        console.log(e);
+    }
+ 
 }
  
  

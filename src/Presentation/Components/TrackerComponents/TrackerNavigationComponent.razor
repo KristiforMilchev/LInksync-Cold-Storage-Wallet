@@ -12,14 +12,17 @@
                     {
                         foreach (var tokenData in @_Communication.LoadedTokens)
                         {
-                            var listedWithPrice = tokenData.Contracts.Where(x => x.CurrentPrice != 0).ToList();
-                            @foreach (var contract in @listedWithPrice)
+                            @if (tokenData.Contracts.Where(x => x.CurrentPrice != 0) != null)
                             {
-                                <div class="Promoteditem">
-                                    <img src="@BindLogo(@tokenData.Logo)" class="PLogoSize"/>
-                                    <span>@tokenData.Name</span>
-                                    <span>@Utilities.TruncateDecimals(@contract.CurrentPrice)</span>
-                                </div>
+                                var listedWithPrice = tokenData.Contracts.Where(x => x.CurrentPrice != 0).ToList();
+                                @foreach (var contract in @listedWithPrice)
+                                {
+                                    <div class="Promoteditem">
+                                        <img src="@BindLogo(@tokenData.Logo)" class="PLogoSize"/>
+                                        <span>@tokenData.Name</span>
+                                        <span>@Utilities.TruncateDecimals(@contract.CurrentPrice)</span>
+                                    </div>
+                                }
                             }
                         }
                     }
@@ -29,38 +32,6 @@
                 <div class="row" style="display: flex;justify-content: center;">
                     <img class="TokenLogo" src="@CurrentToken.Logo"/>
                 </div>
-                <div class="row">
-                    <select class="select2 form-control custom-select" id="TrackerSelect" onchange="TrackerCurrencyChanged" style="width: 100%; height:36px;">
-                        <option>@CurrentToken.Name</option>
-                        
-                        @foreach (var ntGroup in @ListedTokens)
-                        {
-                            if (ntGroup != null)
-                            {
-                                <optgroup label="@ntGroup.Network.Name">
-                                    @if (ntGroup.Tokens != null)
-                                    {
-                                        @foreach (var token in ntGroup.Tokens)
-                                        {
-                                            <option value="@token.Name">
-                                                <div>
-                                                    <span>
-                                                        @token.Name (@token.Symbol)
-                                                    </span>
-                                                </div>
-                                            </option>
-                                        }
-                                    }
-                                </optgroup>
-                            }
-                          
-                              
-                        }
-                   
-                        
-                    </select>
-                </div>
-
             </div>
         </div>
     </div>
