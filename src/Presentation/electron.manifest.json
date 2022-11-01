@@ -19,14 +19,14 @@
     },
     "win": {
 
-      "icon": "../../../wwwroot/icon-linux.png"
+      "icon": "../../../wwwroot/logo.png"
     },
     "linux": {
 
-      "icon": "../../../wwwroot/icon-linux.png"
+      "icon": "../../../wwwroot/logo.png"
     },
     "mac":{
-      "icon": "../../../wwwroot/icon-linux.png"
+      "icon": "../../../wwwroot/logo.png"
     },
     "extraResources": [
       {
