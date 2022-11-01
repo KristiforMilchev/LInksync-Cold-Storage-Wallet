@@ -26,7 +26,10 @@ namespace SYNCWallet.Components.Transactions
                 Communication = ServiceHelper.GetService<ICommunication>();
                 Repository = ServiceHelper.GetService<SYNCWallet.Services.Definitions.ITransactionRepository>();;
                 Utilities = ServiceHelper.GetService<IUtilities>();
-                Task.Run(() => GetAllTransactions());
+                InvokeAsync(() =>
+                {
+                    GetAllTransactions();
+                });
                 TrackerHandler.NotifyChildren += ParentUpdated;
             }
             catch (Exception e)

@@ -6,7 +6,7 @@
     <RootNamespace>LInksync_Cold_Storage_Wallet</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-<!--    <PackageReference Include="ArduinoUploader" Version="3.2.0" />-->
+    <!--    <PackageReference Include="ArduinoUploader" Version="3.2.0" />-->
     <PackageReference Include="IntelHexFormatReader" Version="2.2.3" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="NBitcoin" Version="7.0.11" />
@@ -23,15 +23,7 @@
     <PackageReference Include="Nethereum.RPC" Version="4.9.0" />
     <PackageReference Include="Nethereum.RPC.Reactive" Version="4.9.0" />
     <PackageReference Include="Nethereum.Web3" Version="4.9.0" />
-
   </ItemGroup>
-  
-  <ItemGroup>
-    <Content Update="electron.manifest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
   <ItemGroup>
     <Reference Include="ArduinoUploader">
       <HintPath>..\..\..\ArduinoSketchUploader\Source\ArduinoUploader\bin\Debug\net6.0\ArduinoUploader.dll</HintPath>
@@ -40,7 +32,6 @@
       <HintPath>..\..\..\Electron.NET\ElectronNET.API\bin\Debug\net6.0\ElectronNET.API.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Models\ABI.json" />
     <_ContentIncludedByDefault Remove="Models\Tokens\busd\token.json" />
@@ -95,13 +86,14 @@
     <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
     <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
   </ItemGroup>
-  
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
- 
-  
-  
+  <ItemGroup>
+    <Content Update="electron.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

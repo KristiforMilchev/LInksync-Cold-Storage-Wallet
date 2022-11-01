@@ -101,7 +101,6 @@ namespace SYNCWallet.Components.PriceChart
                 {
                     IsEmpty = false;
                     StateHasChanged();
-                    Task.Run(() => JS.InvokeAsync<string>("InitBalanceChart", bindingData));
                 }
                 else
                 {
@@ -109,7 +108,11 @@ namespace SYNCWallet.Components.PriceChart
                     StateHasChanged();
                 }
             });
-        
+
+            if (bindingData.Count > 0 && bindingData.Any(x => x.Balance > 0))
+            {
+                JS.InvokeVoidAsync("InitBalanceChart", bindingData);
+            }
         }
     }
 }

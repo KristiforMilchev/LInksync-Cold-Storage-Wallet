@@ -7,7 +7,7 @@ namespace Application.Cache
 {
     public class UserBalanceCache : ICacheRepository<UserAssetBalance>
     {
-         private ICommunication Communication { get; set; }
+        private ICommunication Communication { get; set; }
         public  string DB { get; set; }
 
 

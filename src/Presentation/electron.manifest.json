@@ -1,5 +1,6 @@
+ 
 {
-  "executable": "SYCNWAllet",
+  "executable": "LInksync-Cold-Storage-Wallet",
   "splashscreen": {
     "imageFile": ""
   },
@@ -17,11 +18,14 @@
       "output": "../../../bin/Desktop"
     },
     "win": {
-      
+
       "icon": "../../../wwwroot/icon-linux.png"
     },
     "linux": {
 
+      "icon": "../../../wwwroot/icon-linux.png"
+    },
+    "mac":{
       "icon": "../../../wwwroot/icon-linux.png"
     },
     "extraResources": [

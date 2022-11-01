@@ -51,7 +51,6 @@ namespace SYNCWallet.Services.Implementation
                 Debug.WriteLine(e); //Show error in debug mode.
                 return default(T); //Return the defaukt<T>
             }
-           
         }
 
         public IEnumerable<string> Split(string str, int chunkSize)
