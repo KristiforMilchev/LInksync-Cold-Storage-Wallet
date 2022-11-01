@@ -3,7 +3,7 @@
 Public taskboard:
 https://concoctcloud.com/Boards/PublicBoard?projectId=9026&iteration=7037&person=0
 
-##Link to the documentation
+### Link to the documentation
 
 https://linksync.developerhub.io/sync-wallet/getting-started
 
