@@ -3,6 +3,10 @@
 Public taskboard:
 https://concoctcloud.com/Boards/PublicBoard?projectId=9026&iteration=7037&person=0
 
+##Link to the documentation
+
+https://linksync.developerhub.io/sync-wallet/getting-started
+
 ### **What is a SYNC Wallet ?**
 
 SYNC Wallet is a local and hardware wallet depending on your chosen configuratio, which is compatible with all EVM blockchains. It's easy to integrate and provides security and it’s built for privacy.  Using the SYNC wallet, users can move and trade coins/tokens in a safe environment, retaining access to their private key which are stored on either the computer or an external device see compatible devices for more information.   
